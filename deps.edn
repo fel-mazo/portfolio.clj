@@ -7,5 +7,7 @@
  :aliases
  {:run {:main-opts ["-m" "portfolio.core"]}
   :export {:main-opts ["-m" "portfolio.export"]}
+  :nrepl {:extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}}
+          :main-opts ["-m" "nrepl.cmdline" "--bind" "127.0.0.1" "--port" "7888"]}
   :test {:extra-paths ["test"]
          :main-opts ["-m" "portfolio.test-runner"]}}}

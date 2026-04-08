@@ -22,6 +22,11 @@
    [:div.brand-bottom]
    [:div.brand-accent]])
 
+(defn- valid-href? [href]
+  (and (string? href)
+       (not (str/blank? href))
+       (not= "#" href)))
+
 (defn layout [{:keys [locale title description site navigation body page-class header-class footer-class show-footer]
                :or {page-class "theme-default"
                     header-class ""
@@ -41,9 +46,11 @@
             [:div.footer-bottom
              [:div.footer-meta
               [:span (:copyright site)]
-              [:a {:href (:privacy-link site)} (:privacy-label site)]
-              [:a {:href (:terms-link site)} (:terms-label site)]
-              [:a {:href (:cookies-link site)} (:cookies-label site)]]
+              (for [[href label] [[(:privacy-link site) (:privacy-label site)]
+                                  [(:terms-link site) (:terms-label site)]
+                                  [(:cookies-link site) (:cookies-label site)]]
+                    :when (valid-href? href)]
+                [:a {:href href} label])]
              [:a.locale-switch {:href locale-switch-href}
               (if (= locale :fr) "EN" "FR")]]]])
         page
@@ -66,7 +73,8 @@
              [:nav.top-nav
               (for [{:keys [href label]} navigation]
                 [:a.nav-link {:href href} label])]
-             [:a.cv-button {:href (:cv-link site)} (:cv-label site)]]]
+             (when (valid-href? (:cv-link site))
+               [:a.cv-button {:href (:cv-link site)} (:cv-label site)])]]
            body
            footer-node]]]]
     (str "<!DOCTYPE html>" (h/html page))))
@@ -168,11 +176,7 @@
     [:div.starfield.starfield-soft]
     [:div.blog-list
      (for [post posts]
-       (post-card post))]
-    [:div.blog-pagination
-     [:a {:href "#"} "1"]
-     [:a {:href "#"} "2"]
-     [:a {:href "#"} "3"]]]])
+       (post-card post))]]])
 
 (defn article-page [{:keys [post labels related-posts]}]
   [:main.article-page

@@ -7,20 +7,52 @@
 (def site-config
   (-> "content/site.edn" io/resource slurp edn/read-string))
 
-(defn- resource-path [path]
-  (some-> path io/resource io/file))
+(defn- classpath-entries []
+  (-> (System/getProperty "java.class.path")
+      (str/split (re-pattern (java.util.regex.Pattern/quote (System/getProperty "path.separator"))))))
 
-(defn- list-resource-files [path]
-  (let [dir (resource-path path)]
+(defn- file-resource-urls [classpath-entry path]
+  (let [dir (io/file classpath-entry path)]
     (if (and dir (.exists dir))
       (->> (.listFiles dir)
            (filter #(.isFile %))
-           (sort-by #(.getName %)))
+           (sort-by #(.getName %))
+           (map #(.toURL (.toURI %))))
       [])))
+
+(defn- jar-resource-urls [classpath-entry path]
+  (let [jar-file (io/file classpath-entry)
+        jar-file-url (.toURL (.toURI jar-file))
+        resource-prefix (str (str/replace path #"/+$" "") "/")]
+    (with-open [jar (java.util.jar.JarFile. jar-file)]
+      (->> (enumeration-seq (.entries jar))
+           (keep (fn [entry]
+                   (let [name (.getName ^java.util.jar.JarEntry entry)]
+                     (when (and (not (.isDirectory ^java.util.jar.JarEntry entry))
+                                (str/starts-with? name resource-prefix)
+                                (let [nested-path (subs name (count resource-prefix))]
+                                  (not (str/includes? nested-path "/"))))
+                       (java.net.URL.
+                        (str "jar:" (.toExternalForm jar-file-url) "!/" name))))))
+           (sort-by #(.toExternalForm ^java.net.URL %))))))
+
+(defn- list-resource-urls [path]
+  (->> (classpath-entries)
+       (mapcat (fn [entry]
+                 (cond
+                   (.isDirectory (io/file entry)) (file-resource-urls entry path)
+                   (str/ends-with? entry ".jar") (jar-resource-urls entry path)
+                   :else [])))
+       (sort-by #(.toExternalForm ^java.net.URL %))))
 
 (defn- parse-front-matter [raw]
   (let [[_ fm body] (re-matches #"(?s)^---\n(.*?)\n---\n(.*)$" raw)]
     [(some-> fm edn/read-string) (or body raw)]))
+
+(defn- resource-basename [resource-url]
+  (some->> (.toExternalForm ^java.net.URL resource-url)
+           (re-find #"([^/]+)$")
+           second))
 
 (defn- reading-time [text]
   (let [words (count (re-seq #"\S+" text))]
@@ -34,11 +66,11 @@
                   :title heading})))
        vec))
 
-(defn- normalize-post [file]
-  (let [raw (slurp file)
+(defn- normalize-post [resource-url]
+  (let [raw (slurp resource-url)
         [front-matter body] (parse-front-matter raw)
         slug (or (:slug front-matter)
-                 (-> (.getName file)
+                 (-> (resource-basename resource-url)
                      (str/replace #"\.[^.]+$" "")))
         excerpt (or (:excerpt front-matter)
                     (-> body
@@ -60,11 +92,22 @@
       :date-label (:date-label front-matter)
       :excerpt excerpt})))
 
-(def posts
-  (->> (list-resource-files "content/posts")
-       (map normalize-post)
+(defn- parse-post-safe [resource-url]
+  (try
+    (normalize-post resource-url)
+    (catch Exception ex
+      (binding [*out* *err*]
+        (println "Warning: skipping post" (.toExternalForm ^java.net.URL resource-url) "-" (.getMessage ex)))
+      nil)))
+
+(defn load-posts []
+  (->> (list-resource-urls "content/posts")
+       (keep parse-post-safe)
        (sort-by (juxt :locale :date) #(compare %2 %1))
        vec))
+
+(def posts
+  (load-posts))
 
 (defn posts-for-locale [locale]
   (filter #(= locale (:locale %)) posts))
@@ -84,4 +127,4 @@
        (take 4)))
 
 (defn locale-copy [locale]
-  (get-in site-config [:site/locales locale]))
+  (get-in site-config [:site :locales locale]))

@@ -26,6 +26,14 @@
   (let [words (count (re-seq #"\S+" text))]
     (max 1 (long (Math/ceil (/ words 220.0))))))
 
+(defn- extract-headings [body]
+  (->> (str/split-lines body)
+       (keep (fn [line]
+               (when-let [[_ hashes heading] (re-matches #"^(#{2,3})\s+(.+)$" line)]
+                 {:level (count hashes)
+                  :title heading})))
+       vec))
+
 (defn- normalize-post [file]
   (let [raw (slurp file)
         [front-matter body] (parse-front-matter raw)
@@ -46,6 +54,7 @@
              (str "/blog/" slug "/")
              (str "/en/blog/" slug "/"))
       :reading-time (reading-time body)
+      :headings (extract-headings body)
       :content body
       :html (markdown/md-to-html-string body)
       :date-label (:date-label front-matter)
@@ -68,6 +77,11 @@
                     (= slug (:slug %)))
            %)
         posts))
+
+(defn related-posts [locale slug]
+  (->> (posts-for-locale locale)
+       (remove #(= slug (:slug %)))
+       (take 4)))
 
 (defn locale-copy [locale]
   (get-in site-config [:site/locales locale]))

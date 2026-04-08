@@ -13,5 +13,9 @@
 (def app
   (wrap-resource handler "public"))
 
+(defn- server-port []
+  (or (some-> (System/getenv "PORT") parse-long)
+      3000))
+
 (defn -main [& _]
-  (jetty/run-jetty #'app {:port 3000 :join? true}))
+  (jetty/run-jetty #'app {:port (server-port) :join? true}))

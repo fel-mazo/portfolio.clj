@@ -23,9 +23,10 @@
 (defn- navigation [locale]
   (let [copy (content/locale-copy locale)
         prefix (if (= locale :fr) "" "/en")]
-    [{:href (str prefix "/#projects") :label (:projects copy)}
-     {:href (str prefix "/blog/") :label (:blog copy)}
-     {:href (str prefix "/#contact") :label (:contact copy)}]))
+    [{:href (str prefix "/#about") :label (:about-nav copy)}
+     {:href (str prefix "/#projects") :label (:projects copy)}
+     {:href (str prefix "/#contact") :label (:contact copy)}
+     {:href (str prefix "/blog/") :label (:blog copy)}]))
 
 (defn render-home [locale]
   (let [copy (content/locale-copy locale)
@@ -37,27 +38,27 @@
       :description (:home-description copy)
       :site site
       :navigation (navigation locale)
+      :page-class "theme-home"
+      :header-class "site-header--home"
+      :footer-class "site-footer--home"
       :body
       [:main
-       (templates/hero-section
-        {:eyebrow (:hero-eyebrow copy)
-         :name (:hero-name copy)
-         :intro (:hero-intro copy)
-         :cta-label (:hero-cta copy)
-         :cta-href (str prefix "/#about")
-         :portrait-url (:portrait-url (:site content/site-config))})
-       (templates/stats-section
-        {:title (:about-title copy)
-         :body (:about-body copy)
-         :stats (:stats copy)
-         :languages (:languages copy)
-         :cta-label (:about-cta copy)
-         :cta-href (str prefix "/blog/")})
+       (templates/home-page
+        {:name (:hero-name copy)
+         :role (:hero-role copy)
+         :about-tag (:about-tag copy)
+         :about-title (:about-title copy)
+         :about-heading (:about-heading copy)
+         :about-body (:about-body copy)
+         :portrait-url (:portrait-url (:site content/site-config))
+         :contact-label (:home-contact-cta copy)
+         :contact-href (str prefix "/#contact")})
        (templates/portfolio-section
         {:title (:portfolio-title copy)
          :cta-label (:portfolio-cta copy)
          :cta-href (str prefix "/blog/")
-         :projects (:projects content/site-config)})]})))
+         :projects (:projects content/site-config)
+         :home? true})]})))
 
 (defn render-blog-index [locale]
   (let [copy (content/locale-copy locale)]
@@ -67,6 +68,9 @@
       :description (:blog-description copy)
       :site (localized-site locale)
       :navigation (navigation locale)
+      :page-class "theme-home"
+      :header-class "site-header--home"
+      :footer-class "site-footer--home"
       :body (templates/blog-index-section
              {:eyebrow (:blog-eyebrow copy)
               :title (:blog-heading copy)
@@ -83,11 +87,20 @@
         :description (:excerpt post)
         :site (localized-site locale)
         :navigation (navigation locale)
+        :page-class "theme-home"
+        :header-class "site-header--home"
+        :footer-class "site-footer--home"
         :body (templates/article-page
                {:post post
+                :related-posts (content/related-posts locale slug)
                 :labels {:eyebrow (:blog-eyebrow copy)
                          :all-posts (str prefix "/blog/")
-                         :all-posts-label (:all-posts copy)}})}))))
+                         :all-posts-label (:all-posts copy)
+                         :project-link "https://github.com/fel-mazo"
+                         :project-label (:project-label copy)
+                         :reading-time-label (:reading-time-label copy)
+                         :date-label-copy (:date-label-copy copy)
+                         :related-posts-label (:related-posts-label copy)}})}))))
 
 (defn page-for-uri [uri]
   (case uri

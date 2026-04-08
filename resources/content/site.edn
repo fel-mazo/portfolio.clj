@@ -1,0 +1,82 @@
+{:site
+ {:name "Fahd El Mazouni"
+  :logo "FEM"
+  :email "hello@fahdelmazouni.dev"
+  :cv-link "#"
+  :portrait-url "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80"
+  :socials [{:label "LinkedIn" :href "https://www.linkedin.com/in/fahd-el-mazouni/"}
+            {:label "GitHub" :href "https://github.com/fel-mazo"}]
+  :locales
+  {:fr
+   {:cv-label "Telecharger mon CV"
+    :contact-label "Me contacter"
+    :copyright "2026 Fahd El Mazouni. Tous droits reserves."
+    :privacy-label "Confidentialite"
+    :terms-label "Conditions"
+    :cookies-label "Cookies"
+    :projects "Projets"
+    :blog "Blog"
+    :contact "Contact"
+    :home-title "Portfolio"
+    :home-description "Portfolio bilingue de Fahd El Mazouni, developpeur full stack avec une forte specialisation backend."
+    :hero-eyebrow "HELLO, I'M"
+    :hero-name "Fahd El Mazouni"
+    :hero-intro "Developpeur full stack avec 5 ans d'experience professionnelle, je construis des systemes backend fiables, des experiences web nettes et des produits qui restent agreables a faire evoluer."
+    :hero-cta "A propos de moi"
+    :about-title "About me"
+    :about-body "Je recherche des equipes exigeantes sur la qualite, la collaboration et l'apprentissage continu. Mon travail s'appuie sur une forte culture backend, mais j'aime aussi transformer une vision produit en experiences web solides de bout en bout."
+    :stats [{:value "5+" :label "Annees d'experience professionnelle"}
+            {:value "20+" :label "Projets menes du prototype a la production"}]
+    :languages ["Clojure" "Java" "JavaScript" "TypeScript" "SQL" "AWS"]
+    :about-cta "Lire le blog"
+    :portfolio-title "Portfolio"
+    :portfolio-cta "Voir tous les articles"
+    :blog-title "Blog"
+    :blog-description "Articles sur l'architecture backend, la fiabilite, l'API design et le quotidien d'un developpeur full stack."
+    :blog-eyebrow "BLOG"
+    :blog-heading "Reflexions sur le craft logiciel"
+    :blog-intro "Billets courts et pratiques autour du backend, de la qualite logicielle, des APIs et des choix d'architecture."
+    :all-posts "Tous les articles"}
+   :en
+   {:cv-label "Download my resume"
+    :contact-label "Get in touch"
+    :copyright "2026 Fahd El Mazouni. All rights reserved."
+    :privacy-label "Privacy"
+    :terms-label "Terms"
+    :cookies-label "Cookies"
+    :projects "Projects"
+    :blog "Blog"
+    :contact "Contact"
+    :home-title "Portfolio"
+    :home-description "Bilingual portfolio for Fahd El Mazouni, a full stack developer with a strong backend focus."
+    :hero-eyebrow "HELLO, I'M"
+    :hero-name "Fahd El Mazouni"
+    :hero-intro "Full stack developer with 5 years of professional experience, focused on building reliable backend systems, crisp web experiences, and products that stay maintainable as they grow."
+    :hero-cta "About me"
+    :about-title "About me"
+    :about-body "I am looking for teams that care deeply about quality, collaboration, and continuous learning. My strongest edge is backend engineering, but I also enjoy turning product intent into end-to-end web experiences."
+    :stats [{:value "5+" :label "Years of professional experience"}
+            {:value "20+" :label "Projects shipped from prototype to production"}]
+    :languages ["Clojure" "Java" "JavaScript" "TypeScript" "SQL" "AWS"]
+    :about-cta "Read the blog"
+    :portfolio-title "Portfolio"
+    :portfolio-cta "Browse the blog"
+    :blog-title "Blog"
+    :blog-description "Notes on backend architecture, reliability, API design, and the day-to-day practice of full stack engineering."
+    :blog-eyebrow "BLOG"
+    :blog-heading "Notes on software craft"
+    :blog-intro "Short, practical writing on backend systems, software quality, API design, and engineering tradeoffs."
+    :all-posts "All posts"}}}
+ :projects
+ [{:title "Distributed billing platform"
+   :summary "A resilient billing workflow for subscription products, with job orchestration, observability, and safe retry semantics."
+   :href "https://github.com/fel-mazo"
+   :image "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
+   :alt "Billing analytics dashboard"
+   :stack ["Clojure" "Kafka" "PostgreSQL"]}
+  {:title "Developer platform portal"
+   :summary "A self-serve internal portal that simplified onboarding, deployment visibility, and API lifecycle documentation."
+   :href "https://github.com/fel-mazo"
+   :image "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80"
+   :alt "Developer portal on a laptop"
+   :stack ["Clojure" "REST APIs" "AWS"]}]}

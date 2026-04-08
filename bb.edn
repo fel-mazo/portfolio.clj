@@ -1,0 +1,4 @@
+{:tasks
+ {dev {:task (shell "clojure -M:run")}
+  export {:task (shell "clojure -M:export")}
+  test {:task (shell "clojure -M:test")}}}

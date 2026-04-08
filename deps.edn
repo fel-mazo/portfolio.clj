@@ -1,0 +1,11 @@
+{:paths ["src" "resources" "test"]
+ :deps {org.clojure/clojure {:mvn/version "1.12.0"}
+        hiccup/hiccup {:mvn/version "2.0.0-RC4"}
+        markdown-clj/markdown-clj {:mvn/version "1.12.2"}
+        ring/ring-core {:mvn/version "1.12.2"}
+        ring/ring-jetty-adapter {:mvn/version "1.12.2"}}
+ :aliases
+ {:run {:main-opts ["-m" "portfolio.core"]}
+  :export {:main-opts ["-m" "portfolio.export"]}
+  :test {:extra-paths ["test"]
+         :main-opts ["-m" "portfolio.test-runner"]}}}

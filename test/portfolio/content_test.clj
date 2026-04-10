@@ -126,6 +126,18 @@
       (is (str/includes? html "id=\"introduction\""))
       (is (not (str/includes? html ">SECTION 1<"))))))
 
+(deftest blog-index-uses-compact-layout-for-sparse-content
+  (testing "blog index marks sparse content so the hero can tighten visually"
+    (let [html (:body (site/page-for-uri "/blog/"))]
+      (is (str/includes? html "class=\"blog-page blog-page--compact\""))
+      (is (str/includes? html "class=\"blog-hero blog-hero--compact\"")))))
+
+(deftest article-page-omits-empty-related-sidebar
+  (testing "article page does not render an empty related sidebar when there are no related posts"
+    (let [html (:body (site/page-for-uri "/en/blog/designing-api-boundaries-that-age-well/"))]
+      (is (str/includes? html "class=\"article-layout article-layout--solo\""))
+      (is (not (str/includes? html "class=\"article-related\""))))))
+
 (deftest rendering-uses-current-site-config
   (testing "page rendering pulls site content through functions at render time"
     (let [custom-config {:site {:name "Fahd El Mazouni"
@@ -148,7 +160,7 @@
                                                :home-description "Description"
                                                :hero-name "Fahd El Mazouni"
                                                :hero-role "DEVELOPPEUR BACKEND"
-                                               :about-tag "ABOUT"
+                                               :about-tag "Profil"
                                                :about-title "WHO I AM"
                                                :about-heading "Heading from test"
                                                :about-body "Body from test"

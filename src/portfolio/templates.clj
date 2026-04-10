@@ -157,8 +157,10 @@
    [:a.project-arrow {:href uri :aria-label (str "Open " title)}]])
 
 (defn blog-index-section [{:keys [eyebrow title intro tags-intro tags posts]}]
-  [:main.blog-page
-   [:section.blog-hero
+  (let [compact? (or (<= (count posts) 1)
+                     (<= (count tags) 3))]
+    [:main {:class (str "blog-page" (when compact? " blog-page--compact"))}
+     [:section {:class (str "blog-hero" (when compact? " blog-hero--compact"))}
     [:div.starfield]
     [:div.star-glow.star-glow-left]
     [:div.star-glow.star-glow-center]
@@ -173,54 +175,55 @@
         [:div.blog-tags-grid
          (for [tag tags]
            [:span.project-tech tag])]])]]
-   [:section.blog-list-section {:id "blog-list"}
-    [:div.starfield.starfield-soft]
-    [:div.blog-list
-     (for [post posts]
-       (post-card post))]]])
+     [:section.blog-list-section {:id "blog-list"}
+      [:div.starfield.starfield-soft]
+      [:div.blog-list
+       (for [post posts]
+         (post-card post))]]]))
 
 (defn article-page [{:keys [post labels related-posts]}]
-  [:main.article-page
-   [:section.article-hero-section
-    [:div.starfield]
-    [:div.star-glow.star-glow-center]
-    [:div.article-hero-inner
-     [:div.about-tag (:eyebrow labels)]
-     [:h1.article-title (:title post)]
-     [:p.article-excerpt (:excerpt post)]
-     [:div.article-meta-row
-      [:span (str (:reading-time-label labels) " : " (:reading-time post) " min")]
-      [:span (str (:date-label-copy labels) " : " (:date-label post))]]
-     [:div.article-tags
-      (for [tag (:tags post)]
-        [:span.project-tech tag])]]]
-   [:section.article-content-section
-    [:div.starfield.starfield-soft]
-    [:div.article-layout
-     [:aside.article-toc
-      [:div.article-toc-line]
-      (map-indexed
-      (fn [idx {:keys [title anchor]}]
-         [:div.article-toc-item
-          [:span.article-toc-number (format "%02d" (inc idx))]
-          [:a.article-toc-title {:href (str "#" anchor)} title]])
-       (:headings post))]
-     [:div.article-main
-      [:div.rich-html (h/raw (:html post))]
-      (when-let [project-link (:project-link labels)]
-        [:div.article-actions-row
-         [:a.home-contact-button {:href project-link} (:project-label labels)]])
-      (when (seq related-posts)
-        [:div.article-related-mobile
-         [:div.article-related-card
-          [:h3 (:related-posts-label labels)]
-          [:ul
-           (for [related related-posts]
-             [:li [:a {:href (:uri related)} (:title related)]])]]])]
-     [:aside.article-related
-      (when (seq related-posts)
-        [:div.article-related-card
-         [:h3 (:related-posts-label labels)]
-         [:ul
-          (for [related related-posts]
-            [:li [:a {:href (:uri related)} (:title related)]])]])]]]])
+  (let [has-related-posts? (seq related-posts)]
+    [:main.article-page
+     [:section.article-hero-section
+      [:div.starfield]
+      [:div.star-glow.star-glow-center]
+      [:div.article-hero-inner
+       [:div.about-tag (:eyebrow labels)]
+       [:h1.article-title (:title post)]
+       [:p.article-excerpt (:excerpt post)]
+       [:div.article-meta-row
+        [:span (str (:reading-time-label labels) " : " (:reading-time post) " min")]
+        [:span (str (:date-label-copy labels) " : " (:date-label post))]]
+       [:div.article-tags
+        (for [tag (:tags post)]
+          [:span.project-tech tag])]]]
+     [:section.article-content-section
+      [:div.starfield.starfield-soft]
+      [:div {:class (str "article-layout" (when-not has-related-posts? " article-layout--solo"))}
+       [:aside.article-toc
+        [:div.article-toc-line]
+        (map-indexed
+         (fn [idx {:keys [title anchor]}]
+           [:div.article-toc-item
+            [:span.article-toc-number (format "%02d" (inc idx))]
+            [:a.article-toc-title {:href (str "#" anchor)} title]])
+         (:headings post))]
+       [:div.article-main
+        [:div.rich-html (h/raw (:html post))]
+        (when-let [project-link (:project-link labels)]
+          [:div.article-actions-row
+           [:a.home-contact-button {:href project-link} (:project-label labels)]])
+        (when has-related-posts?
+          [:div.article-related-mobile
+           [:div.article-related-card
+            [:h3 (:related-posts-label labels)]
+            [:ul
+             (for [related related-posts]
+               [:li [:a {:href (:uri related)} (:title related)]])]]])]
+       (when has-related-posts?
+         [:aside.article-related
+          [:div.article-related-card
+           [:h3 (:related-posts-label labels)]
+           [:ul
+            (for [related related-posts]
+              [:li [:a {:href (:uri related)} (:title related)]])]]])]]]))

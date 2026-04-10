@@ -5,10 +5,12 @@
             [markdown.core :as markdown]))
 
 (defn load-site-config []
-  (-> "content/site.edn" io/resource slurp edn/read-string))
+  (if-let [resource (io/resource "content/site.edn")]
+    (edn/read-string (slurp resource))
+    (throw (ex-info "Missing required resource: content/site.edn" {}))))
 
-(defn site-config []
-  (load-site-config))
+(def ^:private cached-site-config (delay (load-site-config)))
+(defn site-config [] @cached-site-config)
 
 (defn- classpath-entries []
   (-> (System/getProperty "java.class.path")
@@ -129,14 +131,11 @@
        (sort-by (juxt :locale :date) #(compare %2 %1))
        vec))
 
-(defn posts []
-  (load-posts))
+(def ^:private cached-posts (delay (load-posts)))
+(defn posts [] @cached-posts)
 
 (defn posts-for-locale [locale]
   (filter #(= locale (:locale %)) (posts)))
-
-(defn featured-posts [locale]
-  (take 3 (posts-for-locale locale)))
 
 (defn find-post [locale slug]
   (some #(when (and (= locale (:locale %))

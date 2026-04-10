@@ -26,6 +26,15 @@
     (binding [*out* *err*]
       (println "Warning: static asset not found:" resource-path))))
 
+(defn- export-public-dir! []
+  (let [public-dir (io/file "resources/public")]
+    (when (.exists public-dir)
+      (doseq [file (remove #(.isDirectory %) (file-seq public-dir))]
+        (let [relative-path (.relativize (.toPath public-dir) (.toPath file))
+              target (io/file export-dir (str relative-path))]
+          (.mkdirs (.getParentFile target))
+          (io/copy file target))))))
+
 (defn -main [& _]
   (.mkdirs (io/file export-dir))
   (doseq [uri ["/" "/blog/" "/en/" "/en/blog/"]]
@@ -33,4 +42,5 @@
   (doseq [post (content/posts)]
     (write-page! (:uri post)
                  (:body (site/page-for-uri (:uri post)))))
-  (export-static-asset! "public/site.css"))
+  (export-static-asset! "public/site.css")
+  (export-public-dir!))

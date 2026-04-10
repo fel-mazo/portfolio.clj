@@ -91,7 +91,7 @@
 (deftest home-page-renders-real-links
   (testing "home page uses localized copy and avoids placeholder anchors"
     (let [html (:body (site/page-for-uri "/"))]
-      (is (str/includes? html ">ABOUT<"))
+      (is (str/includes? html ">A propos<"))
       (is (str/includes? html ">Blog<"))
       (is (not (str/includes? html "href=\"#\""))))))
 
@@ -109,6 +109,21 @@
   (testing "blog index keeps only one main landmark"
     (let [html (:body (site/page-for-uri "/blog/"))]
       (is (= 1 (count (re-seq #"<main[ >]" html)))))))
+
+(deftest rendered-pages-include-accessibility-basics
+  (testing "home page exposes skip link, landmarks, and labeled logo"
+    (let [html (:body (site/page-for-uri "/"))]
+      (is (str/includes? html "lang=\"fr\""))
+      (is (str/includes? html "class=\"skip-link\""))
+      (is (str/includes? html "id=\"main-content\""))
+      (is (str/includes? html "role=\"banner\""))
+      (is (str/includes? html "role=\"contentinfo\""))
+      (is (str/includes? html "aria-label=\"Fahd El Mazouni - Accueil\""))))
+  (testing "blog index uses button-based scroll controls and readable card labels"
+    (let [html (:body (site/page-for-uri "/blog/"))]
+      (is (str/includes? html "aria-label=\"Defiler vers le contenu\""))
+      (is (str/includes? html "aria-label=\"Voir les articles\""))
+      (is (str/includes? html "aria-label=\"Lire l&apos;article\"")))))
 
 (deftest blog-index-renders-real-post-tags
   (testing "blog cards use post metadata instead of placeholder tags"
@@ -152,7 +167,18 @@
                                                :privacy-label "Privacy"
                                                :terms-label "Terms"
                                                :cookies-label "Cookies"
-                                               :about-nav "ABOUT"
+                                               :skip-link-label "Aller au contenu principal"
+                                               :nav-toggle-label "Ouvrir la navigation"
+                                               :nav-close-label "Fermer la navigation"
+                                               :logo-home-label "Fahd El Mazouni - Accueil"
+                                               :scroll-label "Defiler vers le contenu"
+                                               :blog-list-label "Voir les articles"
+                                               :post-link-label "Lire l'article"
+                                               :project-link-label "Voir sur GitHub →"
+                                               :footer-kicker "CONTACT"
+                                               :footer-tagline "Tagline"
+                                               :back-to-top "Retour en haut ↑"
+                                               :about-nav "A propos"
                                                :projects "Projets"
                                                :blog "Blog"
                                                :contact "Contact"
@@ -160,12 +186,15 @@
                                                :home-description "Description"
                                                :hero-name "Fahd El Mazouni"
                                                :hero-role "DEVELOPPEUR BACKEND"
+                                               :hero-summary "Summary"
                                                :about-tag "Profil"
-                                               :about-title "WHO I AM"
+                                               :about-title "QUI JE SUIS"
                                                :about-heading "Heading from test"
                                                :about-body "Body from test"
                                                :home-contact-cta "CONTACT"
                                                :portfolio-title "Portfolio"
+                                               :portfolio-home-tag "Projets"
+                                               :portfolio-home-heading "CE QUE JE FAIS"
                                                :portfolio-cta "Voir tous les articles"
                                                :blog-title "Blog"
                                                :blog-description "Blog description"

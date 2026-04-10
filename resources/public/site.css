@@ -1,6 +1,64 @@
+/* Fix #2: self-host the project fonts and enable swap to avoid invisible text. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-400.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter-600.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/inter-700.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-400-italic.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/roboto-400.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/roboto-500.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/roboto-700.ttf") format("truetype");
+}
+
 :root {
   --navy: #0f1d36;
   --navy-2: #13233f;
+  --navy-deep: #0b1120;
   --blue: #62a8ff;
   --coral: #ff5f5f;
   --white: #fcfbf9;
@@ -19,13 +77,14 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--navy-deep);
 }
 
 body {
   margin: 0;
   font-family: "Roboto", Arial, sans-serif;
-  color: var(--ink);
-  background: #fff;
+  color: var(--white);
+  background: var(--navy-deep);
 }
 
 a {
@@ -42,6 +101,25 @@ img {
   min-height: 100vh;
 }
 
+/* Fix #11: add a visible-on-focus skip link for keyboard users. */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 0.75rem 1.5rem;
+  background: #4a9eff;
+  color: #fff;
+  z-index: 9999;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 .site-header {
   width: 100%;
   position: relative;
@@ -55,6 +133,14 @@ img {
   display: flex;
   align-items: center;
   gap: 32px;
+}
+
+/* Fix #7: prepare a mobile drawer container and backdrop without changing desktop flow. */
+.site-header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 28px;
 }
 
 .site-header--home {
@@ -79,6 +165,7 @@ img {
   justify-content: center;
   width: 44px;
   height: 44px;
+  flex: 0 0 auto;
 }
 
 .brand-mark {
@@ -129,16 +216,17 @@ img {
   display: flex;
   align-items: center;
   gap: 48px;
-  margin-left: auto;
   letter-spacing: 0.04em;
 }
 
+/* Fix #13: keep source labels readable and normalize the rendered casing in CSS. */
 .nav-link {
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: 0.98rem;
+  text-transform: uppercase;
 }
 
 .cv-button {
-  margin-left: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -146,17 +234,66 @@ img {
   padding: 0 22px;
   border: 2px solid var(--coral);
   border-radius: 999px;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: 0.98rem;
   color: var(--coral);
+  text-transform: uppercase;
 }
 
+.nav-toggle,
+.nav-close,
+.nav-backdrop,
+.back-to-top,
+.home-scroll {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.nav-toggle,
+.nav-close,
+.nav-backdrop {
+  display: none;
+}
+
+.nav-toggle {
+  width: 48px;
+  height: 48px;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid rgba(252, 251, 249, 0.2);
+  border-radius: 999px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-direction: column;
+}
+
+.nav-toggle-line {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 999px;
+}
+
+.nav-close {
+  font-family: "Inter", "Roboto", Arial, sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Fix #1, #3, #5: extend the dark theme across the full shell instead of only the hero blocks. */
 .theme-home {
   color: var(--white);
   background:
     radial-gradient(circle at 15% 50%, rgba(126, 95, 156, 0.25), transparent 25%),
     radial-gradient(circle at 51% 22%, rgba(155, 118, 168, 0.16), transparent 18%),
     radial-gradient(circle at 63% 78%, rgba(96, 86, 141, 0.18), transparent 20%),
-    linear-gradient(180deg, var(--navy) 0%, var(--navy) 100%);
+    linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 30%, var(--navy) 100%);
 }
 
 .home-page {
@@ -172,7 +309,7 @@ img {
 }
 
 .home-hero {
-  min-height: 100vh;
+  min-height: max(600px, 85vh);
   padding-top: 110px;
 }
 
@@ -253,6 +390,7 @@ img {
 
 .home-name {
   margin: 0;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: clamp(3.4rem, 7vw, 6rem);
   font-weight: 700;
   line-height: 1.05;
@@ -260,21 +398,63 @@ img {
 
 .home-role {
   margin: 40px 0 0;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: clamp(1.5rem, 2.5vw, 2.2rem);
   letter-spacing: 0.02em;
 }
 
+/* Fix #16: add a concise value proposition and direct social access in the hero. */
+.home-summary {
+  max-width: 680px;
+  margin: 18px auto 0;
+  color: rgba(252, 251, 249, 0.82);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.hero-socials {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.hero-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  color: var(--white);
+  font-family: "Inter", "Roboto", Arial, sans-serif;
+  font-size: 0.92rem;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.hero-social-link:hover,
+.hero-social-link:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(98, 168, 255, 0.6);
+  background: rgba(98, 168, 255, 0.12);
+}
+
+/* Fix #10 and #14: style the scroll control as a real button with the existing chevron look. */
 .home-scroll {
   width: 24px;
   height: 24px;
   margin-top: 88px;
+  padding: 0;
   border-right: 3px solid var(--white);
   border-bottom: 3px solid var(--white);
   transform: rotate(45deg);
 }
 
+/* Fix #4: tighten the transition between the hero and the about section. */
 .home-about {
-  padding: 70px 0 80px;
+  padding: 56px 0 80px;
 }
 
 .home-about-inner {
@@ -317,6 +497,7 @@ img {
 
 .about-display {
   margin: 0 0 28px;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: clamp(3.6rem, 7vw, 6.2rem);
   line-height: 0.95;
   font-weight: 700;
@@ -329,6 +510,7 @@ img {
 .about-heading {
   margin: 0 0 26px;
   max-width: 560px;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: clamp(2rem, 3.2vw, 3.4rem);
   line-height: 1.18;
   font-weight: 700;
@@ -365,6 +547,7 @@ img {
 
 .home-projects-title {
   margin: 28px 0 0;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: clamp(3.8rem, 7vw, 5.9rem);
   line-height: 0.94;
   font-weight: 700;
@@ -390,6 +573,7 @@ img {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--home-line);
   border-radius: 34px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .theme-default .project-card {
@@ -422,6 +606,7 @@ img {
 
 .project-meta h3 {
   margin: 0 0 10px;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: 1.35rem;
 }
 
@@ -449,6 +634,18 @@ img {
   padding: 0;
   color: var(--blue);
   font-weight: 600;
+}
+
+/* Fix #17: make project cards feel interactive and expose a visible GitHub CTA. */
+.project-card--home {
+  cursor: pointer;
+}
+
+.project-card:hover,
+.project-card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 42px rgba(5, 13, 29, 0.34);
+  border-color: rgba(98, 168, 255, 0.32);
 }
 
 .project-card--home {
@@ -483,6 +680,12 @@ img {
   margin-top: 18px;
 }
 
+.project-card-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .project-tech-list {
   display: flex;
   flex-wrap: wrap;
@@ -499,8 +702,17 @@ img {
   border: 1px solid var(--blue);
   border-radius: 4px;
   color: var(--blue);
-  font-size: 0.48rem;
+  font-size: 0.875rem;
   letter-spacing: 0.14em;
+  background: rgba(98, 168, 255, 0.08);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.project-tech:hover,
+.project-tech:focus-visible {
+  background: rgba(98, 168, 255, 0.18);
+  border-color: rgba(98, 168, 255, 0.9);
+  color: #a8cfff;
 }
 
 .project-arrow {
@@ -588,6 +800,7 @@ img {
 .blog-title,
 .article-title {
   margin: 0 0 16px;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: clamp(2.6rem, 4vw, 3.8rem);
   line-height: 1.1;
 }
@@ -606,6 +819,7 @@ img {
   color: rgba(252, 251, 249, 0.88);
 }
 
+/* Fix #19: increase tag filter contrast and readability on the blog page. */
 .blog-tags-block {
   margin-top: 82px;
 }
@@ -632,6 +846,12 @@ img {
   color: var(--white);
 }
 
+.blog-list-jump {
+  margin-top: 18px;
+  color: rgba(252, 251, 249, 0.72);
+  font-size: 0.92rem;
+}
+
 .blog-tags-grid {
   width: min(700px, calc(100vw - 48px));
   margin: 0 auto;
@@ -649,7 +869,8 @@ img {
 .blog-list-section {
   position: relative;
   overflow: hidden;
-  padding-bottom: 70px;
+  width: 100%;
+  padding: 18px 0 70px;
 }
 
 .blog-list {
@@ -685,6 +906,7 @@ img {
 
 .post-card h3 {
   margin: 0 0 18px;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: 1.2rem;
   text-transform: uppercase;
 }
@@ -769,6 +991,7 @@ img {
   position: relative;
   padding: 24px 0 90px;
   overflow: hidden;
+  background: transparent;
 }
 
 .article-layout {
@@ -833,12 +1056,14 @@ img {
 
 .rich-html h2 {
   margin: 38px 0 16px;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: 2.3rem;
   color: var(--white);
 }
 
 .rich-html h3 {
   margin: 28px 0 12px;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
   font-size: 1.35rem;
   color: var(--white);
 }
@@ -932,6 +1157,24 @@ img {
   padding-bottom: 56px;
 }
 
+.footer-kicker,
+.footer-tagline {
+  margin: 0;
+}
+
+.footer-kicker {
+  font-family: "Inter", "Roboto", Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.footer-tagline {
+  max-width: 620px;
+  color: rgba(252, 251, 249, 0.78);
+  line-height: 1.7;
+}
+
 .footer-top,
 .footer-bottom {
   display: flex;
@@ -979,12 +1222,13 @@ img {
 }
 
 .site-footer--home .footer-contact {
-  order: 2;
+  order: 3;
   font-size: 1rem;
+  color: var(--blue);
 }
 
 .site-footer--home .footer-socials {
-  order: 3;
+  order: 4;
 }
 
 .site-footer--home .footer-bottom {
@@ -997,15 +1241,15 @@ img {
   color: rgba(252, 251, 249, 0.7);
 }
 
-.site-footer--home .locale-switch {
+.back-to-top {
+  padding: 0;
   color: var(--blue);
+  font-family: "Inter", "Roboto", Arial, sans-serif;
+  font-size: 0.92rem;
 }
 
-.site-footer--home .footer-top::before {
-  content: "CONTACT ME";
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+.site-footer--home .locale-switch {
+  color: var(--blue);
 }
 
 .site-footer--home .footer-top::after {
@@ -1054,9 +1298,68 @@ img {
     align-items: flex-start;
   }
 
+  /* Fix #7: collapse the desktop nav into an accessible mobile drawer. */
+  .site-header-inner {
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .site-header-actions {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(320px, calc(100vw - 32px));
+    padding: 112px 28px 32px;
+    background: rgba(11, 17, 32, 0.98);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    transform: translateX(100%);
+    transition: transform 0.24s ease;
+    z-index: 7;
+  }
+
+  .site-header[data-nav-open="true"] .site-header-actions,
+  .site-header-actions[data-open="true"] {
+    transform: translateX(0);
+  }
+
+  .nav-close {
+    display: inline-flex;
+    padding: 0;
+  }
+
+  .nav-backdrop {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(4, 10, 22, 0.54);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.24s ease;
+    z-index: 6;
+  }
+
+  .nav-open .nav-backdrop {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .top-nav {
     margin-left: 0;
-    flex-wrap: wrap;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
   }
 
   .cv-button {
@@ -1080,6 +1383,11 @@ img {
     padding-top: 48px;
   }
 
+  .hero-socials,
+  .footer-socials {
+    align-items: flex-start;
+  }
+
   .home-about-inner,
   .portfolio-section {
     width: calc(100vw - 24px);
@@ -1092,6 +1400,11 @@ img {
   .post-card {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .project-card-home-footer {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .blog-tags-grid {

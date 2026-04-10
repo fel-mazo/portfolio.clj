@@ -44,26 +44,32 @@
       :title (:home-title copy)
       :description (:home-description copy)
       :site site
+      :labels copy
       :navigation (navigation locale)
       :page-class "theme-home"
       :header-class "site-header--home"
       :footer-class "site-footer--home"
       :body
-      [:main
+      [:main {:id "main-content"}
        (templates/home-page
         {:name (:hero-name copy)
          :role (:hero-role copy)
+         :summary (:hero-summary copy)
          :about-tag (:about-tag copy)
          :about-title (:about-title copy)
          :about-heading (:about-heading copy)
          :about-body (:about-body copy)
          :portrait-url (:portrait-url (site-data))
+         :scroll-label (:scroll-label copy)
+         :socials (:socials site)
          :contact-label (:home-contact-cta copy)
          :contact-href (str prefix "/#contact")})
        (templates/portfolio-section
-        {:title (:portfolio-title copy)
+        {:title (:portfolio-home-tag copy)
+         :heading (:portfolio-home-heading copy)
          :cta-label (:portfolio-cta copy)
          :cta-href (str prefix "/blog/")
+         :project-link-label (:project-link-label copy)
          :projects projects
          :home? true})]})))
 
@@ -74,6 +80,7 @@
       :title (:blog-title copy)
       :description (:blog-description copy)
       :site (localized-site locale)
+      :labels copy
       :navigation (navigation locale)
       :page-class "theme-home"
       :header-class "site-header--home"
@@ -83,6 +90,9 @@
               :title (:blog-heading copy)
               :intro (:blog-intro copy)
               :tags-intro (:blog-tags-intro copy)
+              :scroll-label (:scroll-label copy)
+              :blog-list-label (:blog-list-label copy)
+              :post-link-label (:post-link-label copy)
               :tags (content/popular-tags locale)
               :posts (content/posts-for-locale locale)})})))
 
@@ -95,6 +105,7 @@
         :title (:title post)
         :description (:excerpt post)
         :site (localized-site locale)
+        :labels copy
         :navigation (navigation locale)
         :page-class "theme-home"
         :header-class "site-header--home"

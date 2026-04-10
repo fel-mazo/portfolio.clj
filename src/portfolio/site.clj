@@ -2,8 +2,11 @@
   (:require [portfolio.content :as content]
             [portfolio.templates :as templates]))
 
+(defn- site-data []
+  (:site (content/site-config)))
+
 (defn- localized-site [locale]
-  (let [global (:site content/site-config)
+  (let [global (site-data)
         copy (content/locale-copy locale)]
     {:name (:name global)
      :logo (:logo global)
@@ -31,7 +34,8 @@
 (defn render-home [locale]
   (let [copy (content/locale-copy locale)
         prefix (if (= locale :fr) "" "/en")
-        site (localized-site locale)]
+        site (localized-site locale)
+        projects (:projects (content/site-config))]
     (templates/layout
      {:locale locale
       :title (:home-title copy)
@@ -50,14 +54,14 @@
          :about-title (:about-title copy)
          :about-heading (:about-heading copy)
          :about-body (:about-body copy)
-         :portrait-url (:portrait-url (:site content/site-config))
+         :portrait-url (:portrait-url (site-data))
          :contact-label (:home-contact-cta copy)
          :contact-href (str prefix "/#contact")})
        (templates/portfolio-section
         {:title (:portfolio-title copy)
          :cta-label (:portfolio-cta copy)
          :cta-href (str prefix "/blog/")
-         :projects (:projects content/site-config)
+         :projects projects
          :home? true})]})))
 
 (defn render-blog-index [locale]
@@ -75,6 +79,8 @@
              {:eyebrow (:blog-eyebrow copy)
               :title (:blog-heading copy)
               :intro (:blog-intro copy)
+              :tags-intro (:blog-tags-intro copy)
+              :tags (content/popular-tags locale)
               :posts (content/posts-for-locale locale)})})))
 
 (defn render-article [locale slug]
@@ -96,7 +102,7 @@
                 :labels {:eyebrow (:blog-eyebrow copy)
                          :all-posts (str prefix "/blog/")
                          :all-posts-label (:all-posts copy)
-                         :project-link "https://github.com/fel-mazo"
+                         :project-link (:project-link post)
                          :project-label (:project-label copy)
                          :reading-time-label (:reading-time-label copy)
                          :date-label-copy (:date-label-copy copy)

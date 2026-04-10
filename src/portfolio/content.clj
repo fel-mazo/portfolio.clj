@@ -4,8 +4,11 @@
             [clojure.string :as str]
             [markdown.core :as markdown]))
 
-(def site-config
+(defn load-site-config []
   (-> "content/site.edn" io/resource slurp edn/read-string))
+
+(defn site-config []
+  (load-site-config))
 
 (defn- classpath-entries []
   (-> (System/getProperty "java.class.path")
@@ -58,13 +61,31 @@
   (let [words (count (re-seq #"\S+" text))]
     (max 1 (long (Math/ceil (/ words 220.0))))))
 
+(defn- slugify [value]
+  (-> value
+      str/lower-case
+      (str/replace #"[^a-z0-9]+" "-")
+      (str/replace #"(^-+|-+$)" "")))
+
 (defn- extract-headings [body]
   (->> (str/split-lines body)
        (keep (fn [line]
                (when-let [[_ hashes heading] (re-matches #"^(#{2,3})\s+(.+)$" line)]
                  {:level (count hashes)
-                  :title heading})))
+                  :title heading
+                  :anchor (slugify heading)})))
        vec))
+
+(defn- inject-heading-anchors [html headings]
+  (reduce (fn [rendered {:keys [level title anchor]}]
+            (let [pattern (re-pattern
+                           (str "(?s)<h" level ">"
+                                (java.util.regex.Pattern/quote title)
+                                "</h" level ">"))
+                  replacement (str "<h" level " id=\"" anchor "\">" title "</h" level ">")]
+              (str/replace-first rendered pattern replacement)))
+          html
+          headings))
 
 (defn- normalize-post [resource-url]
   (let [raw (slurp resource-url)
@@ -77,7 +98,9 @@
                         str/split-lines
                         (->> (remove str/blank?) first)
                         (or "")))
-        locale (keyword (or (:locale front-matter) "fr"))]
+        locale (keyword (or (:locale front-matter) "fr"))
+        headings (extract-headings body)
+        html (-> body markdown/md-to-html-string (inject-heading-anchors headings))]
     (merge
      front-matter
      {:slug slug
@@ -86,9 +109,9 @@
              (str "/blog/" slug "/")
              (str "/en/blog/" slug "/"))
       :reading-time (reading-time body)
-      :headings (extract-headings body)
+      :headings headings
       :content body
-      :html (markdown/md-to-html-string body)
+      :html html
       :date-label (:date-label front-matter)
       :excerpt excerpt})))
 
@@ -106,11 +129,11 @@
        (sort-by (juxt :locale :date) #(compare %2 %1))
        vec))
 
-(def posts
+(defn posts []
   (load-posts))
 
 (defn posts-for-locale [locale]
-  (filter #(= locale (:locale %)) posts))
+  (filter #(= locale (:locale %)) (posts)))
 
 (defn featured-posts [locale]
   (take 3 (posts-for-locale locale)))
@@ -119,12 +142,20 @@
   (some #(when (and (= locale (:locale %))
                     (= slug (:slug %)))
            %)
-        posts))
+        (posts)))
 
 (defn related-posts [locale slug]
   (->> (posts-for-locale locale)
        (remove #(= slug (:slug %)))
        (take 4)))
 
+(defn popular-tags [locale]
+  (->> (posts-for-locale locale)
+       (mapcat :tags)
+       frequencies
+       (sort-by (juxt (comp - val) key))
+       (map key)
+       (take 8)))
+
 (defn locale-copy [locale]
-  (get-in site-config [:site :locales locale]))
+  (get-in (site-config) [:site :locales locale]))

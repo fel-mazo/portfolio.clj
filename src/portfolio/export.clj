@@ -28,7 +28,7 @@
   (.mkdirs (io/file export-dir))
   (doseq [uri ["/" "/blog/" "/en/" "/en/blog/"]]
     (write-page! uri (:body (site/page-for-uri uri))))
-  (doseq [post content/posts]
+  (doseq [post (content/posts)]
     (write-page! (:uri post)
                  (:body (site/page-for-uri (:uri post)))))
   (export-static-asset! "public/site.css"))

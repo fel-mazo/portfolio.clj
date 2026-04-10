@@ -80,7 +80,7 @@
     (str "<!DOCTYPE html>" (h/html page))))
 
 (defn home-page [{:keys [name role about-tag about-title about-heading about-body portrait-url contact-label contact-href]}]
-  [:main.home-page
+  [:div.home-page
    [:section.home-hero
     [:div.starfield]
     [:div.star-glow.star-glow-left]
@@ -99,7 +99,7 @@
       [:img {:src portrait-url :alt name}]]
      [:div.home-about-copy
       [:div.about-tag about-tag]
-     [:h2.about-display
+      [:h2.about-display
        "WHO"
        [:span.about-display-accent " I "]
        "AM"]
@@ -146,17 +146,17 @@
          (project-card project))]
       [:a.outline-pill {:href cta-href} cta-label]])])
 
-(defn post-card [{:keys [category title excerpt uri date-label reading-time]}]
+(defn post-card [{:keys [category title excerpt uri tags]}]
   [:article.post-card
    [:div.post-card-content
     [:h3 [:a.post-card-link {:href uri} title]]
     [:p.post-card-excerpt excerpt]
     [:div.post-card-tags
-     (for [tag [category "TECHNO 1" "TECHNO 2"]]
+     (for [tag (remove str/blank? (cons category tags))]
        [:span.project-tech tag])]]
    [:a.project-arrow {:href uri :aria-label (str "Open " title)}]])
 
-(defn blog-index-section [{:keys [eyebrow title intro posts]}]
+(defn blog-index-section [{:keys [eyebrow title intro tags-intro tags posts]}]
   [:main.blog-page
    [:section.blog-hero
     [:div.starfield]
@@ -167,11 +167,12 @@
      [:h1.blog-title title]
      [:p.blog-intro intro]
      [:a.home-scroll {:href "#blog-list" :aria-label "Scroll to blog list"}]
-     [:div.blog-tags-block
-      [:p.blog-tags-intro "Phrase pour introduire les tags"]
-      [:div.blog-tags-grid
-       (for [tag ["TAG TECHNO" "TAG TECHNO" "TAG TECHNO" "TAG TECHNO" "TAG TECHNO" "TAG TECHNO" "TAG SUBJECTS" "TAG SUBJECTS" "TAG SUBJECTS" "TAG SUBJECTS" "TAG SUBJECTS"]]
-         [:span {:class (str "project-tech" (when (= tag "TAG SUBJECTS") " project-tech--light"))} tag])]]]]
+     (when (seq tags)
+       [:div.blog-tags-block
+        [:p.blog-tags-intro tags-intro]
+        [:div.blog-tags-grid
+         (for [tag tags]
+           [:span.project-tech tag])]])]]
    [:section.blog-list-section {:id "blog-list"}
     [:div.starfield.starfield-soft]
     [:div.blog-list
@@ -192,33 +193,34 @@
       [:span (str (:date-label-copy labels) " : " (:date-label post))]]
      [:div.article-tags
       (for [tag (:tags post)]
-        [:span {:class (str "project-tech" (when (re-find #"(?i)subject" tag) " project-tech--light"))} tag])]]]
+        [:span.project-tech tag])]]]
    [:section.article-content-section
     [:div.starfield.starfield-soft]
     [:div.article-layout
      [:aside.article-toc
       [:div.article-toc-line]
       (map-indexed
-      (fn [idx {:keys [title]}]
+      (fn [idx {:keys [title anchor]}]
          [:div.article-toc-item
           [:span.article-toc-number (format "%02d" (inc idx))]
-          [:span.article-toc-title title]])
-       (or (seq (:headings post))
-           [{:title "SECTION 1"} {:title "SECTION 2"} {:title "SECTION 3"} {:title "SECTION 4"}]))]
+          [:a.article-toc-title {:href (str "#" anchor)} title]])
+       (:headings post))]
      [:div.article-main
       [:div.rich-html (h/raw (:html post))]
-      [:div.article-image-placeholder "photo"]
-      [:div.article-actions-row
-       [:a.home-contact-button {:href (:project-link labels)} (:project-label labels)]]
-      [:div.article-related-mobile
-       [:div.article-related-card
-        [:h3 (:related-posts-label labels)]
-        [:ul
-         (for [related related-posts]
-           [:li [:a {:href (:uri related)} (:title related)]])]]]]
+      (when-let [project-link (:project-link labels)]
+        [:div.article-actions-row
+         [:a.home-contact-button {:href project-link} (:project-label labels)]])
+      (when (seq related-posts)
+        [:div.article-related-mobile
+         [:div.article-related-card
+          [:h3 (:related-posts-label labels)]
+          [:ul
+           (for [related related-posts]
+             [:li [:a {:href (:uri related)} (:title related)]])]]])]
      [:aside.article-related
-      [:div.article-related-card
-       [:h3 (:related-posts-label labels)]
-       [:ul
-        (for [related related-posts]
-          [:li [:a {:href (:uri related)} (:title related)]])]]]]]])
+      (when (seq related-posts)
+        [:div.article-related-card
+         [:h3 (:related-posts-label labels)]
+         [:ul
+          (for [related related-posts]
+            [:li [:a {:href (:uri related)} (:title related)]])]])]]]])

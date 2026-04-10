@@ -19,10 +19,12 @@
     (spit target html)))
 
 (defn- export-static-asset! [resource-path]
-  (when-let [resource (io/resource resource-path)]
+  (if-let [resource (io/resource resource-path)]
     (let [target (io/file export-dir (.getName (io/file resource-path)))]
       (.mkdirs (.getParentFile target))
-      (io/copy (io/input-stream resource) target))))
+      (io/copy (io/input-stream resource) target))
+    (binding [*out* *err*]
+      (println "Warning: static asset not found:" resource-path))))
 
 (defn -main [& _]
   (.mkdirs (io/file export-dir))

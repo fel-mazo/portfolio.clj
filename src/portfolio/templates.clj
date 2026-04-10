@@ -2,19 +2,6 @@
   (:require [clojure.string :as str]
             [hiccup2.core :as h]))
 
-(def design-tokens
-  {:colors {:navy "#0b182e"
-            :blue "#1251b5"
-            :sky "#5fa8ff"
-            :coral "#f95959"
-            :black "#000000"
-            :white "#ffffff"
-            :mist "#f9f7f7"
-            :line "#d8d8d8"}
-   :fonts {:display "\"Poppins\", \"Roboto\", sans-serif"
-           :body "\"Poppins\", \"Roboto\", sans-serif"
-           :quote "\"Inter\", sans-serif"}})
-
 (defn brand-mark []
   [:div.brand-mark
    [:div.brand-stem]

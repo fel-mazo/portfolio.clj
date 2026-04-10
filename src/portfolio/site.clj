@@ -2,6 +2,9 @@
   (:require [portfolio.content :as content]
             [portfolio.templates :as templates]))
 
+(defn- locale-prefix [locale]
+  (if (= locale :fr) "" "/en"))
+
 (defn- site-data []
   (:site (content/site-config)))
 
@@ -25,7 +28,7 @@
 
 (defn- navigation [locale]
   (let [copy (content/locale-copy locale)
-        prefix (if (= locale :fr) "" "/en")]
+        prefix (locale-prefix locale)]
     [{:href (str prefix "/#about") :label (:about-nav copy)}
      {:href (str prefix "/#projects") :label (:projects copy)}
      {:href (str prefix "/#contact") :label (:contact copy)}
@@ -33,7 +36,7 @@
 
 (defn render-home [locale]
   (let [copy (content/locale-copy locale)
-        prefix (if (= locale :fr) "" "/en")
+        prefix (locale-prefix locale)
         site (localized-site locale)
         projects (:projects (content/site-config))]
     (templates/layout
@@ -86,7 +89,7 @@
 (defn render-article [locale slug]
   (when-let [post (content/find-post locale slug)]
     (let [copy (content/locale-copy locale)
-          prefix (if (= locale :fr) "" "/en")]
+          prefix (locale-prefix locale)]
       (templates/layout
        {:locale locale
         :title (:title post)

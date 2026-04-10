@@ -179,7 +179,7 @@
                                                :related-posts-label "ARTICLES ASSOCIES"
                                                :project-label "VOIR LE PROJET"}}}
                          :projects []}]
-      (with-redefs [content/load-site-config (constantly custom-config)]
+      (with-redefs [content/site-config (constantly custom-config)]
         (let [html (:body (site/page-for-uri "/"))]
           (is (str/includes? html "Heading from test"))
           (is (str/includes? html "Body from test")))))))

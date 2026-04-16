@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeLaGuardo/setup-clojure@13.2
+        with:
+          cli: latest
+          bb: latest
+
+      - name: Run tests
+        run: bb test
+
+      - name: Build static export
+        run: bb export
+
+      - name: Assert launch assets exist
+        run: |
+          test -f dist/404.html
+          test -f dist/robots.txt
+          test -f dist/sitemap.xml
+          test -f dist/favicon.svg

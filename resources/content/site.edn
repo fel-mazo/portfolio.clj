@@ -1,6 +1,7 @@
 {:site
  {:name "Fahd El Mazouni"
   :logo "FEM"
+  :site-url "https://fel-mazo.com"
   :email "hello@fahdelmazouni.dev"
   :cv-link "#"
   :portrait-url "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80"
@@ -13,6 +14,7 @@
     :skip-link-label "Aller au contenu principal"
     :nav-toggle-label "Ouvrir la navigation"
     :nav-close-label "Fermer la navigation"
+    :nav-label "Navigation principale"
     :logo-home-label "Fahd El Mazouni - Accueil"
     :scroll-label "Defiler vers le contenu"
     :blog-list-label "Voir les articles"
@@ -50,6 +52,11 @@
     :blog-intro "Quelques notes sur la fiabilite, l'architecture et les choix qui rendent un systeme durable."
     :blog-tags-intro "Themes abordes"
     :all-posts "Tous les articles"
+    :not-found-title "Page introuvable"
+    :not-found-description "La page demandee n'existe pas ou n'est plus disponible."
+    :not-found-heading "PAGE INTROUVABLE"
+    :not-found-body "Le lien est peut-etre ancien, incomplet ou incorrect."
+    :not-found-cta "Retour a l'accueil"
     :reading-time-label "Temps"
     :date-label-copy "Date"
     :related-posts-label "ARTICLES ASSOCIES"
@@ -60,6 +67,7 @@
     :skip-link-label "Skip to main content"
     :nav-toggle-label "Open navigation"
     :nav-close-label "Close navigation"
+    :nav-label "Main navigation"
     :logo-home-label "Fahd El Mazouni - Home"
     :scroll-label "Scroll to content"
     :blog-list-label "View articles"
@@ -97,6 +105,11 @@
     :blog-intro "A running set of notes on architecture, reliability, and careful product engineering."
     :blog-tags-intro "Topics I write about"
     :all-posts "All posts"
+    :not-found-title "Page not found"
+    :not-found-description "The page you requested does not exist or is no longer available."
+    :not-found-heading "PAGE NOT FOUND"
+    :not-found-body "The link may be outdated, incomplete, or incorrect."
+    :not-found-cta "Back to home"
     :reading-time-label "Reading time"
     :date-label-copy "Date"
     :related-posts-label "RELATED ARTICLES"
@@ -104,25 +117,25 @@
  :projects
  [{:title "Reliable Backend Systems"
    :summary "Patterns and implementation work focused on observability, idempotent jobs, and calmer operations for distributed products."
-   :href "https://github.com/fel-mazo"
+   :href nil
    :image "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
    :alt "Billing analytics dashboard"
    :stack ["Clojure" "PostgreSQL" "Observability"]}
   {:title "API Boundary Design"
    :summary "Designing APIs that stay understandable as products evolve, with explicit states, clearer contracts, and practical ergonomics."
-   :href "https://github.com/fel-mazo"
+   :href nil
    :image "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80"
    :alt "Developer portal on a laptop"
    :stack ["REST" "Domain Modeling" "DX"]}
   {:title "Async Workflow Tooling"
    :summary "Internal tooling and workflow thinking around retries, queue visibility, and safe background processing."
-   :href "https://github.com/fel-mazo"
+   :href nil
    :image "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80"
    :alt "Code editor on a monitor"
    :stack ["Queues" "Automation" "Reliability"]}
   {:title "Product Engineering"
    :summary "Full stack delivery with a backend-first mindset: stable foundations, maintainable code, and better collaboration across teams."
-   :href "https://github.com/fel-mazo"
+   :href nil
    :image "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80"
    :alt "Laptop and product planning notes"
    :stack ["Backend" "Frontend" "Teamwork"]}]}

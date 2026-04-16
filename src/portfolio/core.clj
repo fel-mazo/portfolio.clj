@@ -5,10 +5,7 @@
   (:gen-class))
 
 (defn handler [request]
-  (let [{:keys [status body]} (site/page-for-uri (:uri request))]
-    {:status status
-     :headers {"content-type" "text/html; charset=utf-8"}
-     :body body}))
+  (site/page-for-uri (:uri request)))
 
 (def app
   (wrap-resource handler "public"))

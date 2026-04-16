@@ -60,30 +60,19 @@
          window.scrollTo({ top: 0, behavior: 'smooth' });
        });
      });
-     document.querySelectorAll('[data-card-link]').forEach(function (card) {
-       var href = card.getAttribute('data-card-link');
-       if (!href) { return; }
-       var navigate = function () { window.location.href = href; };
-       card.addEventListener('click', function (event) {
-         if (event.target.closest('a, button')) { return; }
-         navigate();
-       });
-       card.addEventListener('keydown', function (event) {
-         if (event.key === 'Enter' || event.key === ' ') {
-           event.preventDefault();
-           navigate();
-         }
-       });
-     });
    }());")
 
-(defn layout [{:keys [locale title description site labels navigation body page-class header-class footer-class show-footer]
+(defn layout [{:keys [locale title description site labels navigation body meta page-class header-class footer-class show-footer]
                :or {page-class "theme-default"
                     header-class ""
                     footer-class ""
                     show-footer true}}]
   (let [home-href (if (= locale :fr) "/" "/en/")
-        locale-switch-href (if (= locale :fr) "/en/" "/")]
+        locale-switch-href (if (= locale :fr) "/en/" "/")
+        {:keys [canonical-url og-type image-url robots]
+         :or {og-type "website"
+              robots "index,follow"}} meta
+        page-title (str title " | " (:name site))]
     (str
      "<!DOCTYPE html>"
      (h/html
@@ -91,8 +80,20 @@
        [:head
         [:meta {:charset "utf-8"}]
         [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
-        [:title (str title " | " (:name site))]
+        [:title page-title]
         [:meta {:name "description" :content description}]
+        [:link {:rel "icon" :type "image/svg+xml" :href "/favicon.svg"}]
+        [:link {:rel "canonical" :href canonical-url}]
+        [:meta {:property "og:title" :content page-title}]
+        [:meta {:property "og:description" :content description}]
+        [:meta {:property "og:type" :content og-type}]
+        [:meta {:property "og:url" :content canonical-url}]
+        [:meta {:property "og:image" :content image-url}]
+        [:meta {:name "twitter:card" :content "summary_large_image"}]
+        [:meta {:name "twitter:title" :content page-title}]
+        [:meta {:name "twitter:description" :content description}]
+        [:meta {:name "twitter:image" :content image-url}]
+        [:meta {:name "robots" :content robots}]
         [:link {:rel "preload" :href "/fonts/roboto-400.ttf" :as "font" :type "font/ttf" :crossorigin "anonymous"}]
         [:link {:rel "preload" :href "/fonts/inter-700.ttf" :as "font" :type "font/ttf" :crossorigin "anonymous"}]
         [:link {:rel "stylesheet" :href "/site.css"}]]
@@ -117,7 +118,7 @@
              {:type "button"
               :aria-label (:nav-close-label labels)}
              (:nav-close-label labels)]
-            [:nav.top-nav {:aria-label "Navigation principale"}
+            [:nav.top-nav {:aria-label (:nav-label labels)}
              (for [{:keys [href label]} navigation]
                [:a.nav-link {:href href} label])]
             (when (valid-href? (:cv-link site))
@@ -185,11 +186,19 @@
       [:p.about-body about-body]
       [:a.home-contact-button {:href contact-href} contact-label]]]]])
 
+(defn not-found-page [{:keys [eyebrow heading body cta-label cta-href]}]
+  [:main {:id "main-content" :class "not-found-page"}
+   [:section.not-found-hero
+    [:div.starfield]
+    [:div.star-glow.star-glow-center]
+    [:div.not-found-inner
+     [:div.about-tag eyebrow]
+     [:h1.not-found-title heading]
+     [:p.not-found-body body]
+     [:a.home-contact-button {:href cta-href} cta-label]]]])
+
 (defn project-card [{:keys [title summary href image alt stack home? project-link-label]}]
-  [:article {:class (str "project-card" (when home? " project-card--home"))
-             :data-card-link href
-             :role "link"
-             :tabindex "0"}
+  [:article {:class (str "project-card" (when home? " project-card--home"))}
    (when-not home?
      [:img.project-image {:src image :alt alt}])
    [:div.project-meta
@@ -197,14 +206,12 @@
       [:div.project-stack (str/join " · " stack)])
     [:h3 title]
     [:p summary]
-    (if home?
+    (when home?
       [:div.project-card-home-footer
        [:div.project-tech-list
         (for [tech stack]
-          [:span.project-tech tech])]
-       [:div.project-card-links
-        [:a.text-link {:href href} project-link-label]
-        [:a.project-arrow {:href href :aria-label project-link-label}]]]
+          [:span.project-tech tech])]])
+    (when (and (not home?) href)
       [:a.text-link {:href href} project-link-label])]])
 
 (defn portfolio-section [{:keys [title heading cta-label cta-href project-link-label projects home?]}]

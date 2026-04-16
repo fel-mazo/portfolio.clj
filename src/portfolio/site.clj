@@ -1,5 +1,6 @@
 (ns portfolio.site
-  (:require [portfolio.content :as content]
+  (:require [clojure.string :as str]
+            [portfolio.content :as content]
             [portfolio.templates :as templates]))
 
 (defn- locale-prefix [locale]
@@ -8,11 +9,36 @@
 (defn- site-data []
   (:site (content/site-config)))
 
+(defn- site-url []
+  (:site-url (site-data)))
+
+(defn- absolute-url [uri]
+  (str (site-url) uri))
+
+(defn- html-response [status body]
+  {:status status
+   :headers {"content-type" "text/html; charset=utf-8"}
+   :body body})
+
+(defn- text-response [status body content-type]
+  {:status status
+   :headers {"content-type" content-type}
+   :body body})
+
+(defn- page-meta [uri & {:keys [og-type robots image-url]
+                         :or {og-type "website"
+                              robots "index,follow"}}]
+  {:canonical-url (absolute-url uri)
+   :og-type og-type
+   :image-url (or image-url (:portrait-url (site-data)))
+   :robots robots})
+
 (defn- localized-site [locale]
   (let [global (site-data)
         copy (content/locale-copy locale)]
     {:name (:name global)
      :logo (:logo global)
+     :site-url (:site-url global)
      :email (:email global)
      :socials (:socials global)
      :cv-link (:cv-link global)
@@ -38,11 +64,13 @@
   (let [copy (content/locale-copy locale)
         prefix (locale-prefix locale)
         site (localized-site locale)
+        uri (if (= locale :fr) "/" "/en/")
         projects (:projects (content/site-config))]
     (templates/layout
      {:locale locale
       :title (:home-title copy)
       :description (:home-description copy)
+      :meta (page-meta uri)
       :site site
       :labels copy
       :navigation (navigation locale)
@@ -74,11 +102,13 @@
          :home? true})]})))
 
 (defn render-blog-index [locale]
-  (let [copy (content/locale-copy locale)]
+  (let [copy (content/locale-copy locale)
+        uri (if (= locale :fr) "/blog/" "/en/blog/")]
     (templates/layout
      {:locale locale
       :title (:blog-title copy)
       :description (:blog-description copy)
+      :meta (page-meta uri)
       :site (localized-site locale)
       :labels copy
       :navigation (navigation locale)
@@ -104,6 +134,7 @@
        {:locale locale
         :title (:title post)
         :description (:excerpt post)
+        :meta (page-meta (:uri post) :og-type "article")
         :site (localized-site locale)
         :labels copy
         :navigation (navigation locale)
@@ -122,21 +153,74 @@
                          :date-label-copy (:date-label-copy copy)
                          :related-posts-label (:related-posts-label copy)}})}))))
 
+(defn render-not-found [locale]
+  (let [copy (content/locale-copy locale)
+        site (localized-site locale)
+        home-href (if (= locale :fr) "/" "/en/")]
+    (templates/layout
+     {:locale locale
+      :title (:not-found-title copy)
+      :description (:not-found-description copy)
+      :meta (page-meta "/404.html" :robots "noindex,nofollow")
+      :site site
+      :labels copy
+      :navigation (navigation locale)
+      :page-class "theme-home"
+      :header-class "site-header--home"
+      :footer-class "site-footer--home"
+      :body (templates/not-found-page
+             {:eyebrow "404"
+              :heading (:not-found-heading copy)
+              :body (:not-found-body copy)
+              :cta-label (:not-found-cta copy)
+              :cta-href home-href})})))
+
+(defn- home-response [locale]
+  (html-response 200 (render-home locale)))
+
+(defn- blog-index-response [locale]
+  (html-response 200 (render-blog-index locale)))
+
+(defn- article-response [locale slug]
+  (if-let [article (render-article locale slug)]
+    (html-response 200 article)
+    (html-response 404 (render-not-found locale))))
+
+(defn- not-found-response [locale]
+  (html-response 404 (render-not-found locale)))
+
+(defn- public-routes []
+  (concat ["/" "/blog/" "/en/" "/en/blog/"]
+          (map :uri (content/posts))))
+
+(defn- robots-txt []
+  (str "User-agent: *\n"
+       "Allow: /\n"
+       "Sitemap: " (absolute-url "/sitemap.xml") "\n"))
+
+(defn- sitemap-xml []
+  (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+       "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
+       (apply str
+              (for [uri (public-routes)]
+                (str "  <url><loc>" (absolute-url uri) "</loc></url>\n")))
+       "</urlset>\n"))
+
 (defn page-for-uri [uri]
   (case uri
-    "/" {:status 200 :body (render-home :fr)}
-    "/index.html" {:status 200 :body (render-home :fr)}
-    "/blog/" {:status 200 :body (render-blog-index :fr)}
-    "/en/" {:status 200 :body (render-home :en)}
-    "/en/index.html" {:status 200 :body (render-home :en)}
-    "/en/blog/" {:status 200 :body (render-blog-index :en)}
+    "/" (home-response :fr)
+    "/index.html" (home-response :fr)
+    "/blog/" (blog-index-response :fr)
+    "/en/" (home-response :en)
+    "/en/index.html" (home-response :en)
+    "/en/blog/" (blog-index-response :en)
+    "/robots.txt" (text-response 200 (robots-txt) "text/plain; charset=utf-8")
+    "/sitemap.xml" (text-response 200 (sitemap-xml) "application/xml; charset=utf-8")
+    "/404.html" (html-response 200 (render-not-found :fr))
     (let [fr-match (re-matches #"/blog/([^/]+)/" uri)
           en-match (re-matches #"/en/blog/([^/]+)/" uri)]
       (cond
-        fr-match (if-let [page (render-article :fr (second fr-match))]
-                   {:status 200 :body page}
-                   {:status 404 :body "Not found"})
-        en-match (if-let [page (render-article :en (second en-match))]
-                   {:status 200 :body page}
-                   {:status 404 :body "Not found"})
-        :else {:status 404 :body "Not found"}))))
+        fr-match (article-response :fr (second fr-match))
+        en-match (article-response :en (second en-match))
+        (str/starts-with? uri "/en/") (not-found-response :en)
+        :else (not-found-response :fr)))))

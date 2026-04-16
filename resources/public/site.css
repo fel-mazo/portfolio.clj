@@ -1438,3 +1438,27 @@ img {
     flex-direction: column;
   }
 }
+
+.not-found-page {
+  min-height: 70vh;
+}
+
+.not-found-hero {
+  position: relative;
+  padding: 140px 0 120px;
+}
+
+.not-found-inner {
+  width: var(--content-width);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.not-found-title {
+  margin: 0 0 24px;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1;
+}

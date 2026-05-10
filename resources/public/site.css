@@ -1161,18 +1161,14 @@ img {
 }
 
 .article-layout {
-  width: min(1320px, calc(100vw - 48px));
+  width: min(1203px, calc(100vw - 48px));
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 170px minmax(0, 690px) 290px;
+  grid-template-columns: 165px minmax(0, 1fr);
   gap: 60px;
   align-items: start;
   position: relative;
   z-index: 1;
-}
-
-.article-layout--solo {
-  grid-template-columns: 170px minmax(0, 760px);
 }
 
 .article-toc {
@@ -1210,10 +1206,7 @@ img {
 
 .article-main {
   padding-top: 56px;
-}
-
-.article-layout--solo .article-main {
-  max-width: 760px;
+  max-width: 895px;
 }
 
 .rich-html p,
@@ -1274,42 +1267,48 @@ img {
   font-size: 1.2rem;
 }
 
-.article-actions-row {
-  margin-top: 24px;
+.article-bottom-row {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  margin-top: 40px;
 }
 
 .article-related-card {
-  margin-top: 1040px;
-  padding: 28px 24px;
-  border: 1px solid var(--home-line);
-  border-radius: 34px;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.05), transparent 40%),
-    rgba(255,255,255,0.03);
+  width: 100%;
+  max-width: 380px;
+  padding: 30px;
+  border-radius: var(--r-card);
+  background: linear-gradient(var(--glass-from), var(--glass-to));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-card);
 }
 
 .article-related-card h3 {
-  margin: 0 0 20px;
+  margin: 0 0 18px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 25px;
+  line-height: 35px;
   color: var(--white);
-  font-size: 1rem;
 }
 
 .article-related-card ul {
+  list-style: none;
   margin: 0;
-  padding-left: 16px;
-  color: var(--white);
-}
-
-.article-related-card li {
-  margin-bottom: 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .article-related-card a {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 35px;
+  color: var(--white);
   text-decoration: underline;
-}
-
-.article-related-mobile {
-  display: none;
 }
 
 .site-footer {
@@ -1633,17 +1632,12 @@ img {
     display: none;
   }
 
-  .article-related {
-    display: none;
-  }
-
-  .article-related-mobile {
-    display: block;
-    margin-top: 36px;
+  .article-bottom-row {
+    flex-direction: column;
   }
 
   .article-related-card {
-    margin-top: 0;
+    max-width: 100%;
   }
 
   .article-meta-row {

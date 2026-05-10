@@ -336,7 +336,7 @@
           [:span.project-tech tag])]]]
      [:section.article-content-section
       [:div.starfield.starfield-soft]
-      [:div {:class (str "article-layout" (when-not has-related-posts? " article-layout--solo"))}
+      [:div.article-layout
        [:aside.article-toc
         [:div.article-toc-line]
         (map-indexed
@@ -347,12 +347,9 @@
          (:headings post))]
        [:div.article-main
         [:div.rich-html (h/raw (:html post))]
-        (when-let [project-link (:project-link labels)]
-          [:div.article-actions-row
-           [:a.home-contact-button {:href project-link} (:project-label labels)]])
-        (when has-related-posts?
-          [:div.article-related-mobile
-           (related-posts-card labels related-posts)])]
-       (when has-related-posts?
-         [:aside.article-related
-          (related-posts-card labels related-posts)])]]]))
+        (when (or (:project-link labels) has-related-posts?)
+          [:div.article-bottom-row
+           (when-let [project-link (:project-link labels)]
+             [:a.home-contact-button {:href project-link} (:project-label labels)])
+           (when has-related-posts?
+             (related-posts-card labels related-posts))])]]]]))

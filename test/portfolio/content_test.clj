@@ -148,10 +148,10 @@
       (is (str/includes? html "class=\"blog-hero blog-hero--compact\"")))))
 
 (deftest article-page-omits-empty-related-sidebar
-  (testing "article page does not render an empty related sidebar when there are no related posts"
+  (testing "article page uses inline layout without separate related sidebar"
     (let [html (:body (site/page-for-uri "/en/blog/designing-api-boundaries-that-age-well/"))]
-      (is (str/includes? html "class=\"article-layout article-layout--solo\""))
-      (is (not (str/includes? html "class=\"article-related\""))))))
+      (is (str/includes? html "class=\"article-layout\""))
+      (is (not (str/includes? html "article-layout--solo"))))))
 
 (deftest rendering-uses-current-site-config
   (testing "page rendering pulls site content through functions at render time"

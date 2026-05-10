@@ -1188,30 +1188,36 @@ img {
   min-height: 220px;
 }
 
-.article-toc-line {
-  position: absolute;
-  left: 8px;
-  top: 68px;
-  width: 3px;
-  height: 110px;
-  background: var(--blue);
-}
-
 .article-toc-item {
   display: flex;
   gap: 18px;
   margin-bottom: 20px;
   font-size: 0.95rem;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
 .article-toc-number {
+  flex-shrink: 0;
   width: 28px;
   color: var(--white);
+  transition: color 0.2s;
 }
 
 .article-toc-title {
   color: var(--white);
   text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.article-toc-item.active .article-toc-number,
+.article-toc-item.active .article-toc-title {
+  color: var(--blue);
+}
+
+.article-toc-item:hover .article-toc-number,
+.article-toc-item:hover .article-toc-title {
+  color: var(--white);
 }
 
 .article-main {

@@ -114,7 +114,6 @@
       :headings headings
       :content body
       :html html
-      :date-label (:date-label front-matter)
       :excerpt excerpt})))
 
 (defn- parse-post-safe [resource-url]

@@ -9,22 +9,11 @@
   (:site (content/site-config)))
 
 (defn- localized-site [locale]
-  (let [global (site-data)
-        copy (content/locale-copy locale)]
-    {:name (:name global)
-     :logo (:logo global)
-     :email (:email global)
-     :socials (:socials global)
-     :cv-link (:cv-link global)
-     :cv-label (:cv-label copy)
-     :contact-label (:contact-label copy)
-     :copyright (:copyright copy)
-     :privacy-label (:privacy-label copy)
-     :privacy-link "#"
-     :terms-label (:terms-label copy)
-     :terms-link "#"
-     :cookies-label (:cookies-label copy)
-     :cookies-link "#"}))
+  (merge (select-keys (site-data) [:name :logo :email :socials :cv-link])
+         (select-keys (content/locale-copy locale)
+                      [:cv-label :contact-label :copyright
+                       :privacy-label :terms-label :cookies-label])
+         {:privacy-link "#" :terms-link "#" :cookies-link "#"}))
 
 (defn- navigation [locale]
   (let [copy (content/locale-copy locale)
@@ -122,6 +111,8 @@
                          :date-label-copy (:date-label-copy copy)
                          :related-posts-label (:related-posts-label copy)}})}))))
 
+(def ^:private not-found {:status 404 :body "Not found"})
+
 (defn page-for-uri [uri]
   (case uri
     "/" {:status 200 :body (render-home :fr)}
@@ -135,8 +126,8 @@
       (cond
         fr-match (if-let [page (render-article :fr (second fr-match))]
                    {:status 200 :body page}
-                   {:status 404 :body "Not found"})
+                   not-found)
         en-match (if-let [page (render-article :en (second en-match))]
                    {:status 200 :body page}
-                   {:status 404 :body "Not found"})
-        :else {:status 404 :body "Not found"}))))
+                   not-found)
+        :else not-found))))

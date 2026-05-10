@@ -18,14 +18,6 @@
     (.mkdirs (.getParentFile target))
     (spit target html)))
 
-(defn- export-static-asset! [resource-path]
-  (if-let [resource (io/resource resource-path)]
-    (let [target (io/file export-dir (.getName (io/file resource-path)))]
-      (.mkdirs (.getParentFile target))
-      (io/copy (io/input-stream resource) target))
-    (binding [*out* *err*]
-      (println "Warning: static asset not found:" resource-path))))
-
 (defn- export-public-dir! []
   (let [public-dir (io/file "resources/public")]
     (when (.exists public-dir)
@@ -42,5 +34,4 @@
   (doseq [post (content/posts)]
     (write-page! (:uri post)
                  (:body (site/page-for-uri (:uri post)))))
-  (export-static-asset! "public/site.css")
   (export-public-dir!))

@@ -264,6 +264,13 @@
        (for [post posts]
          (post-card (assoc post :post-link-label post-link-label)))]]]))
 
+(defn- related-posts-card [labels related-posts]
+  [:div.article-related-card
+   [:h3 (:related-posts-label labels)]
+   [:ul
+    (for [related related-posts]
+      [:li [:a {:href (:uri related)} (:title related)]])]])
+
 (defn article-page [{:keys [post labels related-posts]}]
   (let [has-related-posts? (seq related-posts)]
     [:main.article-page {:id "main-content"}
@@ -298,15 +305,7 @@
            [:a.home-contact-button {:href project-link} (:project-label labels)]])
         (when has-related-posts?
           [:div.article-related-mobile
-           [:div.article-related-card
-            [:h3 (:related-posts-label labels)]
-            [:ul
-             (for [related related-posts]
-               [:li [:a {:href (:uri related)} (:title related)]])]]])]
+           (related-posts-card labels related-posts)])]
        (when has-related-posts?
          [:aside.article-related
-          [:div.article-related-card
-           [:h3 (:related-posts-label labels)]
-           [:ul
-            (for [related related-posts]
-              [:li [:a {:href (:uri related)} (:title related)]])]]])]]]))
+          (related-posts-card labels related-posts)])]]]))

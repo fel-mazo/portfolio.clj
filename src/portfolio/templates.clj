@@ -293,7 +293,7 @@
      [:div.star-glow.star-glow-center]
      [:section {:class (str "blog-hero" (when compact? " blog-hero--compact"))}
       [:div.blog-hero-inner
-       [:div.about-tag eyebrow]
+       [:span.article-pill eyebrow]
        [:h1.blog-title title]
        [:p.blog-intro intro]
        [:a.blog-scroll-link {:href "#blog-list" :aria-label scroll-label}

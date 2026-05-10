@@ -896,7 +896,7 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 30px;
 }
 
 .hero-eyebrow {
@@ -1089,16 +1089,21 @@ img {
 .article-back:hover { color: var(--white); }
 
 .article-pill {
-  display: inline-block;
-  padding: 6px 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 12px 3px 14px;
+  height: 19px;
   background: var(--blue);
   color: var(--navy);
   font-family: var(--font-body);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  border-radius: 999px;
+  line-height: 1;
+  letter-spacing: 0.5em;
+  text-transform: lowercase;
+  white-space: nowrap;
+  border-radius: 0;
   margin-bottom: 20px;
 }
 
@@ -1160,7 +1165,7 @@ img {
   margin: 0 auto;
   display: grid;
   grid-template-columns: 170px minmax(0, 690px) 290px;
-  gap: 52px;
+  gap: 60px;
   align-items: start;
   position: relative;
   z-index: 1;
@@ -1171,7 +1176,8 @@ img {
 }
 
 .article-toc {
-  position: relative;
+  position: sticky;
+  top: 120px;
   padding-top: 56px;
   min-height: 220px;
 }

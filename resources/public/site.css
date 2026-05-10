@@ -1064,7 +1064,7 @@ img {
 
 .article-page {
   position: relative;
-  overflow: hidden;
+  overflow: clip;
   margin-top: -90px;
 }
 
@@ -1166,7 +1166,7 @@ img {
 .article-content-section {
   position: relative;
   padding: 24px 0 90px;
-  overflow: hidden;
+  overflow: clip;
   background: transparent;
 }
 

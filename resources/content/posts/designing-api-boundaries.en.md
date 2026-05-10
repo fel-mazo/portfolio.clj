@@ -6,27 +6,47 @@
  :date-label "March 30, 2026"
  :category "API Design"
  :tags ["APIs" "Maintainability"]
- :excerpt "A few habits that make APIs easier to evolve: stable nouns, explicit state transitions, and operational empathy for the teams who consume them."}
+ :excerpt "Most APIs start clean. The interesting question is what happens eighteen months later, when three teams depend on your endpoint and nobody remembers why that field is nullable."}
 ---
 
 ## Introduction
 
-API design tends to look cleanest at the start of a project, when there are few consumers and almost no historical baggage. The challenge is not producing a pleasant first version. The challenge is keeping the boundary understandable after a year of product pressure.
+Every API starts out looking reasonable. You've got a handful of endpoints, a small team, and the luxury of making coherent decisions. The design is clean because the world hasn't happened to it yet.
 
-## Prefer stable nouns over clever verbs
+The hard part comes later. A year in, there are consumers you didn't plan for. Someone built a dashboard on a field you thought was internal. A partner integration relies on a behavior you considered a bug. The question stops being "how do I design a nice API?" and becomes "how do I change this thing without breaking everything around it?"
 
-Names matter because they become the way product, support, and engineering teams think about the system. Stable nouns usually survive product iteration better than workflows that are encoded into endpoint names.
+I don't have a framework for this. What I have are a few habits that have helped.
 
-## Model state transitions on purpose
+## Stable nouns outlast clever verbs
 
-Whenever a resource changes state, I want that transition to be visible in the contract. Hidden transitions create confusion for frontend teams and make operational debugging much harder than it needs to be.
+The most consequential naming decision in an API is usually the resource names. These nouns become the vocabulary that product managers, support teams, and other engineers use to talk about the system. Once they spread, changing them is brutally expensive.
 
-## Design for operators too
+I've learned to spend more time on nouns than on anything else. A verb-heavy endpoint like `POST /activate-subscription` locks you into a specific workflow. A noun-based `POST /subscriptions/{id}/activations` lets the workflow evolve without the name becoming a lie.
 
-The consumer is not the only audience. Good APIs are friendlier to dashboards, logs, incident reviews, and support tooling. That usually means clear identifiers, meaningful errors, and consistent lifecycle events.
+This isn't about REST purity. It's about giving yourself room. The names you choose will outlive your current understanding of the product.
 
-> A maintainable API is one that still feels obvious when the original authors are no longer in the room.
+## Make state transitions visible
+
+The thing that causes the most confusion between backend and frontend teams, in my experience, is implicit state changes. An order that quietly moves from "pending" to "processing" somewhere inside a background job, with no explicit transition in the API, will generate support tickets.
+
+I try to make every meaningful state change something a consumer can see and reason about. That usually means:
+
+- An explicit endpoint or action for each transition
+- A timestamp for when it happened
+- A reason field for transitions that can fail or be reversed
+
+This feels like overengineering until the first time someone needs to debug why an order is stuck in a weird state. Then it feels like the bare minimum.
+
+## Design for the person who gets paged
+
+API design conversations tend to focus on the consumer — the developer calling your endpoint. But there's another audience that rarely gets a seat at the table: the person debugging your system at midnight.
+
+Good APIs make that person's life easier. That means clear, consistent identifiers across endpoints. Error responses that include enough context to narrow down the problem. Lifecycle events that show up in logs without requiring custom instrumentation.
+
+I think of this as operational empathy. The consumer needs a pleasant integration experience. The operator needs to understand what went wrong, fast, without calling the person who built it.
+
+> A maintainable API is one that still makes sense when the original authors are no longer in the room.
 
 ## Conclusion
 
-The API boundaries that age well are rarely the most clever ones. They are the ones that remain legible under growth, staffing changes, and the inevitable pressure of real-world use.
+The API boundaries that hold up over time are rarely the clever ones. They're the ones where someone thought about the names, made the state changes visible, and considered what happens when things go wrong. None of this is flashy work, but it's the kind that pays compound interest.

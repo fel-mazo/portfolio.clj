@@ -75,9 +75,9 @@
     (let [post (first (content/posts-for-locale :en))]
       (is (= "designing-api-boundaries-that-age-well" (:slug post)))
       (is (= [{:level 2 :title "Introduction" :anchor "introduction"}
-              {:level 2 :title "Prefer stable nouns over clever verbs" :anchor "prefer-stable-nouns-over-clever-verbs"}
-              {:level 2 :title "Model state transitions on purpose" :anchor "model-state-transitions-on-purpose"}
-              {:level 2 :title "Design for operators too" :anchor "design-for-operators-too"}
+              {:level 2 :title "Stable nouns outlast clever verbs" :anchor "stable-nouns-outlast-clever-verbs"}
+              {:level 2 :title "Make state transitions visible" :anchor "make-state-transitions-visible"}
+              {:level 2 :title "Design for the person who gets paged" :anchor "design-for-the-person-who-gets-paged"}
               {:level 2 :title "Conclusion" :anchor "conclusion"}]
              (:headings post)))
       (is (pos? (:reading-time post)))

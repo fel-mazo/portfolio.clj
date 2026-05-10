@@ -9,6 +9,12 @@
 (defn- base-path []
   (or (System/getenv "BASE_PATH") (:base-path (site-data)) ""))
 
+(defn- prefix-uri [post]
+  (update post :uri #(str (base-path) %)))
+
+(defn- prefix-uris [posts]
+  (mapv prefix-uri posts))
+
 (defn- locale-prefix [locale]
   (str (base-path) (if (= locale :fr) "" "/en")))
 
@@ -117,7 +123,7 @@
               :blog-list-label (:blog-list-label copy)
               :post-link-label (:post-link-label copy)
               :tags (content/popular-tags locale)
-              :posts (content/posts-for-locale locale)})})))
+              :posts (prefix-uris (content/posts-for-locale locale))})})))
 
 (defn render-article [locale slug]
   (when-let [post (content/find-post locale slug)]
@@ -136,8 +142,8 @@
         :header-class "site-header--home"
         :footer-class "site-footer--home"
         :body (templates/article-page
-               {:post post
-                :related-posts (content/related-posts locale slug)
+               {:post (prefix-uri post)
+                :related-posts (prefix-uris (content/related-posts locale slug))
                 :labels {:eyebrow (:blog-eyebrow copy)
                          :all-posts (str prefix "/blog/")
                          :all-posts-label (:all-posts copy)

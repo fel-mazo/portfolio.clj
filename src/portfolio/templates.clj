@@ -238,41 +238,6 @@
      [:p.not-found-body body]
      [:a.home-contact-button {:href cta-href} cta-label]]]])
 
-(defn project-card [{:keys [title summary href image alt stack home? project-link-label]}]
-  [:article {:class (str "project-card" (when home? " project-card--home"))}
-   (when-not home?
-     [:img.project-image {:src image :alt alt :loading "lazy"}])
-   [:div.project-meta
-    (when-not home?
-      [:div.project-stack (str/join " · " stack)])
-    [:h3 title]
-    [:p summary]
-    [:div.project-card-home-footer
-     [:div.project-tech-list
-      (for [tech stack]
-        [:span.project-tech tech])]
-     (when href
-       [:a.project-arrow {:href href :aria-label project-link-label}])]]])
-
-(defn portfolio-section [{:keys [title heading cta-label cta-href project-link-label projects home?]}]
-  [:section {:class (str "portfolio-section" (when home? " portfolio-section--home")) :id "projects"}
-   (if home?
-     [:div.home-projects-layout
-      [:div.home-projects-copy
-       [:div.about-tag title]
-       [:h2.home-projects-title heading]]
-      [:div.projects-grid
-       (for [project projects]
-         (project-card (assoc project :home? true :project-link-label project-link-label)))]]
-     [:<>
-      [:div.section-heading
-       [:h2 title]]
-      [:div.projects-grid
-       (for [project projects]
-         (project-card (assoc project :project-link-label project-link-label)))]
-      (when (valid-href? cta-href)
-        [:a.outline-pill {:href cta-href} cta-label])])])
-
 (defn post-card [{:keys [category title excerpt uri tags post-link-label]}]
   [:article.post-card
    [:div.post-card-content

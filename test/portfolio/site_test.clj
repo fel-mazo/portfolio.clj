@@ -73,9 +73,3 @@
 (deftest pages-include-rss-auto-discovery-link
   (let [html (:body (site/page-for-uri "/"))]
     (is (str/includes? html "application/rss+xml"))))
-
-(deftest home-project-cards-do-not-render-fake-links
-  (let [html (:body (site/page-for-uri "/"))]
-    (is (not (str/includes? html "data-card-link")))
-    (is (not (str/includes? html "Voir sur GitHub")))
-    (is (not (str/includes? html "View on GitHub")))))

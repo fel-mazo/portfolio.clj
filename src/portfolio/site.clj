@@ -94,7 +94,6 @@
   (let [copy (content/locale-copy locale)
         prefix (locale-prefix locale)]
     [{:href (str prefix "/#about") :label (:about-nav copy)}
-     {:href (str prefix "/#projects") :label (:projects copy)}
      {:href (str prefix "/#contact") :label (:contact copy)}
      {:href (str prefix "/blog/") :label (:blog copy)}]))
 
@@ -103,8 +102,7 @@
         prefix (locale-prefix locale)
         site (localized-site locale)
         uri (if (= locale :fr) "/" "/en/")
-        alt-uri (if (= locale :fr) "/en/" "/")
-        projects (:projects (content/site-config))]
+        alt-uri (if (= locale :fr) "/en/" "/")]
     (templates/layout
      {:locale locale
       :base-path (base-path)
@@ -133,15 +131,7 @@
          :scroll-label (:scroll-label copy)
          :socials (:socials site)
          :contact-label (:home-contact-cta copy)
-         :contact-href (str prefix "/#contact")})
-       (templates/portfolio-section
-        {:title (:portfolio-home-tag copy)
-         :heading (:portfolio-home-heading copy)
-         :cta-label (:portfolio-cta copy)
-         :cta-href (str prefix "/blog/")
-         :project-link-label (:project-link-label copy)
-         :projects projects
-         :home? true})]})))
+         :contact-href (str prefix "/#contact")})]})))
 
 (defn render-blog-index [locale]
   (let [copy (content/locale-copy locale)

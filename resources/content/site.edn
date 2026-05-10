@@ -20,7 +20,6 @@
     :scroll-label "Defiler vers le contenu"
     :blog-list-label "Voir les articles"
     :post-link-label "Lire l'article"
-    :project-link-label "Voir sur GitHub →"
     :footer-kicker "CONTACT"
     :footer-tagline "Disponible pour discuter fiabilite, architecture et systemes qui tiennent bien dans le temps."
     :back-to-top "Retour en haut ↑"
@@ -29,7 +28,6 @@
     :terms-label "Conditions"
     :cookies-label "Cookies"
     :about-nav "A propos"
-    :projects "Projets"
     :blog "Blog"
     :contact "Contact"
     :home-title "Portfolio"
@@ -42,10 +40,6 @@
     :about-heading "Je construis des produits robustes, lisibles et agreables a faire evoluer."
     :about-body "Developpeur full stack avec 5 ans d'experience, je me specialise de plus en plus dans le backend. J'aime concevoir des architectures simples a exploiter, des APIs qui vieillissent bien et des environnements de travail ou la qualite et la collaboration comptent vraiment."
     :home-contact-cta "ME CONTACTER"
-    :portfolio-title "Portfolio"
-    :portfolio-home-tag "Projets"
-    :portfolio-home-heading "CE QUE JE FAIS"
-    :portfolio-cta "Voir tous les articles"
     :blog-title "Blog"
     :blog-description "Articles sur l'architecture backend, la fiabilite, le design d'API et la pratique quotidienne du developpement."
     :blog-eyebrow "BLOG"
@@ -73,7 +67,6 @@
     :scroll-label "Scroll to content"
     :blog-list-label "View articles"
     :post-link-label "Read the article"
-    :project-link-label "View on GitHub →"
     :footer-kicker "CONTACT"
     :footer-tagline "Available to talk about reliability, architecture, and well-built systems."
     :back-to-top "Back to top ↑"
@@ -82,7 +75,6 @@
     :terms-label "Terms"
     :cookies-label "Cookies"
     :about-nav "ABOUT"
-    :projects "Projects"
     :blog "Blog"
     :contact "Contact"
     :home-title "Portfolio"
@@ -95,10 +87,6 @@
     :about-heading "I build backend systems that stay legible under growth."
     :about-body "I am a full stack developer with 5 years of professional experience and a growing specialization in backend engineering. I care about reliability, operability, and clear technical boundaries that help teams ship calmly over time."
     :home-contact-cta "CONTACT ME"
-    :portfolio-title "Portfolio"
-    :portfolio-home-tag "PROJECTS"
-    :portfolio-home-heading "THINGS I DO"
-    :portfolio-cta "Browse the blog"
     :blog-title "Blog"
     :blog-description "Notes on backend architecture, reliability, API design, and the day-to-day practice of software engineering."
     :blog-eyebrow "BLOG"
@@ -114,29 +102,4 @@
     :reading-time-label "Reading time"
     :date-label-copy "Date"
     :related-posts-label "RELATED ARTICLES"
-    :project-label "VIEW PROJECT"}}}
- :projects
- [{:title "Reliable Backend Systems"
-   :summary "Patterns and implementation work focused on observability, idempotent jobs, and calmer operations for distributed products."
-   :href nil
-   :image "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
-   :alt "Billing analytics dashboard"
-   :stack ["Clojure" "PostgreSQL" "Observability"]}
-  {:title "API Boundary Design"
-   :summary "Designing APIs that stay understandable as products evolve, with explicit states, clearer contracts, and practical ergonomics."
-   :href nil
-   :image "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80"
-   :alt "Developer portal on a laptop"
-   :stack ["REST" "Domain Modeling" "DX"]}
-  {:title "Async Workflow Tooling"
-   :summary "Internal tooling and workflow thinking around retries, queue visibility, and safe background processing."
-   :href nil
-   :image "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80"
-   :alt "Code editor on a monitor"
-   :stack ["Queues" "Automation" "Reliability"]}
-  {:title "Product Engineering"
-   :summary "Full stack delivery with a backend-first mindset: stable foundations, maintainable code, and better collaboration across teams."
-   :href nil
-   :image "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80"
-   :alt "Laptop and product planning notes"
-   :stack ["Backend" "Frontend" "Teamwork"]}]}
+    :project-label "VIEW PROJECT"}}}}

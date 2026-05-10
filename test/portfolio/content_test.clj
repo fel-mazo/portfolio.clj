@@ -95,13 +95,6 @@
       (is (str/includes? html ">Blog<"))
       (is (not (str/includes? html "href=\"#\""))))))
 
-(deftest home-page-uses-real-project-content
-  (testing "home page does not render scaffold portfolio placeholders"
-    (let [html (:body (site/page-for-uri "/"))]
-      (is (not (str/includes? html "TITRE PROJET")))
-      (is (not (str/includes? html "Lorem ipsum")))
-      (is (not (str/includes? html "TECHNO 1"))))))
-
 (deftest rendered-pages-use-a-single-main-landmark
   (testing "home page keeps only one main landmark"
     (let [html (:body (site/page-for-uri "/"))]

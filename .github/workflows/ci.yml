@@ -20,10 +20,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
       - uses: DeLaGuardo/setup-clojure@13.2
         with:
           cli: latest
           bb: latest
+
+      - run: npm ci
 
       - name: Run tests
         run: bb test

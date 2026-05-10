@@ -81,6 +81,65 @@
          window.scrollTo({ top: 0, behavior: 'smooth' });
        });
      });
+     var homePage = document.querySelector('.home-page');
+     if (homePage) {
+       var heroLogo = document.querySelector('.home-center-logo');
+       var navLogo = document.querySelector('.logo-mark');
+       if (heroLogo && navLogo) {
+         window.scrollTo(0, 0);
+         var heroBox = heroLogo.getBoundingClientRect();
+         var navBox = navLogo.getBoundingClientRect();
+         var svg = heroLogo.querySelector('svg').cloneNode(true);
+         svg.style.width = '100%';
+         svg.style.height = '100%';
+         var floater = document.createElement('div');
+         floater.style.cssText =
+           'position:fixed;z-index:100;pointer-events:none;color:#fff;' +
+           'width:' + heroBox.width + 'px;height:' + heroBox.height + 'px;' +
+           'left:' + heroBox.left + 'px;top:' + heroBox.top + 'px;' +
+           'transform-origin:center;will-change:transform,opacity;' +
+           'transition:opacity 0.15s;';
+         floater.appendChild(svg);
+         document.body.appendChild(floater);
+         heroLogo.style.visibility = 'hidden';
+         navLogo.style.opacity = '0';
+         var heroCX = heroBox.left + heroBox.width / 2;
+         var heroCY = heroBox.top + heroBox.height / 2;
+         var navCX = navBox.left + navBox.width / 2;
+         var navCY = navBox.top + navBox.height / 2;
+         var dx = navCX - heroCX;
+         var dy = navCY - heroCY;
+         var targetScale = navBox.width / heroBox.width;
+         var scrollRange = Math.max(heroCY - navCY, 250);
+         var ticking = false;
+         function updateLogoMorph() {
+           var p = Math.min(Math.max(window.scrollY / scrollRange, 0), 1);
+           var e = p < 0.5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2;
+           var tx = dx * e;
+           var ty = -window.scrollY * (1 - e) + dy * e;
+           var s = 1 + (targetScale - 1) * e;
+           floater.style.transform =
+             'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ')';
+           if (p >= 0.95) {
+             floater.style.opacity = '0';
+             navLogo.style.opacity = '';
+             navLogo.style.pointerEvents = '';
+           } else {
+             floater.style.opacity = '1';
+             navLogo.style.opacity = '0';
+             navLogo.style.pointerEvents = 'none';
+           }
+           ticking = false;
+         }
+         window.addEventListener('scroll', function () {
+           if (!ticking) {
+             requestAnimationFrame(updateLogoMorph);
+             ticking = true;
+           }
+         }, { passive: true });
+         updateLogoMorph();
+       }
+     }
    }());")
 
 (defn- head-tags [{:keys [page-title description base-path canonical-url og-type image-url robots hreflang json-ld locale]}]

@@ -187,6 +187,10 @@ img {
   flex: 0 0 auto;
 }
 
+.theme-home .logo-mark {
+  transition: opacity 0.15s ease;
+}
+
 .brand-mark {
   position: relative;
   width: 38px;
@@ -341,7 +345,6 @@ img {
   color: var(--white);
   background: var(--navy);
   position: relative;
-  overflow: hidden;
 }
 
 .home-page {

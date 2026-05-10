@@ -130,7 +130,7 @@
                  [:a.social-link {:href href :target "_blank" :rel "noreferrer"} label])]]
              [:div.footer-bottom
               [:div.footer-meta
-               [:span (:copyright site)]
+               [:span (str "© " (.getValue (java.time.Year/now)) " " (:copyright site))]
                (for [[href label] [[(:privacy-link site) (:privacy-label site)]
                                    [(:terms-link site) (:terms-label site)]
                                    [(:cookies-link site) (:cookies-label site)]]

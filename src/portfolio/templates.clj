@@ -2,12 +2,14 @@
   (:require [clojure.string :as str]
             [hiccup2.core :as h]))
 
-(defn brand-mark []
-  [:div.brand-mark
-   [:div.brand-stem]
-   [:div.brand-top]
-   [:div.brand-bottom]
-   [:div.brand-accent]])
+(defn brand-mark
+  ([] (brand-mark {}))
+  ([{:keys [size] :or {size 41}}]
+   (let [w (int (* (/ size 41) 37))]
+     [:svg {:width w :height size :viewBox "0 0 37 41" :fill "none" :aria-label "fel-mazo"}
+      [:path {:d "M25.3002 17.6855H10.7269V24.1986H25.3002V17.6855Z" :fill "#5FA8FF"}]
+      [:path {:d "M0.00356838 3.13724V41.0001H8.21709V6.67361H25.2966V0.0500298H3.08722C1.38319 0.0500298 0 1.43321 0 3.13724H0.00356838Z" :fill "currentColor"}]
+      [:path {:d "M36.0199 37.8628V0H27.8063V14.4949V17.3076V23.8242V34.3122V34.3229H10.7269V40.9465H32.9362C34.6402 40.9465 36.0234 39.5633 36.0234 37.8593L36.0199 37.8628Z" :fill "currentColor"}]])))
 
 (defn- escape-json-str [s]
   (-> (str s)
@@ -141,7 +143,7 @@
                    :id "top"
                    :role "banner"}
           [:div.site-header-inner
-           [:a.logo-mark {:href home-href :aria-label (:logo-home-label labels)} (brand-mark)]
+           [:a.logo-mark {:href home-href :aria-label (:logo-home-label labels)} (brand-mark {:size 41})]
            [:button.nav-toggle
             {:type "button"
              :aria-label (:nav-toggle-label labels)
@@ -192,6 +194,10 @@
                (if (= locale :fr) "EN" "FR")]]]])]
         [:script (h/raw behavior-script)]]]))))
 
+(defn- chevron-down []
+  [:svg {:width 30 :height 15 :viewBox "0 0 30 15" :fill "none" :aria-hidden "true"}
+   [:path {:d "M 1 1 L 15 13 L 29 1" :stroke "currentColor" :stroke-width "2" :fill "none" :stroke-linecap "round" :stroke-linejoin "round"}]])
+
 (defn home-page [{:keys [name role summary about-tag about-title about-heading about-body portrait-url contact-label contact-href scroll-label socials]}]
   [:div.home-page
    [:section.home-hero
@@ -199,23 +205,21 @@
     [:div.star-glow.star-glow-left]
     [:div.star-glow.star-glow-center]
     [:div.home-hero-inner
-     [:div.home-center-logo (brand-mark)]
+     [:div.home-center-logo (brand-mark {:size 194})]
      [:h1.home-name name]
      [:p.home-role role]
      [:p.home-summary summary]
-     [:div.hero-socials
-      (for [{:keys [href label]} socials]
-        [:a.hero-social-link {:href href :target "_blank" :rel "noreferrer"} label])]
      [:button.home-scroll {:type "button"
                            :data-scroll-target "#about"
-                           :aria-label scroll-label}]
+                           :aria-label scroll-label}
+      (chevron-down)]
      [:div.home-about-anchor {:id "about"}]]]
    [:section.home-about
     [:div.starfield.starfield-soft]
     [:div.star-glow.star-glow-bottom]
     [:div.home-about-inner
      [:div.home-portrait
-     [:img {:src portrait-url :alt name :loading "lazy"}]]
+      [:img {:src portrait-url :alt name :loading "lazy"}]]
      [:div.home-about-copy
       [:div.about-tag about-tag]
       [:h2.about-display about-title]
@@ -243,13 +247,12 @@
       [:div.project-stack (str/join " · " stack)])
     [:h3 title]
     [:p summary]
-    (when home?
-      [:div.project-card-home-footer
-       [:div.project-tech-list
-        (for [tech stack]
-          [:span.project-tech tech])]])
-    (when (and (not home?) href)
-      [:a.text-link {:href href} project-link-label])]])
+    [:div.project-card-home-footer
+     [:div.project-tech-list
+      (for [tech stack]
+        [:span.project-tech tech])]
+     (when href
+       [:a.project-arrow {:href href :aria-label project-link-label}])]]])
 
 (defn portfolio-section [{:keys [title heading cta-label cta-href project-link-label projects home?]}]
   [:section {:class (str "portfolio-section" (when home? " portfolio-section--home")) :id "projects"}
@@ -267,7 +270,8 @@
       [:div.projects-grid
        (for [project projects]
          (project-card (assoc project :project-link-label project-link-label)))]
-      [:a.outline-pill {:href cta-href} cta-label]])])
+      (when (valid-href? cta-href)
+        [:a.outline-pill {:href cta-href} cta-label])])])
 
 (defn post-card [{:keys [category title excerpt uri tags post-link-label]}]
   [:article.post-card
@@ -284,26 +288,24 @@
                      (<= (count tags) 3))]
     [:main {:id "main-content"
             :class (str "blog-page" (when compact? " blog-page--compact"))}
+     [:div.starfield]
+     [:div.star-glow.star-glow-left]
+     [:div.star-glow.star-glow-center]
      [:section {:class (str "blog-hero" (when compact? " blog-hero--compact"))}
-    [:div.starfield]
-    [:div.star-glow.star-glow-left]
-    [:div.star-glow.star-glow-center]
-    [:div.blog-hero-inner
-     [:div.about-tag eyebrow]
-     [:h1.blog-title title]
-     [:p.blog-intro intro]
-     [:button.home-scroll {:type "button"
-                           :data-scroll-target "#blog-list"
-                           :aria-label scroll-label}]
-     [:a.blog-list-jump {:href "#blog-list" :aria-label blog-list-label} blog-list-label]
+      [:div.blog-hero-inner
+       [:div.about-tag eyebrow]
+       [:h1.blog-title title]
+       [:p.blog-intro intro]
+       [:a.blog-scroll-link {:href "#blog-list" :aria-label scroll-label}
+        (chevron-down)]]]
      (when (seq tags)
-       [:div.blog-tags-block
-        [:p.blog-tags-intro tags-intro]
-        [:div.blog-tags-grid
-         (for [tag tags]
-           [:span.project-tech tag])]])]]
-     [:section.blog-list-section {:id "blog-list"}
-      [:div.starfield.starfield-soft]
+       [:section.blog-tags-section
+        [:div.blog-tags-inner
+         [:p.blog-tags-intro tags-intro]
+         [:div.blog-tags-grid
+          (for [tag tags]
+            [:span.project-tech tag])]]])
+     [:section.blog-list-section {:id "blog-list" :aria-label blog-list-label}
       [:div.blog-list
        (for [post posts]
          (post-card (assoc post :post-link-label post-link-label)))]]]))
@@ -322,7 +324,8 @@
       [:div.starfield]
       [:div.star-glow.star-glow-center]
       [:div.article-hero-inner
-       [:div.about-tag (:eyebrow labels)]
+       [:a.article-back {:href (:all-posts labels)} (str "← " (:all-posts-label labels))]
+       [:span.article-pill (:eyebrow labels)]
        [:h1.article-title (:title post)]
        [:p.article-excerpt (:excerpt post)]
        [:div.article-meta-row

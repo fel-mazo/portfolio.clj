@@ -1,6 +1,7 @@
 (ns portfolio.content
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
+            [clojure.set :as set]
             [clojure.string :as str]
             [markdown.core :as markdown]))
 
@@ -99,7 +100,12 @@
                     (-> body
                         str/split-lines
                         (->> (remove str/blank?) first)
-                        (or "")))
+                        (or "")
+                        (str/replace #"#{1,6}\s+" "")
+                        (str/replace #"\*{1,2}([^*]+)\*{1,2}" "$1")
+                        (str/replace #"_{1,2}([^_]+)_{1,2}" "$1")
+                        (str/replace #"\[([^\]]+)\]\([^)]+\)" "$1")
+                        (str/replace #"`([^`]+)`" "$1")))
         locale (keyword (or (:locale front-matter) "fr"))
         headings (extract-headings body)
         html (-> body markdown/md-to-html-string (inject-heading-anchors headings))]
@@ -143,9 +149,13 @@
         (posts)))
 
 (defn related-posts [locale slug]
-  (->> (posts-for-locale locale)
-       (remove #(= slug (:slug %)))
-       (take 4)))
+  (let [current (find-post locale slug)
+        current-tags (set (:tags current))
+        score (fn [post] (count (set/intersection current-tags (set (:tags post)))))]
+    (->> (posts-for-locale locale)
+         (remove #(= slug (:slug %)))
+         (sort-by score >)
+         (take 4))))
 
 (defn popular-tags [locale]
   (->> (posts-for-locale locale)
@@ -154,6 +164,12 @@
        (sort-by (juxt (comp - val) key))
        (map key)
        (take 8)))
+
+(defn alternate-post [locale slug]
+  (let [post (find-post locale slug)
+        alt-locale (if (= locale :fr) :en :fr)
+        alt-slug (:alternate-slug post)]
+    (when alt-slug (find-post alt-locale alt-slug))))
 
 (defn locale-copy [locale]
   (get-in (site-config) [:site :locales locale]))

@@ -6,14 +6,14 @@
 
 (def export-dir "dist")
 
-(defn- root-file? [uri]
-  (#{"404.html" "robots.txt" "sitemap.xml"} (subs uri 1)))
+(defn- file-uri? [uri]
+  (re-find #"\.[a-z]+$" uri))
 
 (defn- target-file [uri]
   (let [trimmed (subs uri 1)]
     (cond
       (empty? trimmed) (io/file export-dir "index.html")
-      (root-file? uri) (io/file export-dir trimmed)
+      (file-uri? uri) (io/file export-dir trimmed)
       :else (io/file export-dir trimmed "index.html"))))
 
 (defn- write-page! [uri html]
@@ -36,7 +36,7 @@
 
 (defn -main [& _]
   (.mkdirs (io/file export-dir))
-  (doseq [uri ["/" "/blog/" "/en/" "/en/blog/" "/404.html" "/robots.txt" "/sitemap.xml"]]
+  (doseq [uri ["/" "/blog/" "/en/" "/en/blog/" "/404.html" "/robots.txt" "/sitemap.xml" "/feed.xml" "/en/feed.xml"]]
     (write-page! uri (:body (site/page-for-uri uri))))
   (doseq [post (content/posts)]
     (write-page! (:uri post)

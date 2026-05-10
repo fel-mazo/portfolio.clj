@@ -27,3 +27,10 @@
         (is (str/includes? xml "<loc>https://fel-mazo.com/en/</loc>"))
         (is (re-find #"fel-mazo\.com/en/blog/[^<]+" xml))
         (is (not (str/includes? xml "404.html")))))))
+
+(deftest sitemap-includes-lastmod-dates
+  (let [dir (temp-dir)]
+    (with-redefs [export/export-dir (.getAbsolutePath dir)]
+      (export/-main)
+      (let [xml (slurp (io/file dir "sitemap.xml"))]
+        (is (re-find #"<lastmod>\d{4}-\d{2}-\d{2}</lastmod>" xml))))))

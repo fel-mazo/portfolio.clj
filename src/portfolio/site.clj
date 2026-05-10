@@ -216,7 +216,7 @@
     "/en/blog/" (blog-index-response :en)
     "/robots.txt" (text-response 200 (robots-txt) "text/plain; charset=utf-8")
     "/sitemap.xml" (text-response 200 (sitemap-xml) "application/xml; charset=utf-8")
-    "/404.html" (html-response 200 (render-not-found :fr))
+    "/404.html" (html-response 404 (render-not-found :fr))
     (let [fr-match (re-matches #"/blog/([^/]+)/" uri)
           en-match (re-matches #"/en/blog/([^/]+)/" uri)]
       (cond

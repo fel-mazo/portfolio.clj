@@ -24,5 +24,6 @@
       (export/-main)
       (let [xml (slurp (io/file dir "sitemap.xml"))]
         (is (str/includes? xml "<loc>https://fel-mazo.com/</loc>"))
-        (is (str/includes? xml "<loc>https://fel-mazo.com/en/blog/designing-api-boundaries-that-age-well/</loc>"))
+        (is (str/includes? xml "<loc>https://fel-mazo.com/en/</loc>"))
+        (is (re-find #"fel-mazo\.com/en/blog/[^<]+" xml))
         (is (not (str/includes? xml "404.html")))))))

@@ -2,5 +2,7 @@
 dist/
 .DS_Store
 .clj-kondo/
-.cpcache/
 .lsp/
+node_modules/
+.shadow-cljs/
+resources/public/js/

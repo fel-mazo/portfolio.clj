@@ -1,4 +1,8 @@
 {:tasks
- {dev {:task (shell "clojure -M:run")}
-  export {:task (shell "clojure -M:export")}
+ {dev {:task (do (shell "./node_modules/.bin/shadow-cljs watch app &")
+                 (shell "clojure -M:run"))}
+  cljs:watch {:task (shell "./node_modules/.bin/shadow-cljs watch app")}
+  cljs:release {:task (shell "./node_modules/.bin/shadow-cljs release app")}
+  export {:task (do (shell "./node_modules/.bin/shadow-cljs release app")
+                    (shell "clojure -M:export"))}
   test {:task (shell "clojure -M:test")}}}

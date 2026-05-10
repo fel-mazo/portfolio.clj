@@ -1,7 +1,9 @@
 (ns portfolio.site
   (:require [clojure.string :as str]
             [portfolio.content :as content]
-            [portfolio.templates :as templates]))
+            [portfolio.templates :as templates])
+  (:import [java.time LocalDate ZoneOffset]
+           [java.time.format DateTimeFormatter]))
 
 (defn- site-data []
   (:site (content/site-config)))
@@ -42,6 +44,45 @@
    :image-url (or image-url (:portrait-url (site-data)))
    :robots robots})
 
+(defn- hreflang-map [locale self-uri alt-uri]
+  (let [default-uri (if (= locale :fr) self-uri alt-uri)]
+    {:self-lang (name locale)
+     :self-url (absolute-url self-uri)
+     :alt-lang (name (if (= locale :fr) :en :fr))
+     :alt-url (absolute-url alt-uri)
+     :default-url (absolute-url default-uri)}))
+
+(defn- person-schema []
+  (let [site (site-data)]
+    {"@context" "https://schema.org"
+     "@type" "Person"
+     "name" (:name site)
+     "url" (site-url)
+     "email" (:email site)
+     "jobTitle" "Backend Developer"
+     "sameAs" (mapv :href (:socials site))}))
+
+(defn- article-schema [post]
+  {"@context" "https://schema.org"
+   "@type" "BlogPosting"
+   "headline" (:title post)
+   "description" (:excerpt post)
+   "datePublished" (:date post)
+   "url" (absolute-url (:uri post))
+   "author" {"@type" "Person"
+             "name" (:name (site-data))
+             "url" (site-url)}})
+
+(defn- collection-schema [locale posts]
+  {"@context" "https://schema.org"
+   "@type" "CollectionPage"
+   "name" "Blog"
+   "url" (absolute-url (if (= locale :fr) "/blog/" "/en/blog/"))
+   "hasPart" (mapv (fn [p] {"@type" "BlogPosting"
+                             "headline" (:title p)
+                             "url" (absolute-url (:uri p))})
+                   posts)})
+
 (defn- localized-site [locale]
   (merge (select-keys (site-data) [:name :logo :site-url :email :socials :cv-link])
          (select-keys (content/locale-copy locale)
@@ -62,6 +103,7 @@
         prefix (locale-prefix locale)
         site (localized-site locale)
         uri (if (= locale :fr) "/" "/en/")
+        alt-uri (if (= locale :fr) "/en/" "/")
         projects (:projects (content/site-config))]
     (templates/layout
      {:locale locale
@@ -69,6 +111,8 @@
       :title (:home-title copy)
       :description (:home-description copy)
       :meta (page-meta uri)
+      :hreflang (hreflang-map locale uri alt-uri)
+      :json-ld (person-schema)
       :site site
       :labels copy
       :navigation (navigation locale)
@@ -101,13 +145,17 @@
 
 (defn render-blog-index [locale]
   (let [copy (content/locale-copy locale)
-        uri (if (= locale :fr) "/blog/" "/en/blog/")]
+        uri (if (= locale :fr) "/blog/" "/en/blog/")
+        alt-uri (if (= locale :fr) "/en/blog/" "/blog/")
+        posts (content/posts-for-locale locale)]
     (templates/layout
      {:locale locale
       :base-path (base-path)
       :title (:blog-title copy)
       :description (:blog-description copy)
       :meta (page-meta uri)
+      :hreflang (hreflang-map locale uri alt-uri)
+      :json-ld (collection-schema locale posts)
       :site (localized-site locale)
       :labels copy
       :navigation (navigation locale)
@@ -123,18 +171,25 @@
               :blog-list-label (:blog-list-label copy)
               :post-link-label (:post-link-label copy)
               :tags (content/popular-tags locale)
-              :posts (prefix-uris (content/posts-for-locale locale))})})))
+              :posts (prefix-uris posts)})})))
 
 (defn render-article [locale slug]
   (when-let [post (content/find-post locale slug)]
     (let [copy (content/locale-copy locale)
-          prefix (locale-prefix locale)]
+          prefix (locale-prefix locale)
+          alt-locale (if (= locale :fr) :en :fr)
+          alt-post (content/alternate-post locale slug)
+          alt-uri (if alt-post
+                    (:uri alt-post)
+                    (if (= alt-locale :en) "/en/blog/" "/blog/"))]
       (templates/layout
        {:locale locale
         :base-path (base-path)
         :title (:title post)
         :description (:excerpt post)
         :meta (page-meta (:uri post) :og-type "article")
+        :hreflang (hreflang-map locale (:uri post) alt-uri)
+        :json-ld (article-schema post)
         :site (localized-site locale)
         :labels copy
         :navigation (navigation locale)
@@ -195,18 +250,69 @@
   (concat ["/" "/blog/" "/en/" "/en/blog/"]
           (map :uri (content/posts))))
 
+(defn- escape-xml [s]
+  (-> (str s)
+      (str/replace "&" "&amp;")
+      (str/replace "<" "&lt;")
+      (str/replace ">" "&gt;")
+      (str/replace "\"" "&quot;")))
+
+(defn- rfc822-date [iso-date]
+  (let [local-date (LocalDate/parse iso-date)
+        zoned (.atStartOfDay local-date ZoneOffset/UTC)]
+    (.format zoned (DateTimeFormatter/ofPattern "EEE, dd MMM yyyy HH:mm:ss Z" java.util.Locale/ENGLISH))))
+
+(defn- render-rss-feed [locale]
+  (let [site (site-data)
+        copy (content/locale-copy locale)
+        prefix (if (= locale :fr) "" "/en")
+        posts (content/posts-for-locale locale)]
+    (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+         "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n"
+         "<channel>\n"
+         "  <title>" (escape-xml (:name site)) " - " (escape-xml (:blog-title copy)) "</title>\n"
+         "  <link>" (absolute-url (str prefix "/blog/")) "</link>\n"
+         "  <description>" (escape-xml (:blog-description copy)) "</description>\n"
+         "  <language>" (name locale) "</language>\n"
+         "  <atom:link href=\"" (absolute-url (str prefix "/feed.xml")) "\" rel=\"self\" type=\"application/rss+xml\" />\n"
+         (apply str
+                (for [post posts]
+                  (str "  <item>\n"
+                       "    <title>" (escape-xml (:title post)) "</title>\n"
+                       "    <link>" (absolute-url (:uri post)) "</link>\n"
+                       "    <guid>" (absolute-url (:uri post)) "</guid>\n"
+                       "    <description>" (escape-xml (:excerpt post)) "</description>\n"
+                       (when (:date post)
+                         (str "    <pubDate>" (rfc822-date (:date post)) "</pubDate>\n"))
+                       "  </item>\n")))
+         "</channel>\n"
+         "</rss>\n")))
+
 (defn- robots-txt []
   (str "User-agent: *\n"
        "Allow: /\n"
        "Sitemap: " (absolute-url "/sitemap.xml") "\n"))
 
+(defn- post-date-for-uri [uri posts]
+  (some #(when (= uri (:uri %)) (:date %)) posts))
+
+(defn- latest-date [posts]
+  (some->> posts seq (map :date) (remove nil?) sort last))
+
+(defn- sitemap-entry [uri lastmod]
+  (if lastmod
+    (str "  <url><loc>" (absolute-url uri) "</loc><lastmod>" lastmod "</lastmod></url>\n")
+    (str "  <url><loc>" (absolute-url uri) "</loc></url>\n")))
+
 (defn- sitemap-xml []
-  (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-       "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
-       (apply str
-              (for [uri (public-routes)]
-                (str "  <url><loc>" (absolute-url uri) "</loc></url>\n")))
-       "</urlset>\n"))
+  (let [all-posts (content/posts)
+        fallback-date (latest-date all-posts)]
+    (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+         "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
+         (apply str
+                (for [uri (public-routes)]
+                  (sitemap-entry uri (or (post-date-for-uri uri all-posts) fallback-date))))
+         "</urlset>\n")))
 
 (defn page-for-uri [uri]
   (case uri
@@ -216,6 +322,8 @@
     "/en/" (home-response :en)
     "/en/index.html" (home-response :en)
     "/en/blog/" (blog-index-response :en)
+    "/feed.xml" (text-response 200 (render-rss-feed :fr) "application/xml; charset=utf-8")
+    "/en/feed.xml" (text-response 200 (render-rss-feed :en) "application/xml; charset=utf-8")
     "/robots.txt" (text-response 200 (robots-txt) "text/plain; charset=utf-8")
     "/sitemap.xml" (text-response 200 (sitemap-xml) "application/xml; charset=utf-8")
     "/404.html" (html-response 404 (render-not-found :fr))

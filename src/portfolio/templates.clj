@@ -9,6 +9,25 @@
    [:div.brand-bottom]
    [:div.brand-accent]])
 
+(defn- escape-json-str [s]
+  (-> (str s)
+      (str/replace "\\" "\\\\")
+      (str/replace "\"" "\\\"")
+      (str/replace "\n" "\\n")
+      (str/replace "\r" "\\r")
+      (str/replace "\t" "\\t")))
+
+(defn- to-json [v]
+  (cond
+    (nil? v) "null"
+    (boolean? v) (str v)
+    (number? v) (str v)
+    (string? v) (str "\"" (escape-json-str v) "\"")
+    (keyword? v) (str "\"" (escape-json-str (name v)) "\"")
+    (sequential? v) (str "[" (str/join "," (map to-json v)) "]")
+    (map? v) (str "{" (str/join "," (map (fn [[k val]] (str (to-json k) ":" (to-json val))) v)) "}")
+    :else (str "\"" (escape-json-str (str v)) "\"")))
+
 (defn- valid-href? [href]
   (and (string? href)
        (not (str/blank? href))
@@ -62,7 +81,41 @@
      });
    }());")
 
-(defn layout [{:keys [locale title description site labels navigation body meta page-class header-class footer-class show-footer base-path]
+(defn- head-tags [{:keys [page-title description base-path canonical-url og-type image-url robots hreflang json-ld locale]}]
+  (list
+   [:meta {:charset "utf-8"}]
+   [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
+   [:title page-title]
+   [:meta {:name "description" :content description}]
+   [:link {:rel "icon" :type "image/svg+xml" :href (str base-path "/favicon.svg")}]
+   [:link {:rel "canonical" :href canonical-url}]
+   (when hreflang
+     (list
+      [:link {:rel "alternate" :hreflang (:self-lang hreflang) :href (:self-url hreflang)}]
+      [:link {:rel "alternate" :hreflang (:alt-lang hreflang) :href (:alt-url hreflang)}]
+      [:link {:rel "alternate" :hreflang "x-default" :href (:default-url hreflang)}]))
+   [:meta {:property "og:title" :content page-title}]
+   [:meta {:property "og:description" :content description}]
+   [:meta {:property "og:type" :content og-type}]
+   [:meta {:property "og:url" :content canonical-url}]
+   [:meta {:property "og:image" :content image-url}]
+   [:meta {:name "twitter:card" :content "summary_large_image"}]
+   [:meta {:name "twitter:title" :content page-title}]
+   [:meta {:name "twitter:description" :content description}]
+   [:meta {:name "twitter:image" :content image-url}]
+   [:meta {:name "robots" :content robots}]
+   (when json-ld
+     [:script {:type "application/ld+json"} (h/raw (to-json json-ld))])
+   [:link {:rel "alternate" :type "application/rss+xml"
+           :title page-title
+           :href (str base-path (if (= locale :fr) "/feed.xml" "/en/feed.xml"))}]
+   [:link {:rel "preload" :href (str base-path "/fonts/roboto-400.ttf") :as "font" :type "font/ttf" :crossorigin "anonymous"}]
+   [:link {:rel "preload" :href (str base-path "/fonts/inter-700.ttf") :as "font" :type "font/ttf" :crossorigin "anonymous"}]
+   [:link {:rel "preconnect" :href "https://images.unsplash.com"}]
+   [:link {:rel "dns-prefetch" :href "https://images.unsplash.com"}]
+   [:link {:rel "stylesheet" :href (str base-path "/site.css")}]))
+
+(defn layout [{:keys [locale title description site labels navigation body meta page-class header-class footer-class show-footer base-path hreflang json-ld]
                :or {page-class "theme-default"
                     header-class ""
                     footer-class ""
@@ -78,26 +131,9 @@
      "<!DOCTYPE html>"
      (h/html
       [:html {:lang (name locale)}
-       [:head
-        [:meta {:charset "utf-8"}]
-        [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
-        [:title page-title]
-        [:meta {:name "description" :content description}]
-        [:link {:rel "icon" :type "image/svg+xml" :href (str base-path "/favicon.svg")}]
-        [:link {:rel "canonical" :href canonical-url}]
-        [:meta {:property "og:title" :content page-title}]
-        [:meta {:property "og:description" :content description}]
-        [:meta {:property "og:type" :content og-type}]
-        [:meta {:property "og:url" :content canonical-url}]
-        [:meta {:property "og:image" :content image-url}]
-        [:meta {:name "twitter:card" :content "summary_large_image"}]
-        [:meta {:name "twitter:title" :content page-title}]
-        [:meta {:name "twitter:description" :content description}]
-        [:meta {:name "twitter:image" :content image-url}]
-        [:meta {:name "robots" :content robots}]
-        [:link {:rel "preload" :href (str base-path "/fonts/roboto-400.ttf") :as "font" :type "font/ttf" :crossorigin "anonymous"}]
-        [:link {:rel "preload" :href (str base-path "/fonts/inter-700.ttf") :as "font" :type "font/ttf" :crossorigin "anonymous"}]
-        [:link {:rel "stylesheet" :href (str base-path "/site.css")}]]
+       [:head (head-tags {:page-title page-title :description description :base-path base-path
+                          :canonical-url canonical-url :og-type og-type :image-url image-url
+                          :robots robots :hreflang hreflang :json-ld json-ld :locale locale})]
        [:body
         [:a.skip-link {:href "#main-content"} (:skip-link-label labels)]
         [:div {:class (str "page-shell " page-class)}
@@ -179,7 +215,7 @@
     [:div.star-glow.star-glow-bottom]
     [:div.home-about-inner
      [:div.home-portrait
-     [:img {:src portrait-url :alt name}]]
+     [:img {:src portrait-url :alt name :loading "lazy"}]]
      [:div.home-about-copy
       [:div.about-tag about-tag]
       [:h2.about-display about-title]
@@ -201,7 +237,7 @@
 (defn project-card [{:keys [title summary href image alt stack home? project-link-label]}]
   [:article {:class (str "project-card" (when home? " project-card--home"))}
    (when-not home?
-     [:img.project-image {:src image :alt alt}])
+     [:img.project-image {:src image :alt alt :loading "lazy"}])
    [:div.project-meta
     (when-not home?
       [:div.project-stack (str/join " · " stack)])

@@ -5,7 +5,7 @@
   :base-path ""
   :email "hello@fahdelmazouni.dev"
   :cv-link "#"
-  :portrait-url "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80"
+  :portrait-url "/my-picture.jpg"
   :socials [{:label "LinkedIn" :href "https://www.linkedin.com/in/fahd-el-mazouni/"}
             {:label "GitHub" :href "https://github.com/fel-mazo"}]
   :locales

@@ -66,8 +66,6 @@
            :href (str base-path (if (= locale :fr) "/feed.xml" "/en/feed.xml"))}]
    [:link {:rel "preload" :href (str base-path "/fonts/roboto-400.ttf") :as "font" :type "font/ttf" :crossorigin "anonymous"}]
    [:link {:rel "preload" :href (str base-path "/fonts/inter-700.ttf") :as "font" :type "font/ttf" :crossorigin "anonymous"}]
-   [:link {:rel "preconnect" :href "https://images.unsplash.com"}]
-   [:link {:rel "dns-prefetch" :href "https://images.unsplash.com"}]
    [:link {:rel "stylesheet" :href (str base-path "/site.css")}]))
 
 (defn layout [{:keys [locale title description site labels navigation body meta page-class header-class footer-class show-footer base-path hreflang json-ld]

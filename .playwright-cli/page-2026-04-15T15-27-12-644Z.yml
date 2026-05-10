@@ -1,0 +1,116 @@
+- generic [active] [ref=e1]:
+  - link "Aller au contenu principal" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Fahd El Mazouni - Accueil" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - navigation "Navigation principale" [ref=e13]:
+          - link "A propos" [ref=e14] [cursor=pointer]:
+            - /url: /#about
+          - link "Projets" [ref=e15] [cursor=pointer]:
+            - /url: /#projects
+          - link "Contact" [ref=e16] [cursor=pointer]:
+            - /url: /#contact
+          - link "Blog" [ref=e17] [cursor=pointer]:
+            - /url: /blog/
+    - main [ref=e18]:
+      - generic [ref=e19]:
+        - generic [ref=e21]:
+          - heading "Fahd El Mazouni" [level=1] [ref=e28]
+          - paragraph [ref=e29]: DEVELOPPEUR BACKEND
+          - paragraph [ref=e30]: Je concois des systemes robustes, des APIs durables et des environnements ou la qualite compte.
+          - generic [ref=e31]:
+            - link "LinkedIn" [ref=e32] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/fahd-el-mazouni/
+            - link "GitHub" [ref=e33] [cursor=pointer]:
+              - /url: https://github.com/fel-mazo
+          - button "Defiler vers le contenu" [ref=e34] [cursor=pointer]
+        - generic [ref=e36]:
+          - img "Fahd El Mazouni" [ref=e38]
+          - generic [ref=e39]:
+            - generic [ref=e40]: A propos
+            - heading "QUI JE SUIS" [level=2] [ref=e41]
+            - paragraph [ref=e42]: Je construis des produits robustes, lisibles et agreables a faire evoluer.
+            - paragraph [ref=e43]: Developpeur full stack avec 5 ans d'experience, je me specialise de plus en plus dans le backend. J'aime concevoir des architectures simples a exploiter, des APIs qui vieillissent bien et des environnements de travail ou la qualite et la collaboration comptent vraiment.
+            - link "ME CONTACTER" [ref=e44] [cursor=pointer]:
+              - /url: /#contact
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]: Projets
+          - heading "CE QUE JE FAIS" [level=2] [ref=e49]
+        - generic [ref=e50]:
+          - link "Reliable Backend Systems Patterns and implementation work focused on observability, idempotent jobs, and calmer operations for distributed products. Clojure PostgreSQL Observability Voir sur GitHub → Voir sur GitHub →" [ref=e51] [cursor=pointer]:
+            - generic [ref=e52]:
+              - heading "Reliable Backend Systems" [level=3] [ref=e53]
+              - paragraph [ref=e54]: Patterns and implementation work focused on observability, idempotent jobs, and calmer operations for distributed products.
+              - generic [ref=e55]:
+                - generic [ref=e56]:
+                  - generic [ref=e57]: Clojure
+                  - generic [ref=e58]: PostgreSQL
+                  - generic [ref=e59]: Observability
+                - generic [ref=e60]:
+                  - link "Voir sur GitHub →" [ref=e61]:
+                    - /url: https://github.com/fel-mazo
+                  - link "Voir sur GitHub →" [ref=e62]:
+                    - /url: https://github.com/fel-mazo
+          - link "API Boundary Design Designing APIs that stay understandable as products evolve, with explicit states, clearer contracts, and practical ergonomics. REST Domain Modeling DX Voir sur GitHub → Voir sur GitHub →" [ref=e63] [cursor=pointer]:
+            - generic [ref=e64]:
+              - heading "API Boundary Design" [level=3] [ref=e65]
+              - paragraph [ref=e66]: Designing APIs that stay understandable as products evolve, with explicit states, clearer contracts, and practical ergonomics.
+              - generic [ref=e67]:
+                - generic [ref=e68]:
+                  - generic [ref=e69]: REST
+                  - generic [ref=e70]: Domain Modeling
+                  - generic [ref=e71]: DX
+                - generic [ref=e72]:
+                  - link "Voir sur GitHub →" [ref=e73]:
+                    - /url: https://github.com/fel-mazo
+                  - link "Voir sur GitHub →" [ref=e74]:
+                    - /url: https://github.com/fel-mazo
+          - link "Async Workflow Tooling Internal tooling and workflow thinking around retries, queue visibility, and safe background processing. Queues Automation Reliability Voir sur GitHub → Voir sur GitHub →" [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]:
+              - heading "Async Workflow Tooling" [level=3] [ref=e77]
+              - paragraph [ref=e78]: Internal tooling and workflow thinking around retries, queue visibility, and safe background processing.
+              - generic [ref=e79]:
+                - generic [ref=e80]:
+                  - generic [ref=e81]: Queues
+                  - generic [ref=e82]: Automation
+                  - generic [ref=e83]: Reliability
+                - generic [ref=e84]:
+                  - link "Voir sur GitHub →" [ref=e85]:
+                    - /url: https://github.com/fel-mazo
+                  - link "Voir sur GitHub →" [ref=e86]:
+                    - /url: https://github.com/fel-mazo
+          - 'link "Product Engineering Full stack delivery with a backend-first mindset: stable foundations, maintainable code, and better collaboration across teams. Backend Frontend Teamwork Voir sur GitHub → Voir sur GitHub →" [ref=e87] [cursor=pointer]':
+            - generic [ref=e88]:
+              - heading "Product Engineering" [level=3] [ref=e89]
+              - paragraph [ref=e90]: "Full stack delivery with a backend-first mindset: stable foundations, maintainable code, and better collaboration across teams."
+              - generic [ref=e91]:
+                - generic [ref=e92]:
+                  - generic [ref=e93]: Backend
+                  - generic [ref=e94]: Frontend
+                  - generic [ref=e95]: Teamwork
+                - generic [ref=e96]:
+                  - link "Voir sur GitHub →" [ref=e97]:
+                    - /url: https://github.com/fel-mazo
+                  - link "Voir sur GitHub →" [ref=e98]:
+                    - /url: https://github.com/fel-mazo
+    - contentinfo [ref=e99]:
+      - generic [ref=e100]:
+        - generic [ref=e101]:
+          - paragraph [ref=e102]: CONTACT
+          - paragraph [ref=e103]: Disponible pour discuter fiabilite, architecture et systemes qui tiennent bien dans le temps.
+          - link "hello@fahdelmazouni.dev" [ref=e104] [cursor=pointer]:
+            - /url: mailto:hello@fahdelmazouni.dev
+          - generic [ref=e105]:
+            - link "LinkedIn" [ref=e106] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/fahd-el-mazouni/
+            - link "GitHub" [ref=e107] [cursor=pointer]:
+              - /url: https://github.com/fel-mazo
+        - generic [ref=e108]:
+          - generic [ref=e110]: 2026 Fahd El Mazouni. Tous droits reserves.
+          - button "Retour en haut ↑" [ref=e111] [cursor=pointer]
+          - link "EN" [ref=e112] [cursor=pointer]:
+            - /url: /en/

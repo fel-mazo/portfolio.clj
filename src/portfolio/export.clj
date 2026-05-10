@@ -6,15 +6,18 @@
 
 (def export-dir "dist")
 
-(defn- relative-uri [uri]
+(defn- root-file? [uri]
+  (#{"404.html" "robots.txt" "sitemap.xml"} (subs uri 1)))
+
+(defn- target-file [uri]
   (let [trimmed (subs uri 1)]
-    (if (empty? trimmed) "index.html" trimmed)))
+    (cond
+      (empty? trimmed) (io/file export-dir "index.html")
+      (root-file? uri) (io/file export-dir trimmed)
+      :else (io/file export-dir trimmed "index.html"))))
 
 (defn- write-page! [uri html]
-  (let [path (relative-uri uri)
-        target (if (= path "index.html")
-                 (io/file export-dir path)
-                 (io/file export-dir path "index.html"))]
+  (let [target (target-file uri)]
     (.mkdirs (.getParentFile target))
     (spit target html)))
 
@@ -29,7 +32,7 @@
 
 (defn -main [& _]
   (.mkdirs (io/file export-dir))
-  (doseq [uri ["/" "/blog/" "/en/" "/en/blog/"]]
+  (doseq [uri ["/" "/blog/" "/en/" "/en/blog/" "/404.html" "/robots.txt" "/sitemap.xml"]]
     (write-page! uri (:body (site/page-for-uri uri))))
   (doseq [post (content/posts)]
     (write-page! (:uri post)

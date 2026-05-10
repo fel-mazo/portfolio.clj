@@ -1,0 +1,102 @@
+- generic [ref=e4]:
+  - link "Skip to main content" [ref=e5] [cursor=pointer]:
+    - /url: "#pageContent"
+    - generic [ref=e6]: Skip to main content
+  - generic [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - button "Close menu" [ref=e10] [cursor=pointer]:
+          - img "Grafana" [ref=e12]
+        - generic [ref=e13]: Grafana
+      - button "Undock menu" [ref=e14] [cursor=pointer]:
+        - img [ref=e15]
+    - navigation [ref=e17]:
+      - list "Navigation" [ref=e21]:
+        - listitem [ref=e22]:
+          - link "Home" [ref=e26] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e28]:
+              - img [ref=e29]
+              - paragraph [ref=e31]: Home
+        - listitem [ref=e32]:
+          - generic [ref=e33]:
+            - link "Starred" [ref=e36] [cursor=pointer]:
+              - /url: /dashboards?starred
+              - generic [ref=e38]:
+                - img [ref=e39]
+                - paragraph [ref=e41]: Starred
+            - 'button "Expand section: Starred" [ref=e43] [cursor=pointer]':
+              - img [ref=e44]
+        - listitem [ref=e46]:
+          - generic [ref=e47]:
+            - link "Dashboards" [ref=e50] [cursor=pointer]:
+              - /url: /dashboards
+              - generic [ref=e52]:
+                - img [ref=e53]
+                - paragraph [ref=e55]: Dashboards
+            - 'button "Expand section: Dashboards" [ref=e57] [cursor=pointer]'
+        - listitem [ref=e59]:
+          - link "Explore" [ref=e63] [cursor=pointer]:
+            - /url: /explore
+            - generic [ref=e65]:
+              - img [ref=e66]
+              - paragraph [ref=e68]: Explore
+        - listitem [ref=e69]:
+          - generic [ref=e70]:
+            - link "Drilldown" [ref=e73] [cursor=pointer]:
+              - /url: /drilldown
+              - generic [ref=e75]:
+                - img [ref=e76]
+                - paragraph [ref=e81]: Drilldown
+            - 'button "Expand section: Drilldown" [ref=e83] [cursor=pointer]'
+        - listitem [ref=e85]:
+          - generic [ref=e86]:
+            - link "Alerting" [ref=e89] [cursor=pointer]:
+              - /url: /alerting
+              - generic [ref=e91]:
+                - img [ref=e92]
+                - paragraph [ref=e94]: Alerting
+            - 'button "Expand section: Alerting" [ref=e96] [cursor=pointer]'
+        - listitem [ref=e98]:
+          - generic [ref=e99]:
+            - link "Connections" [ref=e102] [cursor=pointer]:
+              - /url: /connections
+              - generic [ref=e104]:
+                - img [ref=e105]
+                - paragraph [ref=e107]: Connections
+            - 'button "Expand section: Connections" [ref=e109] [cursor=pointer]'
+        - listitem [ref=e111]:
+          - generic [ref=e112]:
+            - link "Administration" [ref=e115] [cursor=pointer]:
+              - /url: /admin
+              - generic [ref=e117]:
+                - img [ref=e118]
+                - paragraph [ref=e120]: Administration
+            - 'button "Expand section: Administration" [ref=e122] [cursor=pointer]'
+  - banner [ref=e124]:
+    - generic [ref=e125]:
+      - navigation "Breadcrumbs" [ref=e127]:
+        - list [ref=e128]:
+          - listitem [ref=e129]:
+            - link "Home" [ref=e130] [cursor=pointer]:
+              - /url: /
+            - img [ref=e132]
+          - listitem [ref=e134]:
+            - link "Dashboards" [ref=e135] [cursor=pointer]:
+              - /url: /dashboards
+          - listitem [ref=e138]:
+            - generic "Home" [ref=e139]
+      - generic [ref=e140]:
+        - generic [ref=e142]:
+          - img [ref=e144]
+          - button "Search..." [ref=e146] [cursor=pointer]
+          - generic [ref=e148]: ⌘+k
+        - button "New" [ref=e149] [cursor=pointer]:
+          - img [ref=e150]
+        - button "Help" [ref=e154] [cursor=pointer]:
+          - img [ref=e155]
+        - link "Sign in" [ref=e158] [cursor=pointer]:
+          - /url: /?orgId=1&from=now-6h&to=now&timezone=browser&forceLogin=true
+    - button "Show more items" [ref=e164] [cursor=pointer]:
+      - img [ref=e165]
+  - main [ref=e169]

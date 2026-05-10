@@ -31,7 +31,7 @@ jobs:
       - name: Build static export
         run: bb export
         env:
-          BASE_PATH: /portfolio.clj
+          CNAME: fel-mazo.com
 
       - name: Assert launch assets exist
         run: |

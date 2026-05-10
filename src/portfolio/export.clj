@@ -30,6 +30,10 @@
           (.mkdirs (.getParentFile target))
           (io/copy file target))))))
 
+(defn- write-cname! []
+  (when-let [domain (not-empty (System/getenv "CNAME"))]
+    (spit (io/file export-dir "CNAME") domain)))
+
 (defn -main [& _]
   (.mkdirs (io/file export-dir))
   (doseq [uri ["/" "/blog/" "/en/" "/en/blog/" "/404.html" "/robots.txt" "/sitemap.xml"]]
@@ -37,4 +41,5 @@
   (doseq [post (content/posts)]
     (write-page! (:uri post)
                  (:body (site/page-for-uri (:uri post)))))
-  (export-public-dir!))
+  (export-public-dir!)
+  (write-cname!))

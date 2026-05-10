@@ -62,13 +62,14 @@
      });
    }());")
 
-(defn layout [{:keys [locale title description site labels navigation body meta page-class header-class footer-class show-footer]
+(defn layout [{:keys [locale title description site labels navigation body meta page-class header-class footer-class show-footer base-path]
                :or {page-class "theme-default"
                     header-class ""
                     footer-class ""
-                    show-footer true}}]
-  (let [home-href (if (= locale :fr) "/" "/en/")
-        locale-switch-href (if (= locale :fr) "/en/" "/")
+                    show-footer true
+                    base-path ""}}]
+  (let [home-href (str base-path (if (= locale :fr) "/" "/en/"))
+        locale-switch-href (str base-path (if (= locale :fr) "/en/" "/"))
         {:keys [canonical-url og-type image-url robots]
          :or {og-type "website"
               robots "index,follow"}} meta
@@ -82,7 +83,7 @@
         [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
         [:title page-title]
         [:meta {:name "description" :content description}]
-        [:link {:rel "icon" :type "image/svg+xml" :href "/favicon.svg"}]
+        [:link {:rel "icon" :type "image/svg+xml" :href (str base-path "/favicon.svg")}]
         [:link {:rel "canonical" :href canonical-url}]
         [:meta {:property "og:title" :content page-title}]
         [:meta {:property "og:description" :content description}]
@@ -94,9 +95,9 @@
         [:meta {:name "twitter:description" :content description}]
         [:meta {:name "twitter:image" :content image-url}]
         [:meta {:name "robots" :content robots}]
-        [:link {:rel "preload" :href "/fonts/roboto-400.ttf" :as "font" :type "font/ttf" :crossorigin "anonymous"}]
-        [:link {:rel "preload" :href "/fonts/inter-700.ttf" :as "font" :type "font/ttf" :crossorigin "anonymous"}]
-        [:link {:rel "stylesheet" :href "/site.css"}]]
+        [:link {:rel "preload" :href (str base-path "/fonts/roboto-400.ttf") :as "font" :type "font/ttf" :crossorigin "anonymous"}]
+        [:link {:rel "preload" :href (str base-path "/fonts/inter-700.ttf") :as "font" :type "font/ttf" :crossorigin "anonymous"}]
+        [:link {:rel "stylesheet" :href (str base-path "/site.css")}]]
        [:body
         [:a.skip-link {:href "#main-content"} (:skip-link-label labels)]
         [:div {:class (str "page-shell " page-class)}

@@ -3,11 +3,14 @@
             [portfolio.content :as content]
             [portfolio.templates :as templates]))
 
-(defn- locale-prefix [locale]
-  (if (= locale :fr) "" "/en"))
-
 (defn- site-data []
   (:site (content/site-config)))
+
+(defn- base-path []
+  (or (System/getenv "BASE_PATH") (:base-path (site-data)) ""))
+
+(defn- locale-prefix [locale]
+  (str (base-path) (if (= locale :fr) "" "/en")))
 
 (defn- site-url []
   (:site-url (site-data)))
@@ -56,6 +59,7 @@
         projects (:projects (content/site-config))]
     (templates/layout
      {:locale locale
+      :base-path (base-path)
       :title (:home-title copy)
       :description (:home-description copy)
       :meta (page-meta uri)
@@ -94,6 +98,7 @@
         uri (if (= locale :fr) "/blog/" "/en/blog/")]
     (templates/layout
      {:locale locale
+      :base-path (base-path)
       :title (:blog-title copy)
       :description (:blog-description copy)
       :meta (page-meta uri)
@@ -120,6 +125,7 @@
           prefix (locale-prefix locale)]
       (templates/layout
        {:locale locale
+        :base-path (base-path)
         :title (:title post)
         :description (:excerpt post)
         :meta (page-meta (:uri post) :og-type "article")
@@ -144,9 +150,11 @@
 (defn render-not-found [locale]
   (let [copy (content/locale-copy locale)
         site (localized-site locale)
-        home-href (if (= locale :fr) "/" "/en/")]
+        prefix (locale-prefix locale)
+        home-href (str prefix "/")]
     (templates/layout
      {:locale locale
+      :base-path (base-path)
       :title (:not-found-title copy)
       :description (:not-found-description copy)
       :meta (page-meta "/404.html" :robots "noindex,nofollow")

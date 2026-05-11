@@ -10,9 +10,12 @@
 (def app
   (wrap-resource handler "public"))
 
-(defn- server-port []
-  (or (some-> (System/getenv "PORT") parse-long)
+(defn- server-port [args]
+  (or (some-> (first args) parse-long)
+      (some-> (System/getenv "PORT") parse-long)
       3000))
 
-(defn -main [& _]
-  (jetty/run-jetty #'app {:port (server-port) :join? true}))
+(defn -main [& args]
+  (let [port (server-port args)]
+    (println (str "Server listening on http://localhost:" port))
+    (jetty/run-jetty #'app {:port port :join? true})))

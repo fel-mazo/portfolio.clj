@@ -1,6 +1,6 @@
 {:tasks
  {dev {:task (do (shell "./node_modules/.bin/shadow-cljs watch app &")
-                 (shell "clojure -M:run"))}
+                 (apply shell "clojure -M:run" *command-line-args*))}
   cljs:watch {:task (shell "./node_modules/.bin/shadow-cljs watch app")}
   cljs:release {:task (shell "./node_modules/.bin/shadow-cljs release app")}
   export {:task (do (shell "./node_modules/.bin/shadow-cljs release app")

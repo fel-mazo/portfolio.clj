@@ -29,4 +29,8 @@
           (fn [] (set-open! toggle nav-root header false))))
       (.addEventListener js/document "keydown"
         (fn [e] (when (= "Escape" (.-key e))
-                  (set-open! toggle nav-root header false)))))))
+                  (set-open! toggle nav-root header false))))
+      (let [mql (.matchMedia js/window "(max-width: 800px)")]
+        (.addEventListener mql "change"
+          (fn [e] (when-not (.-matches e)
+                    (set-open! toggle nav-root header false))))))))

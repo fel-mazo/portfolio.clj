@@ -5,6 +5,19 @@
     (* 4 p p p)
     (- 1 (/ (.pow js/Math (+ (* -2 p) 2) 3) 2))))
 
+(defonce ^:private state (atom nil))
+
+(defn- teardown! []
+  (when-let [{:keys [floater hero-logo nav-logo scroll-handler]} @state]
+    (when floater (.remove floater))
+    (when hero-logo (set! (.. hero-logo -style -visibility) ""))
+    (when nav-logo
+      (set! (.. nav-logo -style -opacity) "")
+      (set! (.. nav-logo -style -pointerEvents) ""))
+    (when scroll-handler
+      (.removeEventListener js/window "scroll" scroll-handler))
+    (reset! state nil)))
+
 (defn setup! []
   (when (.querySelector js/document ".home-page")
     (let [hero-logo (.querySelector js/document ".home-center-logo")
@@ -50,12 +63,18 @@
                                    (set! (.. nav-logo -style -pointerEvents) ""))
                                (do (set! (.. floater -style -opacity) "1")
                                    (set! (.. nav-logo -style -opacity) "0")
-                                   (set! (.. nav-logo -style -pointerEvents) "none")))))]
-          (.addEventListener js/window "scroll"
-            (fn []
-              (when-not @ticking
-                (js/requestAnimationFrame
-                  (fn [] (update!) (vreset! ticking false)))
-                (vreset! ticking true)))
-            #js {:passive true})
-          (update!))))))
+                                   (set! (.. nav-logo -style -pointerEvents) "none")))))
+              scroll-handler (fn []
+                               (when-not @ticking
+                                 (js/requestAnimationFrame
+                                   (fn [] (update!) (vreset! ticking false)))
+                                 (vreset! ticking true)))]
+          (.addEventListener js/window "scroll" scroll-handler #js {:passive true})
+          (update!)
+          (reset! state {:floater floater
+                         :hero-logo hero-logo
+                         :nav-logo nav-logo
+                         :scroll-handler scroll-handler})
+          (.addEventListener js/window "resize"
+            (fn [] (teardown!))
+            #js {:once true}))))))

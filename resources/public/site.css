@@ -68,6 +68,7 @@
 html {
   scroll-behavior: smooth;
   background: var(--navy);
+  overflow-x: clip;
 }
 
 body {

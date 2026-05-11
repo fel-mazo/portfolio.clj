@@ -64,7 +64,6 @@
    [:link {:rel "alternate" :type "application/rss+xml"
            :title page-title
            :href (str base-path (if (= locale :fr) "/feed.xml" "/en/feed.xml"))}]
-   [:link {:rel "preload" :href (str base-path "/fonts/roboto-400.ttf") :as "font" :type "font/ttf" :crossorigin "anonymous"}]
    [:link {:rel "preload" :href (str base-path "/fonts/inter-700.ttf") :as "font" :type "font/ttf" :crossorigin "anonymous"}]
    [:link {:rel "stylesheet" :href (str base-path "/site.css")}]))
 
@@ -95,6 +94,16 @@
                    :role "banner"}
           [:div.site-header-inner
            [:a.logo-mark {:href home-href :aria-label (:logo-home-label labels)} (brand-mark {:size 41})]
+           [:div.site-header-actions {:id "site-navigation"}
+            [:button.nav-close
+             {:type "button"
+              :aria-label (:nav-close-label labels)}
+             (:nav-close-label labels)]
+            [:nav.top-nav {:aria-label (:nav-label labels)}
+             (for [{:keys [href label]} navigation]
+               [:a.nav-link {:href href} label])]
+            (when (valid-href? (:cv-link site))
+              [:a.cv-button {:href (:cv-link site)} (:cv-label site)])]
            [:button.nav-toggle
             {:type "button"
              :aria-label (:nav-toggle-label labels)
@@ -102,21 +111,11 @@
              :aria-expanded "false"}
             [:span.nav-toggle-line]
             [:span.nav-toggle-line]
-            [:span.nav-toggle-line]]]]
-         [:button.nav-backdrop
-          {:type "button"
-           :tabindex "-1"
-           :aria-label (:nav-close-label labels)}]
-         [:div.site-header-actions {:id "site-navigation"}
-          [:button.nav-close
+            [:span.nav-toggle-line]]]
+          [:button.nav-backdrop
            {:type "button"
-            :aria-label (:nav-close-label labels)}
-           (:nav-close-label labels)]
-          [:nav.top-nav {:aria-label (:nav-label labels)}
-           (for [{:keys [href label]} navigation]
-             [:a.nav-link {:href href} label])]
-          (when (valid-href? (:cv-link site))
-            [:a.cv-button {:href (:cv-link site)} (:cv-label site)])]
+            :tabindex "-1"
+            :aria-label (:nav-close-label labels)}]]
          body
          (when show-footer
            [:footer {:class (str "site-footer " footer-class) :id "contact" :role "contentinfo"}

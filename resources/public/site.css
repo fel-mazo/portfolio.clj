@@ -810,20 +810,21 @@ body::after {
   padding-top: 0;
 }
 .blog-hero {
-  position: relative;
-  z-index: 1;
-  padding: clamp(72px, 10vw, 150px) clamp(20px, 4vw, 50px) 60px;
-  padding-top: calc(90px + clamp(72px, 10vw, 150px));
-  text-align: center;
+ 
+   position: relative;
+  min-height: 500px;
+  padding-top: calc(90px + 120px);
 }
 
 .blog-hero-inner {
-  max-width: 994px;
+  width: min(980px, calc(100vw - 48px));
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-eyebrow {
@@ -832,12 +833,12 @@ body::after {
   font-weight: 600;
 }
 
-.blog-title,
-.article-title {
-  margin: 0 0 16px;
+.blog-title {
+  max-width: 994px;
+  margin: 20px auto 28px;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.6rem, 5vw, 64px);
+  font-size: clamp(36px, 5vw, 60px);
   line-height: 1.2;
   letter-spacing: 0.005em;
 }
@@ -852,10 +853,11 @@ body::after {
 
 .blog-intro {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 0 auto 34px;
   font-weight: 500;
   font-size: 18px;
   line-height: 28px;
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .blog-scroll-link {
@@ -1499,7 +1501,6 @@ body::after {
 
   .home-about,
   .portfolio-section,
-  .blog-hero,
   .article-shell {
     padding-top: 48px;
   }

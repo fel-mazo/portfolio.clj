@@ -202,15 +202,10 @@
        [:span.article-pill eyebrow]
        [:h1.blog-title title]
        [:p.blog-intro intro]
-       [:a.blog-scroll-link {:href "#blog-list" :aria-label scroll-label}
-        (chevron-down)]]]
-     (when (seq tags)
-       [:section.blog-tags-section
-        [:div.blog-tags-inner
-         [:p.blog-tags-intro tags-intro]
-         [:div.blog-tags-grid
+       (when (seq tags)
+         [:div.article-tags
           (for [tag tags]
-            [:span.project-tech tag])]]])
+            [:span.project-tech tag])])]]
      [:section.blog-list-section {:id "blog-list" :aria-label blog-list-label}
       [:div.blog-list
        (for [post posts]

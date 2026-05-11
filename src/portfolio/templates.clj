@@ -182,14 +182,15 @@
      [:a.home-contact-button {:href cta-href} cta-label]]]])
 
 (defn post-card [{:keys [category title excerpt uri tags post-link-label]}]
-  [:article.post-card
-   [:div.post-card-content
-    [:h3 [:a.post-card-link {:href uri} title]]
-    [:p.post-card-excerpt excerpt]
-    [:div.post-card-tags
-      (for [tag (remove str/blank? (cons category tags))]
-        [:span.project-tech tag])]]
-   [:a.project-arrow {:href uri :aria-label post-link-label}]])
+  (let [all-tags (remove str/blank? (cons category tags))]
+    [:article.post-card {:data-tags (str/join "," all-tags)}
+     [:div.post-card-content
+      [:h3 [:a.post-card-link {:href uri} title]]
+      [:p.post-card-excerpt excerpt]
+      [:div.post-card-tags
+       (for [tag all-tags]
+         [:span.project-tech tag])]]
+     [:a.project-arrow {:href uri :aria-label post-link-label}]]))
 
 (defn blog-index-section [{:keys [eyebrow title intro tags-intro tags posts blog-list-label post-link-label]}]
   (let [compact? (or (<= (count posts) 1)
@@ -202,9 +203,11 @@
        [:h1.blog-title title]
        [:p.blog-intro intro]
        (when (seq tags)
-         [:div.article-tags
+         [:div.article-tags {:role "group" :aria-label "Filter by tag"}
           (for [tag tags]
-            [:span.project-tech tag])])]]
+            [:button.project-tech.blog-tag-filter
+             {:type "button" :data-tag tag}
+             tag])])]]
      [:section.blog-list-section {:id "blog-list" :aria-label blog-list-label}
       [:div.blog-list
        (for [post posts]

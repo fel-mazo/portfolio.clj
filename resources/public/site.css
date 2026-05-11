@@ -698,13 +698,28 @@ body::after {
   text-transform: lowercase;
   background: transparent;
   white-space: nowrap;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
 }
 
 .project-tech:hover,
 .project-tech:focus-visible {
   border-color: rgba(255,255,255,0.5);
   color: var(--white);
+}
+
+button.blog-tag-filter {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+button.blog-tag-filter.blog-tag-active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: var(--navy);
+}
+
+.post-card.blog-tag-hidden {
+  display: none;
 }
 
 .project-arrow {

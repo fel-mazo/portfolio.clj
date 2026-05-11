@@ -18,7 +18,7 @@
               _          (set! (.. svg -style -height) "100%")
               floater    (.createElement js/document "div")
               _          (set! (.-cssText (.-style floater))
-                           (str "position:fixed;z-index:100;pointer-events:none;color:#fff;"
+                           (str "position:fixed;z-index:90;pointer-events:none;color:#fff;"
                                 "width:" (.-width hero-box) "px;height:" (.-height hero-box) "px;"
                                 "left:" (.-left hero-box) "px;top:" (.-top hero-box) "px;"
                                 "transform-origin:center;will-change:transform,opacity;"

@@ -102,21 +102,21 @@
              :aria-expanded "false"}
             [:span.nav-toggle-line]
             [:span.nav-toggle-line]
-            [:span.nav-toggle-line]]
-           [:div.site-header-actions {:id "site-navigation"}
-            [:button.nav-close
-             {:type "button"
-              :aria-label (:nav-close-label labels)}
-             (:nav-close-label labels)]
-            [:nav.top-nav {:aria-label (:nav-label labels)}
-             (for [{:keys [href label]} navigation]
-               [:a.nav-link {:href href} label])]
-            (when (valid-href? (:cv-link site))
-              [:a.cv-button {:href (:cv-link site)} (:cv-label site)])]
-           [:button.nav-backdrop
-            {:type "button"
-             :tabindex "-1"
-             :aria-label (:nav-close-label labels)}]]]
+            [:span.nav-toggle-line]]]]
+         [:button.nav-backdrop
+          {:type "button"
+           :tabindex "-1"
+           :aria-label (:nav-close-label labels)}]
+         [:div.site-header-actions {:id "site-navigation"}
+          [:button.nav-close
+           {:type "button"
+            :aria-label (:nav-close-label labels)}
+           (:nav-close-label labels)]
+          [:nav.top-nav {:aria-label (:nav-label labels)}
+           (for [{:keys [href label]} navigation]
+             [:a.nav-link {:href href} label])]
+          (when (valid-href? (:cv-link site))
+            [:a.cv-button {:href (:cv-link site)} (:cv-label site)])]
          body
          (when show-footer
            [:footer {:class (str "site-footer " footer-class) :id "contact" :role "contentinfo"}
@@ -152,9 +152,6 @@
 (defn home-page [{:keys [name role summary about-tag about-title about-heading about-body portrait-url contact-label contact-href scroll-label socials]}]
   [:div.home-page
    [:section.home-hero
-    [:div.starfield]
-    [:div.star-glow.star-glow-left]
-    [:div.star-glow.star-glow-center]
     [:div.home-hero-inner
      [:div.home-center-logo (brand-mark {:size 194})]
      [:h1.home-name name]
@@ -166,8 +163,6 @@
       (chevron-down)]
      [:div.home-about-anchor {:id "about"}]]]
    [:section.home-about
-    [:div.starfield.starfield-soft]
-    [:div.star-glow.star-glow-bottom]
     [:div.home-about-inner
      [:div.home-portrait
       [:img {:src portrait-url :alt name :loading "lazy"}]]
@@ -181,8 +176,6 @@
 (defn not-found-page [{:keys [eyebrow heading body cta-label cta-href]}]
   [:main {:id "main-content" :class "not-found-page"}
    [:section.not-found-hero
-    [:div.starfield]
-    [:div.star-glow.star-glow-center]
     [:div.not-found-inner
      [:div.about-tag eyebrow]
      [:h1.not-found-title heading]
@@ -204,9 +197,6 @@
                      (<= (count tags) 3))]
     [:main {:id "main-content"
             :class (str "blog-page" (when compact? " blog-page--compact"))}
-     [:div.starfield]
-     [:div.star-glow.star-glow-left]
-     [:div.star-glow.star-glow-center]
      [:section {:class (str "blog-hero" (when compact? " blog-hero--compact"))}
       [:div.blog-hero-inner
        [:span.article-pill eyebrow]
@@ -237,8 +227,6 @@
   (let [has-related-posts? (seq related-posts)]
     [:main.article-page {:id "main-content"}
      [:section.article-hero-section
-      [:div.starfield]
-      [:div.star-glow.star-glow-center]
       [:div.article-hero-inner
        [:a.article-back {:href (:all-posts labels)} (str "← " (:all-posts-label labels))]
        [:span.article-pill (:eyebrow labels)]
@@ -251,7 +239,6 @@
         (for [tag (:tags post)]
           [:span.project-tech tag])]]]
      [:section.article-content-section
-      [:div.starfield.starfield-soft]
       [:div.article-layout
        [:aside.article-toc
         (map-indexed

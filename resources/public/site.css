@@ -100,7 +100,8 @@ body {
   margin: 0;
   font-family: var(--font-body);
   color: var(--white);
-  background: var(--navy-deep);
+  background: transparent;
+  isolation: isolate;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -345,7 +346,6 @@ img {
 
 .theme-home {
   color: var(--white);
-  background: var(--navy);
   position: relative;
 }
 
@@ -359,7 +359,6 @@ img {
 .home-about,
 .portfolio-section--home {
   position: relative;
-  overflow: hidden;
 }
 
 .home-hero {
@@ -367,11 +366,16 @@ img {
   padding-top: 110px;
 }
 
-.starfield,
-.starfield-soft {
-  position: absolute;
+body::before,
+body::after {
+  content: "";
+  position: fixed;
   inset: 0;
   pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
   background-image:
     radial-gradient(circle at 4% 15%, rgba(255,255,255,0.9) 0 1px, transparent 1.4px),
     radial-gradient(circle at 22% 7%, rgba(255,255,255,0.7) 0 1px, transparent 1.5px),
@@ -388,39 +392,11 @@ img {
   opacity: 0.95;
 }
 
-.starfield-soft {
-  opacity: 0.55;
-}
-
-.star-glow {
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(80px);
-  pointer-events: none;
-}
-
-.star-glow-left {
-  width: 420px;
-  height: 420px;
-  left: -90px;
-  top: 320px;
-  background: rgba(147, 118, 168, 0.18);
-}
-
-.star-glow-center {
-  width: 360px;
-  height: 360px;
-  top: 120px;
-  left: calc(50% - 180px);
-  background: rgba(196, 174, 210, 0.11);
-}
-
-.star-glow-bottom {
-  width: 420px;
-  height: 240px;
-  right: 260px;
-  bottom: 40px;
-  background: rgba(118, 95, 156, 0.16);
+body::after {
+  background:
+    radial-gradient(420px 420px at -90px 320px, rgba(147, 118, 168, 0.18), transparent 70%),
+    radial-gradient(360px 360px at 50% 120px, rgba(196, 174, 210, 0.11), transparent 70%),
+    radial-gradient(420px 240px at calc(100% - 260px) calc(100% - 40px), rgba(118, 95, 156, 0.16), transparent 70%);
 }
 
 .home-hero-inner {
@@ -884,13 +860,6 @@ img {
   margin-top: -90px;
   padding-top: 0;
 }
-.blog-page > .starfield,
-.blog-page > .star-glow {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
 .blog-hero {
   position: relative;
   z-index: 1;
@@ -1072,7 +1041,6 @@ img {
   position: relative;
   min-height: 500px;
   padding-top: calc(90px + 120px);
-  overflow: hidden;
 }
 
 .article-hero-inner {
@@ -1420,8 +1388,9 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
+  min-width: 36px;
   height: 36px;
+  padding: 0 12px;
   border-radius: 6px;
   background: var(--white);
   color: var(--navy);
@@ -1429,7 +1398,7 @@ img {
   font-weight: 700;
   font-size: 14px;
   text-transform: uppercase;
-  overflow: hidden;
+  white-space: nowrap;
   transition: transform 150ms ease, opacity 150ms ease;
 }
 
@@ -1516,11 +1485,17 @@ img {
 
 @media (max-width: 800px) {
   :root {
-    --content-width: calc(100vw - 24px);
-    --blog-width: calc(100vw - 24px);
+    --content-width: calc(100% - 24px);
+    --blog-width: calc(100% - 24px);
   }
 
   .site-header {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  body.nav-open .site-header {
+    z-index: auto;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -1557,11 +1532,12 @@ img {
     gap: 24px;
     transform: translateX(100%);
     transition: transform 0.24s ease;
-    z-index: 7;
+    z-index: 100;
+    display: none;
   }
 
-  .site-header[data-nav-open="true"] .site-header-actions,
   .site-header-actions[data-open="true"] {
+    display: flex;
     transform: translateX(0);
   }
 
@@ -1574,13 +1550,13 @@ img {
     display: block;
     position: fixed;
     inset: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     background: rgba(0, 0, 0, 0.6);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.24s ease;
-    z-index: 6;
+    z-index: 99;
   }
 
   .nav-open .nav-backdrop {
@@ -1623,7 +1599,7 @@ img {
 
   .home-about-inner,
   .portfolio-section {
-    width: calc(100vw - 24px);
+    width: calc(100% - 24px);
   }
 
   .article-hero {
@@ -1633,6 +1609,11 @@ img {
   .post-card {
     flex-direction: column;
     align-items: flex-start;
+    padding: 30px 24px;
+  }
+
+  .post-card .project-arrow {
+    align-self: flex-end;
   }
 
   .project-card-home-footer {
@@ -1641,7 +1622,7 @@ img {
   }
 
   .blog-tags-grid {
-    width: calc(100vw - 32px);
+    width: calc(100% - 32px);
   }
 
   .article-layout {
@@ -1729,12 +1710,12 @@ img {
     align-items: center;
   }
 
-  .starfield {
+  body::before {
     opacity: 0.3;
   }
 
-  .starfield-soft {
-    opacity: 0.15;
+  body::after {
+    opacity: 0.4;
   }
 
   .blog-title,

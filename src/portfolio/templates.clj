@@ -112,10 +112,11 @@
             [:span.nav-toggle-line]
             [:span.nav-toggle-line]
             [:span.nav-toggle-line]]]
-          [:button.nav-backdrop
-           {:type "button"
-            :tabindex "-1"
-            :aria-label (:nav-close-label labels)}]]
+]
+         [:button.nav-backdrop
+          {:type "button"
+           :tabindex "-1"
+           :aria-label (:nav-close-label labels)}]
          body
          (when show-footer
            [:footer {:class (str "site-footer " footer-class) :id "contact" :role "contentinfo"}

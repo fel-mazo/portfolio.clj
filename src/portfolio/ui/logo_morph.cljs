@@ -37,6 +37,7 @@
                                 "transform-origin:center;will-change:transform,opacity;"
                                 "transition:opacity 0.15s;"))
               _          (.appendChild floater svg)
+              _          (.setAttribute floater "data-logo-floater" "")
               _          (.appendChild (.-body js/document) floater)
               _          (set! (.. hero-logo -style -visibility) "hidden")
               _          (set! (.. nav-logo -style -opacity) "0")

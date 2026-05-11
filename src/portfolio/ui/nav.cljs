@@ -6,7 +6,9 @@
     (.setAttribute toggle "aria-expanded" (str open?))
     (.setAttribute nav-root "data-open" (str open?))
     (when header
-      (.setAttribute header "data-nav-open" (str open?)))))
+      (.setAttribute header "data-nav-open" (str open?)))
+    (when-let [floater (.querySelector js/document "[data-logo-floater]")]
+      (set! (.. floater -style -visibility) (if open? "hidden" "")))))
 
 (defn setup! []
   (let [header   (.querySelector js/document ".site-header")

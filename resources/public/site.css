@@ -68,7 +68,6 @@
 html {
   scroll-behavior: smooth;
   background: var(--navy);
-  overflow-x: clip;
 }
 
 body {
@@ -93,6 +92,15 @@ img {
 
 .page-shell {
   min-height: 100vh;
+  overflow-x: clip;
+}
+
+body.nav-open {
+  overflow: hidden;
+}
+
+body.nav-open [data-logo-floater] {
+  visibility: hidden !important;
 }
 
 .skip-link {
@@ -1396,6 +1404,7 @@ body::after {
   }
 
   body.nav-open .site-header {
+    position: relative;
     z-index: auto;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;

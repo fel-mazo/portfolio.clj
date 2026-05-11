@@ -157,7 +157,6 @@
               :title (:blog-heading copy)
               :intro (:blog-intro copy)
               :tags-intro (:blog-tags-intro copy)
-              :scroll-label (:scroll-label copy)
               :blog-list-label (:blog-list-label copy)
               :post-link-label (:post-link-label copy)
               :tags (content/popular-tags locale)

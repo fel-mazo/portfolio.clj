@@ -112,9 +112,8 @@
       (is (str/includes? html "role=\"banner\""))
       (is (str/includes? html "role=\"contentinfo\""))
       (is (str/includes? html "aria-label=\"Fahd El Mazouni - Accueil\""))))
-  (testing "blog index uses button-based scroll controls and readable card labels"
+  (testing "blog index uses readable card labels"
     (let [html (:body (site/page-for-uri "/blog/"))]
-      (is (str/includes? html "aria-label=\"Defiler vers le contenu\""))
       (is (str/includes? html "aria-label=\"Voir les articles\""))
       (is (str/includes? html "aria-label=\"Lire l&apos;article\"")))))
 

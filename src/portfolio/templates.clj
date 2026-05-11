@@ -111,8 +111,7 @@
              :aria-expanded "false"}
             [:span.nav-toggle-line]
             [:span.nav-toggle-line]
-            [:span.nav-toggle-line]]]
-]
+            [:span.nav-toggle-line]]]]
          [:button.nav-backdrop
           {:type "button"
            :tabindex "-1"
@@ -192,7 +191,7 @@
         [:span.project-tech tag])]]
    [:a.project-arrow {:href uri :aria-label post-link-label}]])
 
-(defn blog-index-section [{:keys [eyebrow title intro tags-intro tags posts scroll-label blog-list-label post-link-label]}]
+(defn blog-index-section [{:keys [eyebrow title intro tags-intro tags posts blog-list-label post-link-label]}]
   (let [compact? (or (<= (count posts) 1)
                      (<= (count tags) 3))]
     [:main {:id "main-content"

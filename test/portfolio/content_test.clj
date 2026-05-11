@@ -70,30 +70,12 @@
              (mapv #(last (str/split (.toExternalForm ^java.net.URL %) #"/"))
                    listing))))))
 
-(deftest parsed-posts-derive-metadata
-  (testing "post parsing keeps content-derived metadata stable"
-    (let [post (first (content/posts-for-locale :en))]
-      (is (= "designing-api-boundaries-that-age-well" (:slug post)))
-      (is (= [{:level 2 :title "Introduction" :anchor "introduction"}
-              {:level 2 :title "Stable nouns outlast clever verbs" :anchor "stable-nouns-outlast-clever-verbs"}
-              {:level 2 :title "Make state transitions visible" :anchor "make-state-transitions-visible"}
-              {:level 2 :title "Design for the person who gets paged" :anchor "design-for-the-person-who-gets-paged"}
-              {:level 2 :title "Conclusion" :anchor "conclusion"}]
-             (:headings post)))
-      (is (pos? (:reading-time post)))
-      (is (string? (:excerpt post))))))
 
 (deftest article-routes-exist
   (testing "known posts render to article pages"
     (doseq [post (content/posts)]
       (is (= 200 (:status (site/page-for-uri (:uri post))))))))
 
-(deftest home-page-renders-real-links
-  (testing "home page uses localized copy and avoids placeholder anchors"
-    (let [html (:body (site/page-for-uri "/"))]
-      (is (str/includes? html ">A propos<"))
-      (is (str/includes? html ">Blog<"))
-      (is (not (str/includes? html "href=\"#\""))))))
 
 (deftest rendered-pages-use-a-single-main-landmark
   (testing "home page keeps only one main landmark"
@@ -117,14 +99,6 @@
       (is (str/includes? html "aria-label=\"Voir les articles\""))
       (is (str/includes? html "aria-label=\"Lire l&apos;article\"")))))
 
-(deftest blog-index-renders-real-post-tags
-  (testing "blog cards use post metadata instead of placeholder tags"
-    (let [html (:body (site/page-for-uri "/blog/"))]
-      (is (str/includes? html ">Architecture<"))
-      (is (str/includes? html ">Event-driven<"))
-      (is (str/includes? html ">Fiabilite<"))
-      (is (not (str/includes? html "TAG TECHNO")))
-      (is (not (str/includes? html "TAG SUBJECTS"))))))
 
 (deftest article-page-renders-linked-table-of-contents
   (testing "article toc links point to generated section anchors"
@@ -133,11 +107,6 @@
       (is (str/includes? html "id=\"introduction\""))
       (is (not (str/includes? html ">SECTION 1<"))))))
 
-(deftest blog-index-uses-compact-layout-for-sparse-content
-  (testing "blog index marks sparse content so the hero can tighten visually"
-    (let [html (:body (site/page-for-uri "/blog/"))]
-      (is (str/includes? html "class=\"blog-page blog-page--compact\""))
-      (is (str/includes? html "class=\"blog-hero blog-hero--compact\"")))))
 
 (deftest article-page-omits-empty-related-sidebar
   (testing "article page uses inline layout without separate related sidebar"

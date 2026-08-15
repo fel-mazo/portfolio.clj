@@ -3,7 +3,6 @@
  :slug "organiser-le-travail-sans-process-lourd"
  :locale "fr"
  :date "2026-05-02"
- :date-label "2 mai 2026"
  :category "Engineering"
  :tags ["Organisation" "Fiabilite"]
  :excerpt "Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus."}

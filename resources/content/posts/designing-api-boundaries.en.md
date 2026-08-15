@@ -3,7 +3,6 @@
  :slug "designing-api-boundaries-that-age-well"
  :locale "en"
  :date "2026-03-30"
- :date-label "March 30, 2026"
  :category "API Design"
  :tags ["APIs" "Maintainability"]
  :excerpt "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}

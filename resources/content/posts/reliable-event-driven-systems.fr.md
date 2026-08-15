@@ -3,7 +3,6 @@
  :slug "concevoir-des-flux-evenementiels-fiables"
  :locale "fr"
  :date "2026-03-28"
- :date-label "28 mars 2026"
  :category "Architecture"
  :tags ["Event-driven" "Fiabilite"]
  :excerpt "Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem."}

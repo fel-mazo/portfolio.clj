@@ -3,7 +3,6 @@
  :slug "choisir-ses-compromis-en-base-de-donnees"
  :locale "fr"
  :date "2026-04-08"
- :date-label "8 avril 2026"
  :category "Architecture"
  :tags ["Databases" "Architecture"]
  :excerpt "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis lorem ut libero malesuada feugiat proin eget tortor risus."}

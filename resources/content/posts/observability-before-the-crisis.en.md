@@ -3,7 +3,6 @@
  :slug "observability-before-the-crisis"
  :locale "en"
  :date "2026-04-15"
- :date-label "April 15, 2026"
  :category "Operations"
  :tags ["Observability" "Maintainability"]
  :excerpt "Pellentesque in ipsum id orci porta dapibus. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus."}

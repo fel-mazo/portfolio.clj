@@ -3,7 +3,6 @@
  :slug "testing-at-the-boundaries"
  :locale "en"
  :date "2026-04-22"
- :date-label "April 22, 2026"
  :category "Testing"
  :tags ["Testing" "APIs"]
  :excerpt "Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem."}

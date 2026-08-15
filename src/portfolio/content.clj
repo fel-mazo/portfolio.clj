@@ -123,6 +123,19 @@
         (do (.appendTail matcher buffer)
             [(str buffer) headings])))))
 
+(def ^:private date-formatters
+  {:fr (java.time.format.DateTimeFormatter/ofPattern "d MMMM yyyy" java.util.Locale/FRENCH)
+   :en (java.time.format.DateTimeFormatter/ofPattern "MMMM d, yyyy" java.util.Locale/ENGLISH)})
+
+(defn- format-date-label
+  "Localized label for an ISO date, or nil when the date is missing/unparsable."
+  [date locale]
+  (when (string? date)
+    (try
+      (.format (java.time.LocalDate/parse (str/trim date))
+               (get date-formatters locale (:en date-formatters)))
+      (catch Exception _ nil))))
+
 
 (defn- normalize-post [resource-url]
   (let [raw (slurp resource-url)
@@ -151,6 +164,8 @@
              (str "/en/blog/" slug "/"))
       :reading-time (reading-time body)
       :headings headings
+      :date-label (or (:date-label front-matter)
+                      (format-date-label (:date front-matter) locale))
       :content body
       :html html
       :excerpt excerpt})))

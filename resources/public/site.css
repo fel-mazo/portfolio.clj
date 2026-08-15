@@ -444,8 +444,18 @@ body::after {
   height: auto;
 }
 
+/* Hidden by design, but kept in the accessibility tree and the document outline:
+   the home page's only h1 must not be display:none. */
 .home-name {
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .home-role {

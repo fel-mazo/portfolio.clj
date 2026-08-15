@@ -7,8 +7,7 @@
             {:label "GitHub" :href "https://github.com/fel-mazo"}]
   :locales
   {:fr
-   {:contact-label "Me contacter"
-    :skip-link-label "Aller au contenu principal"
+   {:skip-link-label "Aller au contenu principal"
     :nav-toggle-label "Ouvrir la navigation"
     :nav-close-label "Fermer la navigation"
     :nav-label "Navigation principale"
@@ -53,8 +52,7 @@
     :related-posts-label "ARTICLES ASSOCIES"
     :project-label "VOIR LE PROJET"}
    :en
-   {:contact-label "Get in touch"
-    :skip-link-label "Skip to main content"
+   {:skip-link-label "Skip to main content"
     :nav-toggle-label "Open navigation"
     :nav-close-label "Close navigation"
     :nav-label "Main navigation"

@@ -97,8 +97,7 @@
 
 (defn- localized-site [locale]
   (merge (select-keys (site-data) [:name :site-url :socials])
-         (select-keys (content/locale-copy locale)
-                      [:contact-label :copyright])))
+         (select-keys (content/locale-copy locale) [:copyright])))
 
 (defn- social-href
   "Href of the named social link, nil when the site has no such entry."

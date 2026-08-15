@@ -291,31 +291,6 @@ body.nav-open [data-logo-floater] {
   transform: scaleX(1);
 }
 
-.cv-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 41px;
-  padding: 0 20px;
-  border: 2px solid var(--coral);
-  border-radius: var(--r-pill);
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--coral);
-  text-transform: lowercase;
-  letter-spacing: 0.02em;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.cv-button:hover {
-  background: var(--coral);
-  color: var(--navy);
-}
-
-.cv-button:active {
-  transform: scale(0.97);
-}
-
 .nav-toggle,
 .nav-close,
 .nav-backdrop,
@@ -1536,10 +1511,6 @@ button.blog-tag-filter.blog-tag-active {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
-  }
-
-  .cv-button {
-    margin-left: 0;
   }
 
   .home-hero {

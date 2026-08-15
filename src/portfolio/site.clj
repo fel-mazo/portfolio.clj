@@ -84,11 +84,16 @@
                    posts)})
 
 (defn- localized-site [locale]
-  (merge (select-keys (site-data) [:name :logo :site-url :email :socials :cv-link])
+  (merge (select-keys (site-data) [:name :site-url :email :socials])
          (select-keys (content/locale-copy locale)
-                      [:cv-label :contact-label :copyright
-                       :privacy-label :terms-label :cookies-label])
-         {:privacy-link "#" :terms-link "#" :cookies-link "#"}))
+                      [:contact-label :copyright])))
+
+(defn- social-href
+  "Href of the named social link, nil when the site has no such entry."
+  [label]
+  (some (fn [{:keys [href] :as social}]
+          (when (= label (:label social)) href))
+        (:socials (site-data))))
 
 (defn- navigation [locale]
   (let [copy (content/locale-copy locale)
@@ -114,24 +119,18 @@
       :site site
       :labels copy
       :navigation (navigation locale)
-      :page-class "theme-home"
-      :header-class "site-header--home"
-      :footer-class "site-footer--home"
-      :body
-      [:main {:id "main-content"}
-       (templates/home-page
-        {:name (:hero-name copy)
-         :role (:hero-role copy)
-         :summary (:hero-summary copy)
-         :about-tag (:about-tag copy)
-         :about-title (:about-title copy)
-         :about-heading (:about-heading copy)
-         :about-body (:about-body copy)
-         :portrait-url (:portrait-url (site-data))
-         :scroll-label (:scroll-label copy)
-         :socials (:socials site)
-         :contact-label (:home-contact-cta copy)
-         :contact-href (str prefix "/#contact")})]})))
+      :body (templates/home-page
+             {:name (:hero-name copy)
+              :role (:hero-role copy)
+              :summary (:hero-summary copy)
+              :about-tag (:about-tag copy)
+              :about-title (:about-title copy)
+              :about-heading (:about-heading copy)
+              :about-body (:about-body copy)
+              :portrait-url (:portrait-url (site-data))
+              :scroll-label (:scroll-label copy)
+              :contact-label (:home-contact-cta copy)
+              :contact-href (or (social-href "LinkedIn") (str prefix "/#contact"))})})))
 
 (defn render-blog-index [locale]
   (let [copy (content/locale-copy locale)
@@ -149,9 +148,6 @@
       :site (localized-site locale)
       :labels copy
       :navigation (navigation locale)
-      :page-class "theme-home"
-      :header-class "site-header--home"
-      :footer-class "site-footer--home"
       :body (templates/blog-index-section
              {:eyebrow (:blog-eyebrow copy)
               :title (:blog-heading copy)
@@ -182,9 +178,6 @@
         :site (localized-site locale)
         :labels copy
         :navigation (navigation locale)
-        :page-class "theme-home"
-        :header-class "site-header--home"
-        :footer-class "site-footer--home"
         :body (templates/article-page
                {:post (prefix-uri post)
                 :related-posts (prefix-uris (content/related-posts locale slug))
@@ -211,9 +204,6 @@
       :site site
       :labels copy
       :navigation (navigation locale)
-      :page-class "theme-home"
-      :header-class "site-header--home"
-      :footer-class "site-footer--home"
       :body (templates/not-found-page
              {:eyebrow "404"
               :heading (:not-found-heading copy)

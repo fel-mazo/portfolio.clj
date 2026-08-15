@@ -1,17 +1,14 @@
 {:site
  {:name "Fahd El Mazouni"
-  :logo "FEM"
   :site-url "https://fel-mazo.com"
   :base-path ""
   :email "hello@fahdelmazouni.dev"
-  :cv-link "#"
   :portrait-url "/my-picture.jpg"
   :socials [{:label "LinkedIn" :href "https://www.linkedin.com/in/fahd-el-mazouni/"}
             {:label "GitHub" :href "https://github.com/fel-mazo"}]
   :locales
   {:fr
-   {:cv-label "Telecharger mon CV"
-    :contact-label "Me contacter"
+   {:contact-label "Me contacter"
     :skip-link-label "Aller au contenu principal"
     :nav-toggle-label "Ouvrir la navigation"
     :nav-close-label "Fermer la navigation"
@@ -24,9 +21,6 @@
     :footer-tagline "Disponible pour discuter architecture, culture d'equipe, ou de ce que vous construisez."
     :back-to-top "Retour en haut ↑"
     :copyright "Fahd El Mazouni. Tous droits reserves."
-    :privacy-label "Confidentialite"
-    :terms-label "Conditions"
-    :cookies-label "Cookies"
     :about-nav "A propos"
     :blog "Blog"
     :contact "Contact"
@@ -57,8 +51,7 @@
     :related-posts-label "ARTICLES ASSOCIES"
     :project-label "VOIR LE PROJET"}
    :en
-   {:cv-label "Download my resume"
-    :contact-label "Get in touch"
+   {:contact-label "Get in touch"
     :skip-link-label "Skip to main content"
     :nav-toggle-label "Open navigation"
     :nav-close-label "Close navigation"
@@ -71,9 +64,6 @@
     :footer-tagline "Open to conversations about architecture, engineering culture, or whatever you're building."
     :back-to-top "Back to top ↑"
     :copyright "Fahd El Mazouni. All rights reserved."
-    :privacy-label "Privacy"
-    :terms-label "Terms"
-    :cookies-label "Cookies"
     :about-nav "ABOUT"
     :blog "Blog"
     :contact "Contact"

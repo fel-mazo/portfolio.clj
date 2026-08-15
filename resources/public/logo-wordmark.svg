@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="64" viewBox="0 0 200 64" fill="none">
-  
-  <rect x="0.5" y="0.5" width="199" height="63" rx="14" stroke="currentColor" stroke-width="1" fill="none"></rect>
-  <g fill="currentColor" font-family="Poppins, system-ui, sans-serif" font-weight="700">
-    <text x="100" y="34" text-anchor="middle" font-size="22" letter-spacing="0.04em">fel-mazo</text>
-    <text x="100" y="50" text-anchor="middle" font-size="8" letter-spacing="0.5em" font-weight="500">BACKEND DEV</text>
-  </g>
-  <circle cx="178" cy="20" r="3" fill="#F95959"></circle>
-</svg>

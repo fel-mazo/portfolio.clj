@@ -30,12 +30,6 @@
     (map? v) (str "{" (str/join "," (map (fn [[k val]] (str (to-json k) ":" (to-json val))) v)) "}")
     :else (str "\"" (escape-json-str (str v)) "\"")))
 
-(defn- valid-href? [href]
-  (and (string? href)
-       (not (str/blank? href))
-       (not= "#" href)))
-
-
 (defn- head-tags [{:keys [page-title description base-path canonical-url og-type image-url robots hreflang json-ld locale]}]
   (list
    [:meta {:charset "utf-8"}]
@@ -87,8 +81,8 @@
                           :robots robots :hreflang hreflang :json-ld json-ld :locale locale})]
        [:body
         [:a.skip-link {:href "#main-content"} (:skip-link-label labels)]
-        [:div {:class (str "page-shell " page-class)}
-         [:header {:class (str "site-header " header-class)
+        [:div.page-shell.theme-home
+         [:header {:class "site-header site-header--home"
                    :id "top"
                    :role "banner"}
           [:div.site-header-inner
@@ -100,9 +94,7 @@
              (:nav-close-label labels)]
             [:nav.top-nav {:aria-label (:nav-label labels)}
              (for [{:keys [href label]} navigation]
-               [:a.nav-link {:href href} label])]
-            (when (valid-href? (:cv-link site))
-              [:a.cv-button {:href (:cv-link site)} (:cv-label site)])]
+               [:a.nav-link {:href href} label])]]
            [:button.nav-toggle
             {:type "button"
              :aria-label (:nav-toggle-label labels)
@@ -116,60 +108,59 @@
            :tabindex "-1"
            :aria-label (:nav-close-label labels)}]
          body
-         (when show-footer
-           [:footer {:class (str "site-footer " footer-class) :id "contact" :role "contentinfo"}
-            [:div.site-footer-inner
-             [:div.footer-top
-              [:p.footer-kicker (:footer-kicker labels)]
-              [:p.footer-tagline (:footer-tagline labels)]
-              [:a.footer-contact {:href (str "mailto:" (:email site))} (:email site)]
-              [:div.footer-socials
-               (for [{:keys [href label]} (:socials site)]
-                 [:a.social-link {:href href :target "_blank" :rel "noreferrer"} label])]]
-             [:div.footer-bottom
-              [:div.footer-meta
-               [:span (str "© " (.getValue (java.time.Year/now)) " " (:copyright site))]
-               (for [[href label] [[(:privacy-link site) (:privacy-label site)]
-                                   [(:terms-link site) (:terms-label site)]
-                                   [(:cookies-link site) (:cookies-label site)]]
-                     :when (valid-href? href)]
-                 [:a {:href href} label])]
-              [:button.back-to-top
-               {:type "button"
-                :data-scroll-top "true"
-                :aria-label (:back-to-top labels)}
-               (:back-to-top labels)]
-              [:a.locale-switch {:href locale-switch-href}
-               (if (= locale :fr) "EN" "FR")]]]])]
+         [:footer {:class "site-footer site-footer--home" :id "contact" :role "contentinfo"}
+          [:div.site-footer-inner
+           [:div.footer-top
+            [:p.footer-kicker (:footer-kicker labels)]
+            [:p.footer-tagline (:footer-tagline labels)]
+            [:a.footer-contact {:href (str "mailto:" (:email site))} (:email site)]
+            [:div.footer-socials
+             (for [{:keys [href label]} (:socials site)]
+               [:a.social-link {:href href :target "_blank" :rel "noreferrer"} label])]]
+           [:div.footer-bottom
+            [:div.footer-meta
+             [:span (str "© " (.getValue (java.time.Year/now)) " " (:copyright site))]]
+            [:button.back-to-top
+             {:type "button"
+              :data-scroll-top "true"
+              :aria-label (:back-to-top labels)}
+             (:back-to-top labels)]
+            [:a.locale-switch {:href locale-switch-href}
+             (if (= locale :fr) "EN" "FR")]]]]]
         [:script {:src (str base-path "/js/main.js") :defer true}]]]))))
 
 (defn- chevron-down []
   [:svg {:width 30 :height 15 :viewBox "0 0 30 15" :fill "none" :aria-hidden "true"}
    [:path {:d "M 1 1 L 15 13 L 29 1" :stroke "currentColor" :stroke-width "2" :fill "none" :stroke-linecap "round" :stroke-linejoin "round"}]])
 
-(defn home-page [{:keys [name role summary about-tag about-title about-heading about-body portrait-url contact-label contact-href scroll-label socials]}]
-  [:div.home-page
-   [:section.home-hero
-    [:div.home-hero-inner
-     [:div.home-center-logo (brand-mark {:size 194})]
-     [:h1.home-name name]
-     [:p.home-role role]
-     [:p.home-summary summary]
-     [:button.home-scroll {:type "button"
-                           :data-scroll-target "#about"
-                           :aria-label scroll-label}
-      (chevron-down)]
-     [:div.home-about-anchor {:id "about"}]]]
-   [:section.home-about
-    [:div.home-about-inner
-     [:div.home-portrait
-      [:img {:src portrait-url :alt name :loading "lazy"}]]
-     [:div.home-about-copy
-      [:div.about-tag about-tag]
-      [:h2.about-display about-title]
-      [:p.about-heading about-heading]
-      [:p.about-body about-body]
-      [:a.home-contact-button {:href contact-href} contact-label]]]]])
+(defn home-page [{:keys [name role summary about-tag about-title about-heading about-body portrait-url contact-label contact-href scroll-label]}]
+  [:main {:id "main-content"}
+   [:div.home-page
+    [:section.home-hero
+     [:div.home-hero-inner
+      [:div.home-center-logo (brand-mark {:size 194})]
+      [:h1.home-name name]
+      [:p.home-role role]
+      [:p.home-summary summary]
+      [:button.home-scroll {:type "button"
+                            :data-scroll-target "#about"
+                            :aria-label scroll-label}
+       (chevron-down)]
+      [:div.home-about-anchor {:id "about"}]]]
+    [:section.home-about
+     [:div.home-about-inner
+      [:div.home-portrait
+       [:img {:src portrait-url :alt name :width 667 :height 1000 :loading "lazy"}]]
+      [:div.home-about-copy
+       [:div.about-tag about-tag]
+       [:h2.about-display about-title]
+       [:p.about-heading about-heading]
+       [:p.about-body about-body]
+       [:a.home-contact-button
+        (cond-> {:href contact-href}
+          (str/starts-with? (str contact-href) "http")
+          (assoc :target "_blank" :rel "noreferrer"))
+        contact-label]]]]]])
 
 (defn not-found-page [{:keys [eyebrow heading body cta-label cta-href]}]
   [:main {:id "main-content" :class "not-found-page"}

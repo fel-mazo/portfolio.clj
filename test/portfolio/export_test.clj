@@ -59,7 +59,7 @@
 (deftest exported-pages-are-the-rendered-pages
   (let [[dir _] (exported)]
     (is (= (support/html-for "/") (slurp (io/file dir "index.html"))))
-    (let [post (first (content/posts))]
+    (when-let [post (first (content/posts))]
       (is (= (support/html-for (:uri post))
              (slurp (io/file dir (subs (:uri post) 1) "index.html")))))))
 

@@ -87,7 +87,15 @@
   (doseq [locale [:fr :en]]
     (let [prefix (if (= locale :fr) "" "/en")
           home (support/html-for (str prefix "/"))
-          blog (support/html-for (str prefix "/blog/"))
+          ;; The blog index only grows a filter group and cards once posts
+          ;; exist, so the corpus is supplied here rather than shipped.
+          blog (with-posts [(support/stub-post :slug "one" :locale locale
+                                               :uri (str prefix "/blog/one/")
+                                               :tags ["architecture"])
+                            (support/stub-post :slug "two" :locale locale
+                                               :uri (str prefix "/blog/two/")
+                                               :tags ["reliability"])]
+                 #(support/html-for (str prefix "/blog/")))
           other (if (= locale :fr) :en :fr)]
       (testing "chrome shared by every page"
         (is (= (support/copy locale :logo-home-label) (get (only-attrs home "logo-mark") "aria-label")))
@@ -139,7 +147,9 @@
       (is (= (support/absolute uri) canonical) uri)
       (is (= canonical (support/meta-content html "og:url")) uri)))
   (testing "articles are tagged as articles, other pages as websites"
-    (is (= "article" (support/meta-content (support/html-for (first (support/post-uris))) "og:type")))
+    (with-posts [(support/stub-post)]
+      (fn []
+        (is (= "article" (support/meta-content (support/html-for "/en/blog/stub/") "og:type")))))
     (is (= "website" (support/meta-content (support/html-for "/") "og:type")))))
 
 (deftest og-image-is-absolute
@@ -268,14 +278,20 @@
               (str (:uri post) " must not appear in the " locale " feed")))))))
 
 (deftest sitemap-lists-every-public-route-with-a-lastmod
-  (let [xml (:body (support/page "/sitemap.xml"))
+  ;; A lastmod can only come from a post date, so the corpus is supplied here:
+  ;; the shipped one may legitimately be empty.
+  (let [posts [(support/stub-post :slug "fr-post" :locale :fr :uri "/blog/fr-post/"
+                                  :date "2026-02-01")
+               (support/stub-post :slug "en-post" :locale :en :uri "/en/blog/en-post/"
+                                  :date "2026-03-01")]
+        xml (with-posts posts #(:body (support/page "/sitemap.xml")))
         entries (into {} (map (fn [[_ loc lastmod]] [loc lastmod]))
                       (re-seq #"<url><loc>([^<]+)</loc><lastmod>([^<]+)</lastmod></url>" xml))]
-    (doseq [uri (into ["/" "/blog/" "/en/" "/en/blog/"] (support/post-uris))]
+    (doseq [uri (into ["/" "/blog/" "/en/" "/en/blog/"] (map :uri posts))]
       (is (contains? entries (support/absolute uri)) uri))
     (is (every? #(re-matches #"\d{4}-\d{2}-\d{2}" %) (vals entries)))
     (testing "posts date their own entry"
-      (doseq [post (content/posts)]
+      (doseq [post posts]
         (is (= (:date post) (get entries (support/absolute (:uri post)))) (:uri post))))
     (testing "error and machine routes stay out of the sitemap"
       (doseq [excluded ["/404.html" "/robots.txt" "/sitemap.xml" "/feed.xml"]]

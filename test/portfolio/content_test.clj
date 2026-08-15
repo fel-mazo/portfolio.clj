@@ -50,8 +50,9 @@
 ;; ---------------------------------------------------------------- loading
 
 (deftest shipped-posts-are-well-formed
+  ;; The shipped corpus may be empty; what matters is that whatever ships
+  ;; is complete.
   (testing "every loaded post carries the keys the rest of the site relies on"
-    (is (seq (content/posts)))
     (doseq [post (content/posts)]
       (let [where (str "post " (:slug post))]
         (is (contains? #{:fr :en} (:locale post)) where)
@@ -70,18 +71,18 @@
   (testing "each locale sees only its own posts, and together they are the whole corpus"
     (let [fr (content/posts-for-locale :fr)
           en (content/posts-for-locale :en)]
-      (is (seq fr))
-      (is (seq en))
       (is (every? #(= :fr (:locale %)) fr))
       (is (every? #(= :en (:locale %)) en))
       (is (= (count (content/posts)) (+ (count fr) (count en)))))))
 
 (deftest find-post-matches-on-locale-and-slug
   (testing "a slug only resolves within its own locale"
-    (let [post (first (content/posts-for-locale :en))]
-      (is (= post (content/find-post :en (:slug post))))
-      (is (nil? (content/find-post :fr (:slug post))))
-      (is (nil? (content/find-post :en "no-such-slug"))))))
+    (let [post (support/stub-post :slug "only-en")]
+      (with-posts [post]
+        (fn []
+          (is (= post (content/find-post :en "only-en")))
+          (is (nil? (content/find-post :fr "only-en")))
+          (is (nil? (content/find-post :en "no-such-slug"))))))))
 
 (deftest load-posts-skips-malformed-front-matter
   (testing "a malformed post does not prevent valid posts from loading"
@@ -298,7 +299,6 @@
 (deftest popular-tags-are-tags-that-shipped-posts-actually-carry
   (doseq [locale [:fr :en]]
     (let [known (set (mapcat content/post-tags (content/posts-for-locale locale)))]
-      (is (seq (content/popular-tags locale)) (str locale " has no tags at all"))
       (is (every? known (content/popular-tags locale))
           (str locale " advertises a tag no post carries")))))
 

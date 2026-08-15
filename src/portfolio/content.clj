@@ -49,6 +49,9 @@
                    (.isDirectory (io/file entry)) (file-resource-urls entry path)
                    (str/ends-with? entry ".jar") (jar-resource-urls entry path)
                    :else [])))
+       ;; The directory also holds bookkeeping files (.gitkeep); only markdown
+       ;; is content.
+       (filter #(str/ends-with? (.toExternalForm ^java.net.URL %) ".md"))
        (sort-by #(.toExternalForm ^java.net.URL %))))
 
 (defn- parse-front-matter [raw]

@@ -1739,11 +1739,62 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
   line-height: 1;
 }
 
+/* Reduced motion
+   Mirrors what portfolio.ui.motion does for the JS layer. Movement goes —
+   smooth scrolling, the bounce loops, translation and scaling. Colour and
+   opacity changes stay: they are motion-neutral and several are load-bearing
+   (the nav scrim fade, the logo cross-fade, the card hover/focus feedback).
+   Transforms that are structural rather than animated are also kept — the
+   .project-arrow::before rotation draws the arrowhead, .site-header-actions
+   parks the mobile drawer off-screen and .nav-link::after hides the underline
+   at scaleX(0); removing those would expose or break each element, so only
+   their transitions are dropped and they snap into place instead.
+   This block is last in the file, so equal-specificity overrides win on
+   source order alone — no priority flags needed. */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  html {
+    scroll-behavior: auto;
   }
-  html { scroll-behavior: auto; }
+
+  /* Decorative looping bounce. Neither element declares a static opacity, so
+     with the animation off they settle at opacity 1 and no offset — visible,
+     not stranded at the keyframe's 0.7 trough. */
+  .home-scroll,
+  .blog-scroll-link {
+    animation: none;
+  }
+
+  /* Snap rather than slide. The declarations that move these into their final
+     position (.skip-link's top: 0, the drawer's translateX(0)) are untouched. */
+  .skip-link,
+  .nav-link::after,
+  .site-header-actions {
+    transition: none;
+  }
+
+  /* Decorative hover/press movement. Every one of these keeps a colour or
+     shadow change, so the state it signals is still communicated. */
+  .home-contact-button:active,
+  .project-card:hover,
+  .project-card:focus-visible,
+  .project-card:hover .project-arrow,
+  .social-link:hover {
+    transform: none;
+  }
+
+  /* Drop transform from the transition lists so the colour, shadow and
+     opacity changes still ease as they do elsewhere. */
+  .project-card,
+  .post-card {
+    transition: background 200ms ease, box-shadow 200ms ease;
+  }
+
+  .project-arrow,
+  .home-contact-button {
+    transition: background 150ms ease, color 150ms ease;
+  }
+
+  .social-link {
+    transition: opacity 150ms ease;
+  }
 }

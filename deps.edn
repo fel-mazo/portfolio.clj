@@ -4,6 +4,7 @@
         markdown-clj/markdown-clj {:mvn/version "1.12.2"}
         org.slf4j/slf4j-simple {:mvn/version "2.0.9"}
         ring/ring-core {:mvn/version "1.12.2"}
+        ring/ring-devel {:mvn/version "1.12.2"}
         ring/ring-jetty-adapter {:mvn/version "1.12.2"}}
  :aliases
  {:run {:main-opts ["-m" "portfolio.core"]}

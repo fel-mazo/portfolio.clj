@@ -106,8 +106,10 @@ inspect `dist/`.
 
 ## Gotchas
 
-- **No content hot-reload** — `site.edn` and posts sit behind `delay`s; restart the server (or
-  re-eval in the REPL) after editing them. The ClojureScript side *does* hot-reload via shadow-cljs.
+- **The dev server reloads everything; the export does not** — `portfolio.core/dev-app` reloads
+  changed namespaces and clears the content cache on every request, so edits to Clojure, `site.edn`,
+  posts and CSS show up on the next page load. ClojureScript and CSS hot-reload via shadow-cljs
+  without a page load. `bb export` renders in one shot and caches the corpus.
 - **`resources/public/js/` is generated and gitignored** — never edit or commit it. Without a
   running watcher or a prior release build, `/js/main.js` 404s in dev.
 

@@ -10,8 +10,18 @@
     (edn/read-string (slurp resource))
     (throw (ex-info "Missing required resource: content/site.edn" {}))))
 
-(def ^:private cached-site-config (delay (load-site-config)))
-(defn site-config [] @cached-site-config)
+;; Parsing every post on every render would make `bb export` re-read the corpus once per page, so
+;; results are cached. The dev server clears the cache per request; see `portfolio.core`.
+(def ^:private cache (atom {}))
+
+(defn reset-cache! []
+  (reset! cache {}))
+
+(defn- cached [k load]
+  (or (get @cache k)
+      (get (swap! cache assoc k (load)) k)))
+
+(defn site-config [] (cached :site-config load-site-config))
 
 (defn- classpath-entries []
   (-> (System/getProperty "java.class.path")
@@ -193,8 +203,7 @@
        (sort-by (juxt :locale :date) #(compare %2 %1))
        vec))
 
-(def ^:private cached-posts (delay (load-posts)))
-(defn posts [] @cached-posts)
+(defn posts [] (cached :posts load-posts))
 
 (defn posts-for-locale [locale]
   (filter #(= locale (:locale %)) (posts)))

@@ -10,6 +10,6 @@ Claude Code specifics:
 - Run `npm ci` once per fresh checkout before any `bb` task other than `bb test`.
 - There is no single-test runner and no formatter — run `bb test` for the whole suite, and match
   surrounding layout by hand.
-- After editing `resources/content/site.edn` or a post, restart the dev server; content is cached in
-  `delay`s and will not pick up changes otherwise.
+- The dev server picks up Clojure, content and CSS edits on the next request — no restart needed.
+  Restart only after changing `deps.edn` or a namespace's `ns` form.
 - `resources/public/js/` and `dist/` are generated. Never edit or commit them.

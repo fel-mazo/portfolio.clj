@@ -14,7 +14,7 @@ GitHub Pages.
 `npm ci` first — every task below except `bb test` shells out to `./node_modules/.bin/shadow-cljs`.
 
 - `bb dev [port]` — starts the shadow-cljs watcher **and** the Ring/Jetty server together. Port
-  comes from the arg, else `PORT`, else `3000`.
+  comes from the arg, else `PORT`, else `3001`.
 - `bb cljs:watch` / `bb cljs:release` — shadow-cljs alone.
 - `bb export` — `shadow-cljs release app`, then `clojure -M:export`.
 - `bb test` — the `clojure.test` suite via `portfolio.test-runner`. No single-test runner.

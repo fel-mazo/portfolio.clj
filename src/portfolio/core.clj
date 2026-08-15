@@ -27,7 +27,7 @@
 (defn- server-port [args]
   (or (some-> (first args) parse-long)
       (some-> (System/getenv "PORT") parse-long)
-      3000))
+      3001))
 
 (defn -main [& args]
   (let [port (server-port args)]

@@ -1,5 +1,8 @@
 {:tasks
- {dev {:task (do (future (shell "./node_modules/.bin/shadow-cljs watch app"))
+ {:requires ([babashka.process :as p])
+  dev {:task (do (p/process {:inherit  true
+                             :shutdown p/destroy-tree}
+                            "./node_modules/.bin/shadow-cljs watch app")
                  (apply shell "clojure -M:run" *command-line-args*))}
   cljs:watch {:task (shell "./node_modules/.bin/shadow-cljs watch app")}
   cljs:release {:task (shell "./node_modules/.bin/shadow-cljs release app")}

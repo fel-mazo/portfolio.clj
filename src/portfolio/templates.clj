@@ -17,7 +17,9 @@
       (str/replace "\"" "\\\"")
       (str/replace "\n" "\\n")
       (str/replace "\r" "\\r")
-      (str/replace "\t" "\\t")))
+      (str/replace "\t" "\\t")
+      (str/replace "<" "\\u003c")
+      (str/replace ">" "\\u003e")))
 
 (defn- to-json [v]
   (cond

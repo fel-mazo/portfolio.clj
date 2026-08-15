@@ -23,8 +23,20 @@
 (defn- site-url []
   (:site-url (site-data)))
 
+;; Deployment root. Under a non-empty base-path (a GitHub project page served
+;; from /repo/) every absolute URL we publish — canonical, og:url, hreflang,
+;; sitemap <loc>, feed <link> — has to carry the prefix, or it points at a 404.
+(defn- site-root-url []
+  (str (site-url) (base-path)))
+
 (defn- absolute-url [uri]
-  (str (site-url) uri))
+  (str (site-root-url) uri))
+
+(defn- absolute-image-url [url]
+  (when url
+    (if (str/starts-with? url "http")
+      url
+      (absolute-url url))))
 
 (defn- html-response [status body]
   {:status status
@@ -41,7 +53,7 @@
                               robots "index,follow"}}]
   {:canonical-url (absolute-url uri)
    :og-type og-type
-   :image-url (or image-url (:portrait-url (site-data)))
+   :image-url (absolute-image-url (or image-url (:portrait-url (site-data))))
    :robots robots})
 
 (defn- hreflang-map [locale self-uri alt-uri]
@@ -57,7 +69,7 @@
     {"@context" "https://schema.org"
      "@type" "Person"
      "name" (:name site)
-     "url" (site-url)
+     "url" (site-root-url)
      "email" (:email site)
      "jobTitle" "Backend Developer"
      "sameAs" (mapv :href (:socials site))}))
@@ -71,7 +83,7 @@
    "url" (absolute-url (:uri post))
    "author" {"@type" "Person"
              "name" (:name (site-data))
-             "url" (site-url)}})
+             "url" (site-root-url)}})
 
 (defn- collection-schema [locale posts]
   {"@context" "https://schema.org"

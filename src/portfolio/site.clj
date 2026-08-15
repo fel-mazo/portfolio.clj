@@ -249,9 +249,11 @@
       (str/replace "\"" "&quot;")))
 
 (defn- rfc822-date [iso-date]
-  (let [local-date (LocalDate/parse iso-date)
-        zoned (.atStartOfDay local-date ZoneOffset/UTC)]
-    (.format zoned (DateTimeFormatter/ofPattern "EEE, dd MMM yyyy HH:mm:ss Z" java.util.Locale/ENGLISH))))
+  (try
+    (let [local-date (LocalDate/parse iso-date)
+          zoned (.atStartOfDay local-date ZoneOffset/UTC)]
+      (.format zoned (DateTimeFormatter/ofPattern "EEE, dd MMM yyyy HH:mm:ss Z" java.util.Locale/ENGLISH)))
+    (catch Exception _ nil)))
 
 (defn- render-rss-feed [locale]
   (let [site (site-data)
@@ -273,8 +275,8 @@
                        "    <link>" (absolute-url (:uri post)) "</link>\n"
                        "    <guid>" (absolute-url (:uri post)) "</guid>\n"
                        "    <description>" (escape-xml (:excerpt post)) "</description>\n"
-                       (when (:date post)
-                         (str "    <pubDate>" (rfc822-date (:date post)) "</pubDate>\n"))
+                       (when-let [pub-date (some-> (:date post) rfc822-date)]
+                         (str "    <pubDate>" pub-date "</pubDate>\n"))
                        "  </item>\n")))
          "</channel>\n"
          "</rss>\n")))

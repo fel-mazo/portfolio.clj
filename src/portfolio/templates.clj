@@ -64,15 +64,14 @@
    [:link {:rel "alternate" :type "application/rss+xml"
            :title page-title
            :href (str base-path (if (= locale :fr) "/feed.xml" "/en/feed.xml"))}]
-   [:link {:rel "preload" :href (str base-path "/fonts/inter-700.ttf") :as "font" :type "font/ttf" :crossorigin "anonymous"}]
+   ;; Above-the-fold faces: --font-display paints the blog/article <h1> and the
+   ;; home about heading; Poppins 500 paints nav, pills, roles and intros.
+   [:link {:rel "preload" :href (str base-path "/fonts/SpecialGothicExpandedOne-Regular.woff2") :as "font" :type "font/woff2" :crossorigin "anonymous"}]
+   [:link {:rel "preload" :href (str base-path "/fonts/poppins-500.woff2") :as "font" :type "font/woff2" :crossorigin "anonymous"}]
    [:link {:rel "stylesheet" :href (str base-path "/site.css")}]))
 
-(defn layout [{:keys [locale title description site labels navigation body meta page-class header-class footer-class show-footer base-path hreflang json-ld]
-               :or {page-class "theme-default"
-                    header-class ""
-                    footer-class ""
-                    show-footer true
-                    base-path ""}}]
+(defn layout [{:keys [locale title description site labels navigation body meta base-path hreflang json-ld]
+               :or {base-path ""}}]
   (let [home-href (str base-path (if (= locale :fr) "/" "/en/"))
         locale-switch-href (str base-path (if (= locale :fr) "/en/" "/"))
         {:keys [canonical-url og-type image-url robots]

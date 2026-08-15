@@ -1,11 +1,49 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap");
-
 @font-face {
   font-family: "Special Gothic Expanded One";
-  src: url("fonts/SpecialGothicExpandedOne-Regular.ttf") format("truetype");
+  src: url("fonts/SpecialGothicExpandedOne-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/poppins-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/poppins-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/poppins-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/poppins-700.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/poppins-400-italic.woff2") format("woff2");
 }
 
 @font-face {
@@ -13,7 +51,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("fonts/inter-400.ttf") format("truetype");
+  src: url("fonts/inter-400.woff2") format("woff2");
 }
 
 @font-face {
@@ -21,7 +59,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url("fonts/inter-600.ttf") format("truetype");
+  src: url("fonts/inter-600.woff2") format("woff2");
 }
 
 @font-face {
@@ -29,7 +67,7 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("fonts/inter-700.ttf") format("truetype");
+  src: url("fonts/inter-700.woff2") format("woff2");
 }
 
 @font-face {
@@ -37,7 +75,7 @@
   font-style: italic;
   font-weight: 400;
   font-display: swap;
-  src: url("fonts/inter-400-italic.ttf") format("truetype");
+  src: url("fonts/inter-400-italic.woff2") format("woff2");
 }
 
 :root {

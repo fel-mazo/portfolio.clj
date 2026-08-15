@@ -85,7 +85,13 @@
                                    (js/requestAnimationFrame
                                      (fn [] (update!) (vreset! ticking false)))
                                    (vreset! ticking true)))
-                resize-handler (fn [] (teardown!))]
+                start-w    (.-innerWidth js/window)
+                ;; Mobile browsers fire "resize" every time the URL bar collapses or expands on
+                ;; scroll, which would tear the morph down mid-flight. Only a width change
+                ;; actually invalidates the geometry measured above.
+                resize-handler (fn []
+                                 (when (not= start-w (.-innerWidth js/window))
+                                   (teardown!)))]
             (.addEventListener js/window "scroll" scroll-handler #js {:passive true})
             (update!)
             (reset! state {:floater floater
@@ -93,4 +99,4 @@
                            :nav-logo nav-logo
                            :scroll-handler scroll-handler
                            :resize-handler resize-handler})
-            (.addEventListener js/window "resize" resize-handler #js {:once true})))))))
+            (.addEventListener js/window "resize" resize-handler)))))))

@@ -424,7 +424,7 @@ body::after {
 .home-hero-inner {
   width: var(--content-width);
   margin: 0 auto;
-  min-height: calc(100vh - 110px);
+  min-height: calc(100svh - 110px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1566,13 +1566,13 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
   }
 
   .home-hero {
-    min-height: auto;
-    padding-top: 140px;
-    padding-bottom: 80px;
+    min-height: 100svh;
+    padding-top: 120px;
+    padding-bottom: 40px;
   }
 
   .home-hero-inner {
-    min-height: auto;
+    min-height: calc(100svh - 160px);
   }
 
   .home-about,

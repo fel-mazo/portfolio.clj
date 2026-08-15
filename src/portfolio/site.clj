@@ -198,7 +198,8 @@
                          :reading-time-unit (:reading-time-unit copy)
                          :label-separator (:label-separator copy)
                          :date-label-copy (:date-label-copy copy)
-                         :related-posts-label (:related-posts-label copy)}})}))))
+                         :related-posts-label (:related-posts-label copy)
+                         :ai-translated-notice (:ai-translated-notice copy)}})}))))
 
 (defn render-not-found [locale]
   (let [copy (content/locale-copy locale)

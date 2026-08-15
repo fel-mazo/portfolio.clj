@@ -50,7 +50,8 @@
     :label-separator " : "
     :date-label-copy "Date"
     :related-posts-label "ARTICLES ASSOCIES"
-    :project-label "VOIR LE PROJET"}
+    :project-label "VOIR LE PROJET"
+    :ai-translated-notice "Cet article a ete traduit par une IA."}
    :en
    {:skip-link-label "Skip to main content"
     :nav-toggle-label "Open navigation"
@@ -95,4 +96,5 @@
     :label-separator ": "
     :date-label-copy "Date"
     :related-posts-label "RELATED ARTICLES"
-    :project-label "VIEW PROJECT"}}}}
+    :project-label "VIEW PROJECT"
+    :ai-translated-notice "This post was translated by AI."}}}}

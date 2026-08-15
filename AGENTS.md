@@ -18,6 +18,12 @@ GitHub Pages.
 - `bb cljs:watch` / `bb cljs:release` — shadow-cljs alone.
 - `bb export` — `shadow-cljs release app`, then `clojure -M:export`.
 - `bb test` — the `clojure.test` suite via `portfolio.test-runner`. No single-test runner.
+- `bb new-post "Title"` — writes the English skeleton `resources/content/posts/{slug}.en.md` with
+  the EDN front-matter filled in (slug derived from the title, accents stripped; date is today),
+  then prints the prompt for an AI agent to translate it into French: where to write the file, how
+  to slug and adapt the front-matter, and to cross-link both with `:alternate-slug`. Posts are
+  written in English and translated; every post ships in both locales. Refuses to overwrite.
+  Translations carry `:ai-translated true`, which renders the disclosure notice on the article page.
 - `clojure -M:nrepl` — nREPL on `127.0.0.1:7888`.
 
 Direct aliases: `clojure -M:run`, `-M:test`, `-M:export`, `-M:nrepl`.

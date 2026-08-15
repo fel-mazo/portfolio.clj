@@ -334,6 +334,21 @@
           (is (empty? (support/attrs-with-class html "article-related-card")))
           (is (not (contains? (support/attr-values html "href") "/en/blog/b/"))))))))
 
+(deftest ai-translated-posts-disclose-the-translation
+  (testing "a post flagged :ai-translated carries the localized notice"
+    (with-posts [(support/stub-post :slug "fr-post" :locale :fr :uri "/blog/fr-post/"
+                                    :ai-translated true)]
+      (fn []
+        (let [html (support/html-for "/blog/fr-post/")]
+          (is (= 1 (count (support/attrs-with-class html "article-translation-notice"))))
+          (is (str/includes? html (support/copy :fr :ai-translated-notice)))))))
+  (testing "a post written in its own locale carries nothing"
+    (with-posts [(support/stub-post :slug "en-post" :uri "/en/blog/en-post/")]
+      (fn []
+        (let [html (support/html-for "/en/blog/en-post/")]
+          (is (empty? (support/attrs-with-class html "article-translation-notice")))
+          (is (not (str/includes? html (support/copy :en :ai-translated-notice)))))))))
+
 (deftest blog-index-exposes-the-data-the-tag-filter-script-reads
   ;; templates.clj emits these attributes and portfolio.ui.tags queries them;
   ;; the two sides only stay in sync if something checks the contract.

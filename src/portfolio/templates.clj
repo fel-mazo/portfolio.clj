@@ -247,6 +247,8 @@
             [:span.article-toc-title title]])
          (:headings post))]
        [:div.article-main
+        (when (:ai-translated post)
+          [:p.article-translation-notice (:ai-translated-notice labels)])
         [:div.rich-html (h/raw (:html post))]
         (when (or (:project-link labels) has-related-posts?)
           [:div.article-bottom-row

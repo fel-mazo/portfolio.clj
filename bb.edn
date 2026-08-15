@@ -1,5 +1,7 @@
 {:tasks
- {:requires ([babashka.process :as p])
+ {:requires ([babashka.process :as p]
+             [clojure.java.io :as io]
+             [clojure.string :as str])
   dev {:task (do (p/process {:inherit  true
                              :shutdown p/destroy-tree}
                             "./node_modules/.bin/shadow-cljs watch app")
@@ -8,4 +10,44 @@
   cljs:release {:task (shell "./node_modules/.bin/shadow-cljs release app")}
   export {:task (do (shell "./node_modules/.bin/shadow-cljs release app")
                     (shell "clojure -M:export"))}
-  test {:task (shell "clojure -M:test")}}}
+  test {:task (shell "clojure -M:test")}
+  new-post
+  {:doc "Write an English post skeleton and print the prompt to translate it into French: bb new-post \"Title\""
+   :task
+   (let [title (str/join " " *command-line-args*)
+         slug (-> (java.text.Normalizer/normalize title java.text.Normalizer$Form/NFD)
+                  (str/replace (re-pattern "\\p{M}+") "")
+                  str/lower-case
+                  (str/replace (re-pattern "[^a-z0-9]+") "-")
+                  (str/replace (re-pattern "(^-+|-+$)") ""))
+         file (io/file "resources/content/posts" (str slug ".en.md"))]
+     (when (str/blank? slug)
+       (println "Usage: bb new-post \"Post title\"")
+       (System/exit 1))
+     (when (.exists file)
+       (println "Already exists:" (str file))
+       (System/exit 1))
+     (spit file (str "---\n"
+                     "{:title " (pr-str title) "\n"
+                     " :slug " (pr-str slug) "\n"
+                     " :locale \"en\"\n"
+                     " :date " (pr-str (str (java.time.LocalDate/now))) "\n"
+                     " :category \"\"\n"
+                     " :tags []\n"
+                     " :excerpt \"\"}\n"
+                     "---\n\n"))
+     (println (str file))
+     (println)
+     (println
+      (str "Once the post is written, translate it into French:\n"
+           "\n"
+           "- Write the translation to resources/content/posts/<fr-slug>.fr.md, where <fr-slug> is\n"
+           "  the translated title slugified: lowercase ASCII, no accents, words joined by `-`.\n"
+           "- Front-matter is EDN, not YAML. Copy it, then translate :title and :excerpt, set\n"
+           "  :locale \"fr\", set :slug to <fr-slug>, add `:ai-translated true` (this renders the\n"
+           "  \"translated by AI\" notice for readers), and leave :date, :category and\n"
+           "  :tags unchanged (tag vocabulary is shared across locales).\n"
+           "- Add `:alternate-slug \"<fr-slug>\"` to " file " and `:alternate-slug \"" slug "\"` to\n"
+           "  the French file, so each post links to its translation.\n"
+           "- Translate the body idiomatically, not word for word. Keep the Markdown structure,\n"
+           "  heading levels, code blocks and link targets identical; add or drop nothing.")))}}}

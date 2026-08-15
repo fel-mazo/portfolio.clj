@@ -1211,6 +1211,16 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
   max-width: 895px;
 }
 
+.article-translation-notice {
+  margin-bottom: 32px;
+  padding: 12px 18px;
+  border-left: 2px solid var(--blue);
+  color: var(--muted);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 20px;
+}
+
 .rich-html p,
 .rich-html li {
   font-size: 16px;

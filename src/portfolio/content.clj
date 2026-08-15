@@ -205,10 +205,11 @@
 (defn related-posts [locale slug]
   (let [current (find-post locale slug)
         current-tags (set (:tags current))
-        score (fn [post] (count (set/intersection current-tags (set (:tags post)))))]
+        overlap (fn [post] (count (set/intersection current-tags (set (:tags post)))))]
     (->> (posts-for-locale locale)
          (remove #(= slug (:slug %)))
-         (sort-by score >)
+         (filter #(pos? (overlap %)))
+         (sort-by (juxt overlap :date) #(compare %2 %1))
          (take 4))))
 
 (defn popular-tags [locale]

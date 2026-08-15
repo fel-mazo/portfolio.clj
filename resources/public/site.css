@@ -969,10 +969,10 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 50px;
-  align-items: center;
 }
 
 .post-card {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -998,9 +998,10 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
 }
 
 .post-card-meta {
-  margin-bottom: 8px;
+  margin: 0 0 8px;
   font-size: 0.8rem;
   font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .post-card h3 {

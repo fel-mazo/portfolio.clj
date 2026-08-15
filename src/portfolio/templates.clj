@@ -172,13 +172,15 @@
      [:p.not-found-body body]
      [:a.home-contact-button {:href cta-href} cta-label]]]])
 
-(defn post-card [{:keys [category title excerpt uri tags all-tags post-link-label]}]
+(defn post-card [{:keys [category title excerpt uri tags all-tags date date-label post-link-label]}]
   ;; Posts arrive with :all-tags precomputed by content/post-tags; the fallback
   ;; keeps the component renderable from a bare map.
   (let [chips (or (seq all-tags)
                   (distinct (remove str/blank? (cons category tags))))]
     [:article.post-card {:data-tags (str/join "," chips)}
      [:div.post-card-content
+      (when date-label
+        [:p.post-card-meta [:time {:datetime date} date-label]])
       [:h3 [:a.post-card-link {:href uri} title]]
       [:p.post-card-excerpt excerpt]
       [:div.post-card-tags

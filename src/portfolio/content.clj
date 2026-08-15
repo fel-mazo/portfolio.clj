@@ -136,6 +136,11 @@
                (get date-formatters locale (:en date-formatters)))
       (catch Exception _ nil))))
 
+;; A card renders :category and :tags as one undifferentiated row of chips, and
+;; the tag filter has to offer that same vocabulary or a chip exists that no
+;; button can match. Category leads; a category repeated in :tags collapses.
+(defn post-tags [post]
+  (distinct (remove str/blank? (cons (:category post) (:tags post)))))
 
 (defn- normalize-post [resource-url]
   (let [raw (slurp resource-url)
@@ -163,6 +168,7 @@
              (str "/blog/" slug "/")
              (str "/en/blog/" slug "/"))
       :reading-time (reading-time body)
+      :all-tags (post-tags front-matter)
       :headings headings
       :date-label (or (:date-label front-matter)
                       (format-date-label (:date front-matter) locale))
@@ -207,7 +213,7 @@
 
 (defn popular-tags [locale]
   (->> (posts-for-locale locale)
-       (mapcat :tags)
+       (mapcat post-tags)
        frequencies
        (sort-by (juxt (comp - val) key))
        (map key)

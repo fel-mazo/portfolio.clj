@@ -171,18 +171,21 @@
      [:p.not-found-body body]
      [:a.home-contact-button {:href cta-href} cta-label]]]])
 
-(defn post-card [{:keys [category title excerpt uri tags post-link-label]}]
-  (let [all-tags (remove str/blank? (cons category tags))]
-    [:article.post-card {:data-tags (str/join "," all-tags)}
+(defn post-card [{:keys [category title excerpt uri tags all-tags post-link-label]}]
+  ;; Posts arrive with :all-tags precomputed by content/post-tags; the fallback
+  ;; keeps the component renderable from a bare map.
+  (let [chips (or (seq all-tags)
+                  (distinct (remove str/blank? (cons category tags))))]
+    [:article.post-card {:data-tags (str/join "," chips)}
      [:div.post-card-content
       [:h3 [:a.post-card-link {:href uri} title]]
       [:p.post-card-excerpt excerpt]
       [:div.post-card-tags
-       (for [tag all-tags]
+       (for [tag chips]
          [:span.project-tech tag])]]
      [:a.project-arrow {:href uri :aria-label post-link-label}]]))
 
-(defn blog-index-section [{:keys [eyebrow title intro tags-intro tags posts blog-list-label post-link-label]}]
+(defn blog-index-section [{:keys [eyebrow title intro tags tag-filter-label posts blog-list-label post-link-label]}]
   (let [compact? (or (<= (count posts) 1)
                      (<= (count tags) 3))]
     [:main {:id "main-content"
@@ -193,7 +196,7 @@
        [:h1.blog-title title]
        [:p.blog-intro intro]
        (when (seq tags)
-         [:div.article-tags {:role "group" :aria-label "Filter by tag"}
+         [:div.article-tags {:role "group" :aria-label tag-filter-label}
           (for [tag tags]
             [:button.project-tech.blog-tag-filter
              {:type "button" :data-tag tag}

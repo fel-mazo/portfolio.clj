@@ -152,7 +152,7 @@
              {:eyebrow (:blog-eyebrow copy)
               :title (:blog-heading copy)
               :intro (:blog-intro copy)
-              :tags-intro (:blog-tags-intro copy)
+              :tag-filter-label (:tag-filter-label copy)
               :blog-list-label (:blog-list-label copy)
               :post-link-label (:post-link-label copy)
               :tags (content/popular-tags locale)

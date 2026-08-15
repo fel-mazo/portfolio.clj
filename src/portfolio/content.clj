@@ -70,25 +70,59 @@
       (str/replace #"[^a-z0-9]+" "-")
       (str/replace #"(^-+|-+$)" "")))
 
-(defn- extract-headings [body]
-  (->> (str/split-lines body)
-       (keep (fn [line]
-               (when-let [[_ hashes heading] (re-matches #"^(#{2,3})\s+(.+)$" line)]
-                 {:level (count hashes)
-                  :title heading
-                  :anchor (slugify heading)})))
-       vec))
+(def ^:private html-entities
+  {"&amp;" "&" "&lt;" "<" "&gt;" ">" "&quot;" "\"" "&apos;" "'" "&#39;" "'" "&nbsp;" " "})
 
-(defn- inject-heading-anchors [html headings]
-  (reduce (fn [rendered {:keys [level title anchor]}]
-            (let [pattern (re-pattern
-                           (str "(?s)<h" level ">"
-                                (java.util.regex.Pattern/quote title)
-                                "</h" level ">"))
-                  replacement (str "<h" level " id=\"" anchor "\">" title "</h" level ">")]
-              (str/replace-first rendered pattern replacement)))
-          html
-          headings))
+(defn- decode-entities [text]
+  (str/replace text #"&(?:amp|lt|gt|quot|apos|nbsp|#39);" #(get html-entities % %)))
+
+(defn- heading-title
+  "Plain-text title for a rendered heading: drops inline tags and entities."
+  [inner-html]
+  (-> inner-html
+      (str/replace #"<[^>]*>" "")
+      decode-entities
+      (str/replace #"\s+" " ")
+      str/trim))
+
+(defn- strip-id-attr [attrs]
+  (str/replace attrs #"(?i)\s+id\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s>]+)" ""))
+
+(defn- unique-anchor
+  "First unused anchor from base, base-2, base-3, ..."
+  [used base]
+  (let [base (if (str/blank? base) "section" base)]
+    (loop [n 1]
+      (let [candidate (if (= n 1) base (str base "-" n))]
+        (if (contains? used candidate)
+          (recur (inc n))
+          candidate)))))
+
+(def ^:private heading-pattern #"(?s)<h([23])((?:\s[^>]*)?)>(.*?)</h\1>")
+
+(defn- annotate-headings
+  "Injects a unique id on every rendered h2/h3 and returns [html headings].
+   Deriving both from the same pass keeps :headings and the ids in :html
+   consistent by construction, and skips headings that markdown rendered as
+   code (fenced blocks) rather than as heading elements."
+  [html]
+  (let [matcher (re-matcher heading-pattern html)
+        buffer (StringBuffer.)]
+    (loop [used #{}
+           headings []]
+      (if (.find matcher)
+        (let [level (Integer/parseInt (.group matcher 1))
+              attrs (strip-id-attr (or (.group matcher 2) ""))
+              inner (.group matcher 3)
+              title (heading-title inner)
+              anchor (unique-anchor used (slugify title))
+              replacement (str "<h" level " id=\"" anchor "\"" attrs ">" inner "</h" level ">")]
+          (.appendReplacement matcher buffer (java.util.regex.Matcher/quoteReplacement replacement))
+          (recur (conj used anchor)
+                 (conj headings {:level level :title title :anchor anchor})))
+        (do (.appendTail matcher buffer)
+            [(str buffer) headings])))))
+
 
 (defn- normalize-post [resource-url]
   (let [raw (slurp resource-url)
@@ -107,8 +141,7 @@
                         (str/replace #"\[([^\]]+)\]\([^)]+\)" "$1")
                         (str/replace #"`([^`]+)`" "$1")))
         locale (keyword (or (:locale front-matter) "fr"))
-        headings (extract-headings body)
-        html (-> body markdown/md-to-html-string (inject-heading-anchors headings))]
+        [html headings] (annotate-headings (markdown/md-to-html-string body))]
     (merge
      front-matter
      {:slug slug

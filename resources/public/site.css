@@ -97,6 +97,14 @@
   --shadow-card: 0 20px 40px rgba(0,0,0,0.10);
   --r-pill: 999px;
   --r-card: 40px;
+  /* Keyboard focus ring. --focus-ring is re-declared per theme so it keeps
+     its contrast on both surfaces (#5FA8FF on --navy is 7.2:1, but only
+     2.3:1 on --panel, hence the .theme-default override). --focus-ring-contrast
+     is for controls whose own fill is already --focus-ring. */
+  --focus-ring: var(--blue);
+  --focus-ring-contrast: var(--white);
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 3px;
 }
 
 * {
@@ -128,6 +136,21 @@ img {
   max-width: 100%;
 }
 
+/* Focus indicators
+   One consistent ring for every keyboard-reachable control. :focus-visible
+   keeps it off mouse clicks. .nav-backdrop is excluded: it is tabindex="-1"
+   and covers the whole viewport, so a ring on it would frame the screen. */
+a:focus-visible,
+button:not(.nav-backdrop):focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
 .page-shell {
   min-height: 100vh;
   overflow-x: clip;
@@ -157,6 +180,12 @@ body.nav-open [data-logo-floater] {
 
 .skip-link:focus {
   top: 0;
+}
+
+/* The link is filled with --blue, so the default blue ring would read as a
+   halo rather than an indicator. */
+.skip-link:focus-visible {
+  outline-color: var(--focus-ring-contrast);
 }
 
 .site-header {
@@ -731,6 +760,11 @@ button.blog-tag-filter.blog-tag-active {
   color: var(--navy);
 }
 
+/* Same reason as .skip-link: the active filter is already --blue. */
+button.blog-tag-filter.blog-tag-active:focus-visible {
+  outline-color: var(--focus-ring-contrast);
+}
+
 .post-card.blog-tag-hidden {
   display: none;
 }
@@ -822,6 +856,11 @@ button.blog-tag-filter.blog-tag-active {
 .theme-default {
   background: var(--white);
   color: var(--ink);
+  /* --blue drops to 2.3:1 on a light surface; --navy gives 16.5:1. Both the
+     ring and the contrast ring go dark here — on a light background it is
+     the dark ring that stays visible next to a --blue filled control. */
+  --focus-ring: var(--navy);
+  --focus-ring-contrast: var(--navy);
 }
 
 .article-shell,

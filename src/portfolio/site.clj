@@ -64,14 +64,15 @@
      :alt-url (absolute-url alt-uri)
      :default-url (absolute-url default-uri)}))
 
-(defn- person-schema []
-  (let [site (site-data)]
+(defn- person-schema [locale]
+  (let [site (site-data)
+        copy (content/locale-copy locale)]
     {"@context" "https://schema.org"
      "@type" "Person"
      "name" (:name site)
      "url" (site-root-url)
      "email" (:email site)
-     "jobTitle" "Backend Developer"
+     "jobTitle" (:job-title copy)
      "sameAs" (mapv :href (:socials site))}))
 
 (defn- article-schema [post]
@@ -88,7 +89,7 @@
 (defn- collection-schema [locale posts]
   {"@context" "https://schema.org"
    "@type" "CollectionPage"
-   "name" "Blog"
+   "name" (:blog-title (content/locale-copy locale))
    "url" (absolute-url (if (= locale :fr) "/blog/" "/en/blog/"))
    "hasPart" (mapv (fn [p] {"@type" "BlogPosting"
                              "headline" (:title p)
@@ -127,7 +128,7 @@
       :description (:home-description copy)
       :meta (page-meta uri)
       :hreflang (hreflang-map locale uri alt-uri)
-      :json-ld (person-schema)
+      :json-ld (person-schema locale)
       :site site
       :labels copy
       :navigation (navigation locale)

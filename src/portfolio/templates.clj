@@ -184,7 +184,14 @@
       [:div.post-card-tags
        (for [tag chips]
          [:span.project-tech tag])]]
-     [:a.project-arrow {:href uri :aria-label post-link-label}]]))
+     [:a.project-arrow {:href uri :aria-label post-link-label}
+      ;; Lucide arrow-right (ISC), inlined — one glyph does not earn a
+      ;; dependency, and currentColor keeps it on the hover colour swap.
+      [:svg {:viewBox "0 0 24 24" :fill "none" :stroke "currentColor"
+             :stroke-width "2" :stroke-linecap "round"
+             :stroke-linejoin "round" :aria-hidden "true" :focusable "false"}
+       [:path {:d "M5 12h14"}]
+       [:path {:d "m12 5 7 7-7 7"}]]]]))
 
 (defn blog-index-section [{:keys [eyebrow title intro tags tag-filter-label posts blog-list-label post-link-label]}]
   (let [compact? (or (<= (count posts) 1)

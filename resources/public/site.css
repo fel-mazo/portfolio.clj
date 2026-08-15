@@ -780,7 +780,6 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
 }
 
 .project-arrow {
-  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -793,26 +792,9 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
   transition: background 150ms ease, color 150ms ease, transform 150ms ease;
 }
 
-.project-arrow::before {
-  content: "";
-  position: absolute;
-  left: 10px;
-  top: 9px;
-  width: 7px;
-  height: 7px;
-  border-top: 2px solid currentColor;
-  border-right: 2px solid currentColor;
-  transform: rotate(45deg);
-}
-
-.project-arrow::after {
-  content: "";
-  position: absolute;
-  left: 9px;
-  top: 14px;
-  width: 10px;
-  height: 2px;
-  background: currentColor;
+.project-arrow svg {
+  width: 18px;
+  height: 18px;
 }
 
 .project-arrow:hover {
@@ -1743,10 +1725,9 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
    smooth scrolling, the bounce loops, translation and scaling. Colour and
    opacity changes stay: they are motion-neutral and several are load-bearing
    (the nav scrim fade, the logo cross-fade, the card hover/focus feedback).
-   Transforms that are structural rather than animated are also kept — the
-   .project-arrow::before rotation draws the arrowhead, .site-header-actions
-   parks the mobile drawer off-screen and .nav-link::after hides the underline
-   at scaleX(0); removing those would expose or break each element, so only
+   Transforms that are structural rather than animated are also kept —
+   .site-header-actions parks the mobile drawer off-screen and .nav-link::after
+   hides the underline at scaleX(0); removing those would break each element, so only
    their transitions are dropped and they snap into place instead.
    This block is last in the file, so equal-specificity overrides win on
    source order alone — no priority flags needed. */

@@ -2,9 +2,8 @@
  {:name "Fahd El Mazouni"
   :site-url "https://fel-mazo.com"
   :base-path ""
-  :email "hello@fahdelmazouni.dev"
   :portrait-url "/my-picture.jpg"
-  :socials [{:label "LinkedIn" :href "https://www.linkedin.com/in/fahd-el-mazouni/"}
+  :socials [{:label "LinkedIn" :href "https://www.linkedin.com/in/fel-mazo/"}
             {:label "GitHub" :href "https://github.com/fel-mazo"}]
   :locales
   {:fr

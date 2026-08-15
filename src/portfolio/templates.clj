@@ -115,7 +115,6 @@
            [:div.footer-top
             [:p.footer-kicker (:footer-kicker labels)]
             [:p.footer-tagline (:footer-tagline labels)]
-            [:a.footer-contact {:href (str "mailto:" (:email site))} (:email site)]
             [:div.footer-socials
              (for [{:keys [href label]} (:socials site)]
                [:a.social-link {:href href :target "_blank" :rel "noreferrer"} label])]]

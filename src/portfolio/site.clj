@@ -71,7 +71,6 @@
      "@type" "Person"
      "name" (:name site)
      "url" (site-root-url)
-     "email" (:email site)
      "jobTitle" (:job-title copy)
      "sameAs" (mapv :href (:socials site))}))
 
@@ -97,7 +96,7 @@
                    posts)})
 
 (defn- localized-site [locale]
-  (merge (select-keys (site-data) [:name :site-url :email :socials])
+  (merge (select-keys (site-data) [:name :site-url :socials])
          (select-keys (content/locale-copy locale)
                       [:contact-label :copyright])))
 

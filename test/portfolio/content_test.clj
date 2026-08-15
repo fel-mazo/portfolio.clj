@@ -334,7 +334,7 @@
       (is (not (str/blank? (str value))) (str ":en " key " is blank")))))
 
 (deftest site-config-exposes-the-keys-rendering-depends-on
-  (doseq [key [:name :site-url :email :portrait-url :socials]]
+  (doseq [key [:name :site-url :portrait-url :socials]]
     (is (some? (support/site-value key)) (str "site.edn is missing " key)))
   (is (str/starts-with? (support/site-value :site-url) "https://")
       "canonical and og urls are built by concatenating :site-url"))

@@ -377,8 +377,7 @@
             internal (remove #(str/starts-with? % "http") hrefs)]
         (is (seq internal))
         (doseq [href internal
-                :when (not (str/starts-with? href "#"))
-                :when (not (str/starts-with? href "mailto:"))]
+                :when (not (str/starts-with? href "#"))]
           (is (str/starts-with? href "/portfolio/") href))
         (is (contains? (support/attr-values html "src") "/portfolio/js/main.js"))))))
 

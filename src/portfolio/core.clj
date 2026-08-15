@@ -1,5 +1,7 @@
 (ns portfolio.core
   (:require [ring.adapter.jetty :as jetty]
+            [ring.middleware.content-type :refer [wrap-content-type]]
+            [ring.middleware.not-modified :refer [wrap-not-modified]]
             [ring.middleware.resource :refer [wrap-resource]]
             [portfolio.site :as site])
   (:gen-class))
@@ -8,7 +10,10 @@
   (site/page-for-uri (:uri request)))
 
 (def app
-  (wrap-resource handler "public"))
+  (-> handler
+      (wrap-resource "public")
+      wrap-content-type
+      wrap-not-modified))
 
 (defn- server-port [args]
   (or (some-> (first args) parse-long)

@@ -66,10 +66,10 @@
    [:link {:rel "preload" :href (str base-path "/fonts/poppins-500.woff2") :as "font" :type "font/woff2" :crossorigin "anonymous"}]
    [:link {:rel "stylesheet" :href (str base-path "/site.css")}]))
 
-(defn layout [{:keys [locale title description site labels navigation body meta base-path hreflang json-ld]
+(defn layout [{:keys [locale title description site labels navigation body meta base-path hreflang json-ld alt-uri]
                :or {base-path ""}}]
   (let [home-href (str base-path (if (= locale :fr) "/" "/en/"))
-        locale-switch-href (str base-path (if (= locale :fr) "/en/" "/"))
+        locale-switch-href (str base-path (or alt-uri (if (= locale :fr) "/en/" "/")))
         {:keys [canonical-url og-type image-url robots]
          :or {og-type "website"
               robots "index,follow"}} meta

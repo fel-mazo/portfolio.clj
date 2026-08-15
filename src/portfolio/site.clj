@@ -126,6 +126,7 @@
       :description (:home-description copy)
       :meta (page-meta uri)
       :hreflang (hreflang-map locale uri alt-uri)
+      :alt-uri alt-uri
       :json-ld (person-schema locale)
       :site site
       :labels copy
@@ -155,6 +156,7 @@
       :description (:blog-description copy)
       :meta (page-meta uri)
       :hreflang (hreflang-map locale uri alt-uri)
+      :alt-uri alt-uri
       :json-ld (collection-schema locale posts)
       :site (localized-site locale)
       :labels copy
@@ -182,6 +184,7 @@
         :meta (page-meta (:uri post) :og-type "article")
         :hreflang (when alt-post
                     (hreflang-map locale (:uri post) (:uri alt-post)))
+        :alt-uri (:uri alt-post)
         :json-ld (article-schema post)
         :site (localized-site locale)
         :labels copy

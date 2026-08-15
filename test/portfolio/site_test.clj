@@ -222,6 +222,27 @@
                    alternates)
                 uri)))))))
 
+(deftest the-locale-switch-points-at-the-same-page-in-the-other-locale
+  (testing "paired pages swap in place"
+    (doseq [[uri alt-uri] {"/" "/en/" "/en/" "/"
+                           "/blog/" "/en/blog/" "/en/blog/" "/blog/"}]
+      (is (= alt-uri (get (only-attrs (support/html-for uri) "locale-switch") "href"))
+          uri)))
+  (testing "translated articles swap in place"
+    (with-posts [(support/stub-post :slug "fr-post" :locale :fr :uri "/blog/fr-post/"
+                                    :alternate-slug "en-post")
+                 (support/stub-post :slug "en-post" :locale :en :uri "/en/blog/en-post/"
+                                    :alternate-slug "fr-post")]
+      (fn []
+        (doseq [[uri alt-uri] {"/blog/fr-post/" "/en/blog/en-post/"
+                               "/en/blog/en-post/" "/blog/fr-post/"}]
+          (is (= alt-uri (get (only-attrs (support/html-for uri) "locale-switch") "href"))
+              uri)))))
+  (testing "an untranslated article falls back to the other locale's home"
+    (with-posts [(support/stub-post :slug "lonely" :locale :fr :uri "/blog/lonely/")]
+      (fn []
+        (is (= "/en/" (get (only-attrs (support/html-for "/blog/lonely/") "locale-switch") "href")))))))
+
 ;; ---------------------------------------------------------------- structured data
 
 (deftest json-ld-escapes-angle-brackets

@@ -206,6 +206,12 @@
        (for [post posts]
          (post-card (assoc post :post-link-label post-link-label)))]]]))
 
+(defn- labeled-value [separator label value]
+  (str label separator value))
+
+(defn- reading-time-value [labels post]
+  (str (:reading-time post) " " (:reading-time-unit labels)))
+
 (defn- related-posts-card [labels related-posts]
   [:div.article-related-card
    [:h3 (:related-posts-label labels)]
@@ -223,8 +229,10 @@
        [:h1.article-title (:title post)]
        [:p.article-excerpt (:excerpt post)]
        [:div.article-meta-row
-        [:span (str (:reading-time-label labels) " : " (:reading-time post) " min")]
-        [:span (str (:date-label-copy labels) " : " (:date-label post))]]
+        (let [separator (:label-separator labels)]
+          (list
+           [:span (labeled-value separator (:reading-time-label labels) (reading-time-value labels post))]
+           [:span (labeled-value separator (:date-label-copy labels) (:date-label post))]))]
        [:div.article-tags
         (for [tag (:tags post)]
           [:span.project-tech tag])]]]

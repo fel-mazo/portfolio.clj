@@ -47,6 +47,8 @@
     :not-found-body "Le lien est peut-etre ancien, incomplet ou incorrect."
     :not-found-cta "Retour a l'accueil"
     :reading-time-label "Temps"
+    :reading-time-unit "min"
+    :label-separator " : "
     :date-label-copy "Date"
     :related-posts-label "ARTICLES ASSOCIES"
     :project-label "VOIR LE PROJET"}
@@ -90,6 +92,8 @@
     :not-found-body "The link may be outdated, incomplete, or incorrect."
     :not-found-cta "Back to home"
     :reading-time-label "Reading time"
+    :reading-time-unit "min"
+    :label-separator ": "
     :date-label-copy "Date"
     :related-posts-label "RELATED ARTICLES"
     :project-label "VIEW PROJECT"}}}}

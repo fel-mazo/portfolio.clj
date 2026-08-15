@@ -187,6 +187,8 @@
                          :project-link (:project-link post)
                          :project-label (:project-label copy)
                          :reading-time-label (:reading-time-label copy)
+                         :reading-time-unit (:reading-time-unit copy)
+                         :label-separator (:label-separator copy)
                          :date-label-copy (:date-label-copy copy)
                          :related-posts-label (:related-posts-label copy)}})}))))
 

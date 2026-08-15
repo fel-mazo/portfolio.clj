@@ -175,18 +175,15 @@
   (when-let [post (content/find-post locale slug)]
     (let [copy (content/locale-copy locale)
           prefix (locale-prefix locale)
-          alt-locale (if (= locale :fr) :en :fr)
-          alt-post (content/alternate-post locale slug)
-          alt-uri (if alt-post
-                    (:uri alt-post)
-                    (if (= alt-locale :en) "/en/blog/" "/blog/"))]
+          alt-post (content/alternate-post locale slug)]
       (templates/layout
        {:locale locale
         :base-path (base-path)
         :title (:title post)
         :description (:excerpt post)
         :meta (page-meta (:uri post) :og-type "article")
-        :hreflang (hreflang-map locale (:uri post) alt-uri)
+        :hreflang (when alt-post
+                    (hreflang-map locale (:uri post) (:uri alt-post)))
         :json-ld (article-schema post)
         :site (localized-site locale)
         :labels copy

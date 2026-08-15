@@ -6,6 +6,21 @@
   (:gen-class))
 
 (def export-dir "dist")
+(def public-dir "resources/public")
+
+;; shadow-cljs writes its watch/dev output next to the released bundle in
+;; resources/public/js. `shadow-cljs release` does not purge a previous watch
+;; build, so these paths must never be copied into the export.
+(def ^:private dev-output-files #{"js/manifest.edn"})
+(def ^:private dev-output-dirs #{"js/cljs-runtime/"})
+
+(defn- normalize-path [path]
+  (str/replace (str path) java.io.File/separator "/"))
+
+(defn- dev-output? [relative-path]
+  (let [path (normalize-path relative-path)]
+    (or (contains? dev-output-files path)
+        (some #(str/starts-with? path %) dev-output-dirs))))
 
 (defn- file-uri? [uri]
   (re-find #"\.[a-z]+$" uri))
@@ -23,11 +38,13 @@
     (spit target html)))
 
 (defn- export-public-dir! []
-  (let [public-dir (io/file "resources/public")]
-    (when (.exists public-dir)
-      (doseq [file (remove #(.isDirectory %) (file-seq public-dir))]
-        (let [relative-path (.relativize (.toPath public-dir) (.toPath file))
-              target (io/file export-dir (str relative-path))]
+  (let [source (io/file public-dir)
+        root (.toPath source)]
+    (when (.exists source)
+      (doseq [file (remove #(.isDirectory %) (file-seq source))
+              :let [relative-path (str (.relativize root (.toPath file)))]
+              :when (not (dev-output? relative-path))]
+        (let [target (io/file export-dir relative-path)]
           (.mkdirs (.getParentFile target))
           (io/copy file target))))))
 

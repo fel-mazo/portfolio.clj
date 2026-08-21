@@ -171,15 +171,16 @@
                         (str/replace #"_{1,2}([^_]+)_{1,2}" "$1")
                         (str/replace #"\[([^\]]+)\]\([^)]+\)" "$1")
                         (str/replace #"`([^`]+)`" "$1")))
-        locale (keyword (or (:locale front-matter) "fr"))
+        locale (keyword (or (:locale front-matter) "en"))
         [html headings] (annotate-headings (markdown/md-to-html-string body))]
     (merge
      front-matter
      {:slug slug
       :locale locale
-      :uri (if (= locale :fr)
+      ;; English owns the root; French lives under /fr/.
+      :uri (if (= locale :en)
              (str "/blog/" slug "/")
-             (str "/en/blog/" slug "/"))
+             (str "/fr/blog/" slug "/"))
       :reading-time (reading-time body)
       :all-tags (post-tags front-matter)
       :headings headings

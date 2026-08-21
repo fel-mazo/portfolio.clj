@@ -31,7 +31,7 @@
 
 (deftest routes-answer-with-the-expected-status-and-content-type
   (testing "public pages are 200 text/html"
-    (doseq [uri (into ["/" "/index.html" "/blog/" "/en/" "/en/index.html" "/en/blog/"]
+    (doseq [uri (into ["/" "/index.html" "/blog/" "/fr/" "/fr/index.html" "/fr/blog/"]
                       (support/post-uris))]
       (let [{:keys [status headers]} (support/page uri)]
         (is (= 200 status) uri)
@@ -40,19 +40,20 @@
     (doseq [[uri content-type] {"/robots.txt" "text/plain; charset=utf-8"
                                 "/sitemap.xml" "application/xml; charset=utf-8"
                                 "/feed.xml" "application/xml; charset=utf-8"
-                                "/en/feed.xml" "application/xml; charset=utf-8"}]
+                                "/en/feed.xml" "application/xml; charset=utf-8"
+                                "/fr/feed.xml" "application/xml; charset=utf-8"}]
       (let [{:keys [status headers]} (support/page uri)]
         (is (= 200 status) uri)
         (is (= content-type (get headers "content-type")) uri))))
   (testing "unknown routes are 404 but still render a full page"
-    (doseq [uri ["/missing" "/en/missing" "/blog/no-such-post/" "/en/blog/no-such-post/" "/404.html"]]
+    (doseq [uri ["/missing" "/fr/missing" "/blog/no-such-post/" "/fr/blog/no-such-post/" "/404.html"]]
       (let [{:keys [status headers body]} (support/page uri)]
         (is (= 404 status) uri)
         (is (= "text/html; charset=utf-8" (get headers "content-type")) uri)
         (is (= 1 (count (support/elements-with-tag body "main"))) uri)))))
 
 (deftest not-found-pages-are-localized-and-kept-out-of-the-index
-  (doseq [[uri locale] {"/missing" :fr "/en/missing" :en "/404.html" :fr}]
+  (doseq [[uri locale] {"/missing" :en "/fr/missing" :fr "/404.html" :en}]
     (let [html (support/html-for uri)
           text (support/decode-entities html)]
       (is (= (name locale) (get-in (first (support/elements-with-tag html "html")) [:attrs "lang"])) uri)
@@ -60,7 +61,7 @@
       (is (str/includes? text (support/copy locale :not-found-cta)) uri)
       (is (= "noindex,nofollow" (support/meta-content html "robots")) uri)))
   (testing "pages that do exist stay indexable"
-    (doseq [uri ["/" "/blog/" "/en/"]]
+    (doseq [uri ["/" "/blog/" "/fr/"]]
       (is (= "index,follow" (support/meta-content (support/html-for uri) "robots")) uri))))
 
 ;; ---------------------------------------------------------------- landmarks
@@ -85,7 +86,7 @@
 
 (deftest accessible-names-are-wired-to-the-locale-copy
   (doseq [locale [:fr :en]]
-    (let [prefix (if (= locale :fr) "" "/en")
+    (let [prefix (if (= locale :en) "" "/fr")
           home (support/html-for (str prefix "/"))
           ;; The blog index only grows a filter group and cards once posts
           ;; exist, so the corpus is supplied here rather than shipped.
@@ -149,7 +150,7 @@
   (testing "articles are tagged as articles, other pages as websites"
     (with-posts [(support/stub-post)]
       (fn []
-        (is (= "article" (support/meta-content (support/html-for "/en/blog/stub/") "og:type")))))
+        (is (= "article" (support/meta-content (support/html-for "/blog/stub/") "og:type")))))
     (is (= "website" (support/meta-content (support/html-for "/") "og:type")))))
 
 (deftest og-image-is-absolute
@@ -168,7 +169,7 @@
     (let [html (support/html-for uri)
           feeds (filter #(= "application/rss+xml" (get % "type"))
                         (support/links-with-rel html "alternate"))
-          expected (if (= :fr (support/locale-of uri)) "/feed.xml" "/en/feed.xml")]
+          expected (if (= :fr (support/locale-of uri)) "/fr/feed.xml" "/feed.xml")]
       (is (= [expected] (map #(get % "href") feeds)) uri)
       (is (= 200 (:status (support/page expected))) uri))))
 
@@ -184,15 +185,15 @@
 ;; ---------------------------------------------------------------- hreflang
 
 (deftest hreflang-links-pair-the-two-locales
-  (doseq [[fr-uri en-uri] [["/" "/en/"] ["/blog/" "/en/blog/"]]]
-    (doseq [uri [fr-uri en-uri]]
+  (doseq [[en-uri fr-uri] [["/" "/fr/"] ["/blog/" "/fr/blog/"]]]
+    (doseq [uri [en-uri fr-uri]]
       (let [alternates (->> (support/links-with-rel (support/html-for uri) "alternate")
                             (filter #(get % "hreflang"))
                             (map (juxt #(get % "hreflang") #(get % "href")))
                             (into {}))]
         (is (= {"fr" (support/absolute fr-uri)
                 "en" (support/absolute en-uri)
-                "x-default" (support/absolute fr-uri)}
+                "x-default" (support/absolute en-uri)}
                alternates)
             uri)))))
 
@@ -206,42 +207,42 @@
         (is (seq (support/links-with-rel (support/html-for (:uri post)) "canonical"))
             "dropping hreflang must not drop the canonical link too"))))
   (testing "a translated pair links to each other"
-    (with-posts [(support/stub-post :slug "fr-post" :locale :fr :uri "/blog/fr-post/"
+    (with-posts [(support/stub-post :slug "fr-post" :locale :fr :uri "/fr/blog/fr-post/"
                                     :alternate-slug "en-post")
-                 (support/stub-post :slug "en-post" :locale :en :uri "/en/blog/en-post/"
+                 (support/stub-post :slug "en-post" :locale :en :uri "/blog/en-post/"
                                     :alternate-slug "fr-post")]
       (fn []
-        (doseq [uri ["/blog/fr-post/" "/en/blog/en-post/"]]
+        (doseq [uri ["/fr/blog/fr-post/" "/blog/en-post/"]]
           (let [alternates (->> (support/links-with-rel (support/html-for uri) "alternate")
                                 (filter #(get % "hreflang"))
                                 (map (juxt #(get % "hreflang") #(get % "href")))
                                 (into {}))]
-            (is (= {"fr" (support/absolute "/blog/fr-post/")
-                    "en" (support/absolute "/en/blog/en-post/")
-                    "x-default" (support/absolute "/blog/fr-post/")}
+            (is (= {"fr" (support/absolute "/fr/blog/fr-post/")
+                    "en" (support/absolute "/blog/en-post/")
+                    "x-default" (support/absolute "/blog/en-post/")}
                    alternates)
                 uri)))))))
 
 (deftest the-locale-switch-points-at-the-same-page-in-the-other-locale
   (testing "paired pages swap in place"
-    (doseq [[uri alt-uri] {"/" "/en/" "/en/" "/"
-                           "/blog/" "/en/blog/" "/en/blog/" "/blog/"}]
+    (doseq [[uri alt-uri] {"/" "/fr/" "/fr/" "/"
+                           "/blog/" "/fr/blog/" "/fr/blog/" "/blog/"}]
       (is (= alt-uri (get (only-attrs (support/html-for uri) "locale-switch") "href"))
           uri)))
   (testing "translated articles swap in place"
-    (with-posts [(support/stub-post :slug "fr-post" :locale :fr :uri "/blog/fr-post/"
+    (with-posts [(support/stub-post :slug "fr-post" :locale :fr :uri "/fr/blog/fr-post/"
                                     :alternate-slug "en-post")
-                 (support/stub-post :slug "en-post" :locale :en :uri "/en/blog/en-post/"
+                 (support/stub-post :slug "en-post" :locale :en :uri "/blog/en-post/"
                                     :alternate-slug "fr-post")]
       (fn []
-        (doseq [[uri alt-uri] {"/blog/fr-post/" "/en/blog/en-post/"
-                               "/en/blog/en-post/" "/blog/fr-post/"}]
+        (doseq [[uri alt-uri] {"/blog/en-post/" "/fr/blog/fr-post/"
+                               "/fr/blog/fr-post/" "/blog/en-post/"}]
           (is (= alt-uri (get (only-attrs (support/html-for uri) "locale-switch") "href"))
               uri)))))
   (testing "an untranslated article falls back to the other locale's home"
-    (with-posts [(support/stub-post :slug "lonely" :locale :fr :uri "/blog/lonely/")]
+    (with-posts [(support/stub-post :slug "lonely" :locale :en :uri "/blog/lonely/")]
       (fn []
-        (is (= "/en/" (get (only-attrs (support/html-for "/blog/lonely/") "locale-switch") "href")))))))
+        (is (= "/fr/" (get (only-attrs (support/html-for "/blog/lonely/" ) "locale-switch") "href")))))))
 
 ;; ---------------------------------------------------------------- structured data
 
@@ -253,7 +254,7 @@
 
 (deftest home-pages-describe-the-person
   (doseq [locale [:fr :en]]
-    (let [json (first (support/json-ld (support/html-for (if (= :fr locale) "/" "/en/"))))]
+    (let [json (first (support/json-ld (support/html-for (if (= :en locale) "/" "/fr/"))))]
       (is (some? json))
       (is (str/includes? json "\"@type\":\"Person\""))
       (is (= (support/site-value :name) (support/json-field json "name")))
@@ -270,7 +271,7 @@
 
 (deftest blog-indexes-describe-the-whole-collection
   (doseq [locale [:fr :en]]
-    (let [uri (if (= :fr locale) "/blog/" "/en/blog/")
+    (let [uri (if (= :en locale) "/blog/" "/fr/blog/")
           json (first (support/json-ld (support/html-for uri)))
           posts (content/posts-for-locale locale)]
       (is (str/includes? json "\"@type\":\"CollectionPage\"") uri)
@@ -284,7 +285,7 @@
 
 (deftest rss-feeds-carry-exactly-their-own-locale-s-posts
   (doseq [locale [:fr :en]]
-    (let [uri (if (= :fr locale) "/feed.xml" "/en/feed.xml")
+    (let [uri (if (= :en locale) "/feed.xml" "/fr/feed.xml")
           body (:body (support/page uri))
           links (set (map second (re-seq #"<link>([^<]+)</link>" body)))]
       (is (str/starts-with? body "<?xml version=\"1.0\" encoding=\"UTF-8\"?>") uri)
@@ -301,14 +302,14 @@
 (deftest sitemap-lists-every-public-route-with-a-lastmod
   ;; A lastmod can only come from a post date, so the corpus is supplied here:
   ;; the shipped one may legitimately be empty.
-  (let [posts [(support/stub-post :slug "fr-post" :locale :fr :uri "/blog/fr-post/"
+  (let [posts [(support/stub-post :slug "fr-post" :locale :fr :uri "/fr/blog/fr-post/"
                                   :date "2026-02-01")
-               (support/stub-post :slug "en-post" :locale :en :uri "/en/blog/en-post/"
+               (support/stub-post :slug "en-post" :locale :en :uri "/blog/en-post/"
                                   :date "2026-03-01")]
         xml (with-posts posts #(:body (support/page "/sitemap.xml")))
         entries (into {} (map (fn [[_ loc lastmod]] [loc lastmod]))
                       (re-seq #"<url><loc>([^<]+)</loc><lastmod>([^<]+)</lastmod></url>" xml))]
-    (doseq [uri (into ["/" "/blog/" "/en/" "/en/blog/"] (map :uri posts))]
+    (doseq [uri (into ["/" "/blog/" "/fr/" "/fr/blog/"] (map :uri posts))]
       (is (contains? entries (support/absolute uri)) uri))
     (is (every? #(re-matches #"\d{4}-\d{2}-\d{2}" %) (vals entries)))
     (testing "posts date their own entry"
@@ -339,34 +340,34 @@
 
 (deftest related-posts-card-renders-only-when-there-are-related-posts
   (testing "a post with tag-sharing siblings gets a card listing each of them"
-    (with-posts [(support/stub-post :slug "a" :uri "/en/blog/a/" :tags ["x"] :date "2026-03-01")
-                 (support/stub-post :slug "b" :uri "/en/blog/b/" :tags ["x"] :date "2026-02-01")
-                 (support/stub-post :slug "c" :uri "/en/blog/c/" :tags ["x"] :date "2026-01-01")]
+    (with-posts [(support/stub-post :slug "a" :uri "/blog/a/" :tags ["x"] :date "2026-03-01")
+                 (support/stub-post :slug "b" :uri "/blog/b/" :tags ["x"] :date "2026-02-01")
+                 (support/stub-post :slug "c" :uri "/blog/c/" :tags ["x"] :date "2026-01-01")]
       (fn []
-        (let [html (support/html-for "/en/blog/a/")]
+        (let [html (support/html-for "/blog/a/")]
           (is (= 1 (count (support/attrs-with-class html "article-related-card"))))
-          (is (contains? (support/attr-values html "href") "/en/blog/b/"))
-          (is (contains? (support/attr-values html "href") "/en/blog/c/"))))))
+          (is (contains? (support/attr-values html "href") "/blog/b/"))
+          (is (contains? (support/attr-values html "href") "/blog/c/"))))))
   (testing "a post with no tag overlap gets no card at all"
-    (with-posts [(support/stub-post :slug "a" :uri "/en/blog/a/" :tags ["x"])
-                 (support/stub-post :slug "b" :uri "/en/blog/b/" :tags ["y"])]
+    (with-posts [(support/stub-post :slug "a" :uri "/blog/a/" :tags ["x"])
+                 (support/stub-post :slug "b" :uri "/blog/b/" :tags ["y"])]
       (fn []
-        (let [html (support/html-for "/en/blog/a/")]
+        (let [html (support/html-for "/blog/a/")]
           (is (empty? (support/attrs-with-class html "article-related-card")))
-          (is (not (contains? (support/attr-values html "href") "/en/blog/b/"))))))))
+          (is (not (contains? (support/attr-values html "href") "/blog/b/"))))))))
 
 (deftest ai-translated-posts-disclose-the-translation
   (testing "a post flagged :ai-translated carries the localized notice"
-    (with-posts [(support/stub-post :slug "fr-post" :locale :fr :uri "/blog/fr-post/"
+    (with-posts [(support/stub-post :slug "fr-post" :locale :fr :uri "/fr/blog/fr-post/"
                                     :ai-translated true)]
       (fn []
-        (let [html (support/html-for "/blog/fr-post/")]
+        (let [html (support/html-for "/fr/blog/fr-post/")]
           (is (= 1 (count (support/attrs-with-class html "article-translation-notice"))))
           (is (str/includes? html (support/copy :fr :ai-translated-notice)))))))
   (testing "a post written in its own locale carries nothing"
-    (with-posts [(support/stub-post :slug "en-post" :uri "/en/blog/en-post/")]
+    (with-posts [(support/stub-post :slug "en-post" :uri "/blog/en-post/")]
       (fn []
-        (let [html (support/html-for "/en/blog/en-post/")]
+        (let [html (support/html-for "/blog/en-post/")]
           (is (empty? (support/attrs-with-class html "article-translation-notice")))
           (is (not (str/includes? html (support/copy :en :ai-translated-notice)))))))))
 
@@ -374,7 +375,7 @@
   ;; templates.clj emits these attributes and portfolio.ui.tags queries them;
   ;; the two sides only stay in sync if something checks the contract.
   (doseq [locale [:fr :en]]
-    (let [uri (if (= :fr locale) "/blog/" "/en/blog/")
+    (let [uri (if (= :en locale) "/blog/" "/fr/blog/")
           html (support/html-for uri)
           buttons (support/attrs-with-class html "blog-tag-filter")
           cards (support/attrs-with-class html "post-card")
@@ -394,7 +395,7 @@
 
 (deftest blog-index-cards-link-to-their-posts
   (doseq [locale [:fr :en]]
-    (let [uri (if (= :fr locale) "/blog/" "/en/blog/")
+    (let [uri (if (= :en locale) "/blog/" "/fr/blog/")
           hrefs (support/attr-values (support/html-for uri) "href")]
       (doseq [post (content/posts-for-locale locale)]
         (is (contains? hrefs (:uri post)) (:uri post))))))
@@ -416,7 +417,7 @@
   ;; A regression here would mean config captured at namespace load, which is
   ;; invisible in production but breaks the REPL workflow documented in AGENTS.md.
   (let [sentinel "SENTINEL-ABOUT-HEADING"
-        patched (assoc-in (content/site-config) [:site :locales :fr :about-heading] sentinel)]
+        patched (assoc-in (content/site-config) [:site :locales :en :about-heading] sentinel)]
     (with-redefs [content/site-config (constantly patched)]
       (is (str/includes? (support/html-for "/") sentinel)))))
 
@@ -441,15 +442,39 @@
         origin (:site-url (:site patched))
         root (str origin "/portfolio")]
     (with-redefs [content/site-config (constantly patched)]
-      (doseq [uri ["/" "/en/" "/blog/" "/en/blog/"]]
+      (doseq [uri ["/" "/fr/" "/blog/" "/fr/blog/"]]
         (let [html (:body (site/page-for-uri uri))]
           (doseq [attr ["href" "content"]
                   value (support/attr-values html attr)
                   :when (str/starts-with? value origin)]
             (is (str/starts-with? value root) (str uri " -> " value)))))
-      (doseq [route ["/sitemap.xml" "/feed.xml" "/en/feed.xml" "/robots.txt"]]
+      (doseq [route ["/sitemap.xml" "/feed.xml" "/en/feed.xml" "/fr/feed.xml" "/robots.txt"]]
         (let [body (:body (site/page-for-uri route))]
           (is (str/includes? body root) route)
           (is (not (re-find (re-pattern (str (java.util.regex.Pattern/quote origin) "/(?!portfolio)"))
                             body))
               (str route " publishes an unprefixed absolute URL")))))))
+
+;; ---------------------------------------------------------------- legacy /en/ URLs
+
+(deftest legacy-en-urls-redirect-to-their-post-swap-home
+  ;; English used to live under /en/; those URLs must keep answering on a host
+  ;; (GitHub Pages) that cannot serve HTTP redirects.
+  (testing "every legacy /en/ URL ships a noindex meta-refresh stub"
+    (doseq [uri (site/legacy-en-uris)]
+      (let [{:keys [status headers body]} (support/page uri)]
+        (is (= 200 status) uri)
+        (is (= "text/html; charset=utf-8" (get headers "content-type")) uri)
+        (is (= "noindex,follow" (support/meta-content body "robots")) uri)
+        (is (str/includes? body "http-equiv=\"refresh\"") uri)
+        (is (empty? (support/elements-with-tag body "main"))
+            (str uri " must not render a page of its own")))))
+  (testing "the refresh and the canonical point at the stripped URL"
+    (let [html (support/html-for "/en/blog/hello-world/")
+          canonical (get (first (support/links-with-rel html "canonical")) "href")]
+      (is (str/includes? html "content=\"0; url=/blog/hello-world/\""))
+      (is (= (support/absolute "/blog/hello-world/") canonical))))
+  (testing "/en/index.html normalizes to the home route"
+    (is (str/includes? (support/html-for "/en/index.html") "content=\"0; url=/\"")))
+  (testing "unknown /en/ paths redirect too, then 404 at their new address"
+    (is (str/includes? (support/html-for "/en/missing/") "content=\"0; url=/missing/\""))))

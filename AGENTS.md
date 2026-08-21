@@ -5,9 +5,10 @@ Canonical guidance for this repo. `CLAUDE.md` points here; keep changes in this 
 ## What This Is
 
 Static portfolio site generator. Clojure renders HTML (Hiccup) from EDN config and Markdown posts;
-ClojureScript (shadow-cljs) adds browser behaviour as progressive enhancement. Bilingual: French at
-the root, English under `/en/`. `bb export` produces static HTML in `dist/`, which CI deploys to
-GitHub Pages.
+ClojureScript (shadow-cljs) adds browser behaviour as progressive enhancement. Bilingual: English
+at the root, French under `/fr/`. Legacy `/en/` URLs still answer — as meta-refresh redirect stubs
+(GitHub Pages cannot serve HTTP redirects), with `/en/feed.xml` still serving the English feed.
+`bb export` produces static HTML in `dist/`, which CI deploys to GitHub Pages.
 
 ## Build, Test, and Development Commands
 

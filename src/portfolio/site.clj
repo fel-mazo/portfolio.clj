@@ -18,7 +18,7 @@
   (mapv prefix-uri posts))
 
 (defn- locale-prefix [locale]
-  (str (base-path) (if (= locale :fr) "" "/en")))
+  (str (base-path) (if (= locale :en) "" "/fr")))
 
 (defn- site-url []
   (:site-url (site-data)))
@@ -57,7 +57,8 @@
    :robots robots})
 
 (defn- hreflang-map [locale self-uri alt-uri]
-  (let [default-uri (if (= locale :fr) self-uri alt-uri)]
+  ;; English is the default locale, so x-default points at the English page.
+  (let [default-uri (if (= locale :en) self-uri alt-uri)]
     {:self-lang (name locale)
      :self-url (absolute-url self-uri)
      :alt-lang (name (if (= locale :fr) :en :fr))
@@ -89,7 +90,7 @@
   {"@context" "https://schema.org"
    "@type" "CollectionPage"
    "name" (:blog-title (content/locale-copy locale))
-   "url" (absolute-url (if (= locale :fr) "/blog/" "/en/blog/"))
+   "url" (absolute-url (if (= locale :en) "/blog/" "/fr/blog/"))
    "hasPart" (mapv (fn [p] {"@type" "BlogPosting"
                              "headline" (:title p)
                              "url" (absolute-url (:uri p))})
@@ -117,8 +118,8 @@
   (let [copy (content/locale-copy locale)
         prefix (locale-prefix locale)
         site (localized-site locale)
-        uri (if (= locale :fr) "/" "/en/")
-        alt-uri (if (= locale :fr) "/en/" "/")]
+        uri (if (= locale :en) "/" "/fr/")
+        alt-uri (if (= locale :en) "/fr/" "/")]
     (templates/layout
      {:locale locale
       :base-path (base-path)
@@ -146,8 +147,8 @@
 
 (defn render-blog-index [locale]
   (let [copy (content/locale-copy locale)
-        uri (if (= locale :fr) "/blog/" "/en/blog/")
-        alt-uri (if (= locale :fr) "/en/blog/" "/blog/")
+        uri (if (= locale :en) "/blog/" "/fr/blog/")
+        alt-uri (if (= locale :en) "/fr/blog/" "/blog/")
         posts (content/posts-for-locale locale)]
     (templates/layout
      {:locale locale
@@ -239,8 +240,37 @@
 (defn- not-found-response [locale]
   (html-response 404 (render-not-found locale)))
 
+;; English used to live under /en/ before it took the root. Those URLs stay
+;; reachable: this is a static export on GitHub Pages, which cannot serve HTTP
+;; redirects, so each legacy URL ships an HTML stub that meta-refreshes to the
+;; new address (and noindexes itself out of the search results).
+(defn- en-legacy-target-path
+  "Path a pre-swap URL serves today: /en/blog/foo/ -> /blog/foo/."
+  [uri]
+  (let [stripped (str/replace uri #"(?i)^/en(/index\.html)?(?=/|$)" "")]
+    (if (str/blank? stripped) "/" stripped)))
+
+(defn- redirect-response [uri]
+  (let [path (en-legacy-target-path uri)]
+    (html-response
+     200
+     (str "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n"
+          "<title>Moved</title>\n"
+          "<meta name=\"robots\" content=\"noindex,follow\">\n"
+          "<link rel=\"canonical\" href=\"" (absolute-url path) "\">\n"
+          "<meta http-equiv=\"refresh\" content=\"0; url=" (base-path) path "\">\n"
+          "</head>\n<body>\n<p>This page has moved to <a href=\"" (base-path) path "\">" path "</a>.</p>\n"
+          "</body>\n</html>\n"))))
+
+(defn legacy-en-uris
+  "Legacy /en/ URLs that must keep answering after English took the root."
+  []
+  (into ["/en/" "/en/blog/"]
+        (map #(str "/en/blog/" (:slug %) "/"))
+        (content/posts-for-locale :en)))
+
 (defn- public-routes []
-  (concat ["/" "/blog/" "/en/" "/en/blog/"]
+  (concat ["/" "/blog/" "/fr/" "/fr/blog/"]
           (map :uri (content/posts))))
 
 (defn- escape-xml [s]
@@ -260,7 +290,7 @@
 (defn- render-rss-feed [locale]
   (let [site (site-data)
         copy (content/locale-copy locale)
-        prefix (if (= locale :fr) "" "/en")
+        prefix (if (= locale :en) "" "/fr")
         posts (content/posts-for-locale locale)]
     (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
          "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n"
@@ -311,21 +341,26 @@
 
 (defn page-for-uri [uri]
   (case uri
-    "/" (home-response :fr)
-    "/index.html" (home-response :fr)
-    "/blog/" (blog-index-response :fr)
-    "/en/" (home-response :en)
-    "/en/index.html" (home-response :en)
-    "/en/blog/" (blog-index-response :en)
-    "/feed.xml" (text-response 200 (render-rss-feed :fr) "application/xml; charset=utf-8")
+    "/" (home-response :en)
+    "/index.html" (home-response :en)
+    "/blog/" (blog-index-response :en)
+    "/fr/" (home-response :fr)
+    "/fr/index.html" (home-response :fr)
+    "/fr/blog/" (blog-index-response :fr)
+    ;; /en/feed.xml keeps serving the English feed: feed readers cannot follow
+    ;; an HTML redirect, and existing subscribers still poll the old URL.
+    "/feed.xml" (text-response 200 (render-rss-feed :en) "application/xml; charset=utf-8")
     "/en/feed.xml" (text-response 200 (render-rss-feed :en) "application/xml; charset=utf-8")
+    "/fr/feed.xml" (text-response 200 (render-rss-feed :fr) "application/xml; charset=utf-8")
     "/robots.txt" (text-response 200 (robots-txt) "text/plain; charset=utf-8")
     "/sitemap.xml" (text-response 200 (sitemap-xml) "application/xml; charset=utf-8")
-    "/404.html" (html-response 404 (render-not-found :fr))
-    (let [fr-match (re-matches #"/blog/([^/]+)/" uri)
-          en-match (re-matches #"/en/blog/([^/]+)/" uri)]
+    "/404.html" (html-response 404 (render-not-found :en))
+    (let [fr-match (re-matches #"/fr/blog/([^/]+)/" uri)
+          en-match (re-matches #"/blog/([^/]+)/" uri)]
       (cond
         fr-match (article-response :fr (second fr-match))
         en-match (article-response :en (second en-match))
-        (str/starts-with? uri "/en/") (not-found-response :en)
-        :else (not-found-response :fr)))))
+        ;; Legacy /en/ URLs redirect to their post-swap home.
+        (str/starts-with? uri "/en/") (redirect-response uri)
+        (str/starts-with? uri "/fr/") (not-found-response :fr)
+        :else (not-found-response :en)))))

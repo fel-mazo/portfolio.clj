@@ -44,14 +44,21 @@
 (deftest export-writes-a-file-for-every-public-route
   (let [[_ paths] (exported)]
     (testing "machine-readable routes keep their own filename"
-      (doseq [path ["404.html" "robots.txt" "sitemap.xml" "feed.xml" "en/feed.xml"]]
+      (doseq [path ["404.html" "robots.txt" "sitemap.xml" "feed.xml" "en/feed.xml" "fr/feed.xml"]]
         (is (contains? paths path) path)))
     (testing "directory routes become index.html"
-      (doseq [path ["index.html" "blog/index.html" "en/index.html" "en/blog/index.html"]]
+      (doseq [path ["index.html" "blog/index.html" "fr/index.html" "fr/blog/index.html"]]
         (is (contains? paths path) path)))
     (testing "every post gets its own page at its own uri"
       (doseq [post (content/posts)]
         (is (contains? paths (str (subs (:uri post) 1) "index.html")) (:uri post))))
+    (testing "legacy /en/ routes keep answering with a redirect stub"
+      (doseq [path ["en/index.html" "en/blog/index.html"]]
+        (is (contains? paths path) path))
+      (doseq [post (content/posts-for-locale :en)]
+        (is (contains? paths (str "en/blog/" (:slug post) "/index.html")) (:slug post))
+        (is (not (contains? paths (str "en/" (:slug post) "/index.html")))
+            (str (:slug post) " has no legacy route outside /en/blog/"))))
     (testing "static assets are copied alongside the pages"
       (is (contains? paths "favicon.svg"))
       (is (contains? paths "site.css")))))

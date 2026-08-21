@@ -98,16 +98,17 @@
 
 (defn html-for [uri] (:body (page uri)))
 
-(def static-page-uris ["/" "/blog/" "/en/" "/en/blog/" "/404.html"])
+(def static-page-uris ["/" "/blog/" "/fr/" "/fr/blog/" "/404.html"])
 
 (defn post-uris [] (mapv :uri (content/posts)))
 
 (defn all-page-uris [] (into static-page-uris (post-uris)))
 
 (defn locale-of
-  "The locale a rendered URI belongs to."
+  "The locale a rendered URI belongs to. English owns the root; French lives
+  under /fr/. Legacy /en/ stubs are English but never carry locale content."
   [uri]
-  (if (str/starts-with? uri "/en/") :en :fr))
+  (if (str/starts-with? uri "/fr/") :fr :en))
 
 ;; ---------------------------------------------------------------- content
 
@@ -122,7 +123,7 @@
   [& {:as overrides}]
   (merge {:slug "stub"
           :locale :en
-          :uri "/en/blog/stub/"
+          :uri "/blog/stub/"
           :title "Stub"
           :excerpt "Stub excerpt."
           :date "2026-01-01"

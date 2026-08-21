@@ -88,7 +88,10 @@
 (defn -main [& _]
   (clean-export-dir!)
   (.mkdirs (io/file export-dir))
-  (doseq [uri ["/" "/blog/" "/en/" "/en/blog/" "/404.html" "/robots.txt" "/sitemap.xml" "/feed.xml" "/en/feed.xml"]]
+  (doseq [uri ["/" "/blog/" "/fr/" "/fr/blog/" "/404.html" "/robots.txt" "/sitemap.xml" "/feed.xml" "/en/feed.xml" "/fr/feed.xml"]]
+    (write-page! uri (:body (site/page-for-uri uri))))
+  ;; Legacy /en/ URLs ship as meta-refresh stubs so old links keep working.
+  (doseq [uri (site/legacy-en-uris)]
     (write-page! uri (:body (site/page-for-uri uri))))
   (doseq [post (content/posts)]
     (write-page! (:uri post)

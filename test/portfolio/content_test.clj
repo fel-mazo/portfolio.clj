@@ -61,9 +61,9 @@
         (is (not (str/blank? (:excerpt post))) where)
         (is (not (str/blank? (:html post))) where)
         (is (pos? (:reading-time post)) where)
-        (is (= (if (= :fr (:locale post))
+        (is (= (if (= :en (:locale post))
                  (str "/blog/" (:slug post) "/")
-                 (str "/en/blog/" (:slug post) "/"))
+                 (str "/fr/blog/" (:slug post) "/"))
                (:uri post))
             where)))))
 
@@ -106,7 +106,7 @@
           (let [posts (content/load-posts)]
             (is (= 1 (count posts)))
             (is (= "Valid post" (:title (first posts))))
-            (is (= "/en/blog/valid-post.en/" (:uri (first posts))))
+            (is (= "/blog/valid-post.en/" (:uri (first posts))))
             (is (.contains (str stderr) "Warning: skipping post"))))))))
 
 (deftest list-resource-urls-supports-jar-resources
@@ -267,9 +267,9 @@
                                            ["one-c" ["a"] "2026-06-01"]
                                            ["none" ["z"] "2026-07-01"]]]
                      (support/stub-post :slug slug :tags tags :date date
-                                        :uri (str "/en/blog/" slug "/")))
+                                        :uri (str "/blog/" slug "/")))
         other-locale (support/stub-post :slug "fr-twin" :locale :fr :tags ["a" "b"]
-                                        :uri "/blog/fr-twin/" :date "2026-08-01")]
+                                        :uri "/fr/blog/fr-twin/" :date "2026-08-01")]
     (with-posts (concat [current other-locale] candidates)
       (fn []
         (let [related (content/related-posts :en "current")]
@@ -303,12 +303,12 @@
           (str locale " advertises a tag no post carries")))))
 
 (deftest alternate-post-follows-the-alternate-slug
-  (let [fr (support/stub-post :slug "fr-post" :locale :fr :uri "/blog/fr-post/"
+  (let [fr (support/stub-post :slug "fr-post" :locale :fr :uri "/fr/blog/fr-post/"
                               :alternate-slug "en-post")
-        en (support/stub-post :slug "en-post" :locale :en :uri "/en/blog/en-post/"
+        en (support/stub-post :slug "en-post" :locale :en :uri "/blog/en-post/"
                               :alternate-slug "fr-post")
-        lonely (support/stub-post :slug "lonely" :locale :en :uri "/en/blog/lonely/")
-        dangling (support/stub-post :slug "dangling" :locale :en :uri "/en/blog/dangling/"
+        lonely (support/stub-post :slug "lonely" :locale :en :uri "/blog/lonely/")
+        dangling (support/stub-post :slug "dangling" :locale :en :uri "/blog/dangling/"
                                     :alternate-slug "gone")]
     (with-posts [fr en lonely dangling]
       (fn []

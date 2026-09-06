@@ -17,7 +17,10 @@ at the root, French under `/fr/`. Legacy `/en/` URLs still answer — as meta-re
 - `bb dev [port]` — starts the shadow-cljs watcher **and** the Ring/Jetty server together. Port
   comes from the arg, else `PORT`, else `3001`.
 - `bb cljs:watch` / `bb cljs:release` — shadow-cljs alone.
-- `bb export` — `shadow-cljs release app`, then `clojure -M:export`.
+- `bb export` — vendors the highlight.js theme, then `shadow-cljs release app`, then `clojure -M:export`.
+- `bb vendor` — copies `node_modules/highlight.js/styles/github-dark.min.css` into
+  `resources/public/css/`. Runs automatically in `bb dev` and `bb export`; run by hand only when
+  bumping highlight.js.
 - `bb test` — the `clojure.test` suite via `portfolio.test-runner`. No single-test runner.
 - `bb new-post "Title"` — writes the English skeleton `resources/content/posts/{slug}.en.md` with
   the EDN front-matter filled in (slug derived from the title, accents stripped; date is today),
@@ -111,7 +114,7 @@ inspect `dist/`.
   changed namespaces and clears the content cache on every request, so edits to Clojure, `site.edn`,
   posts and CSS show up on the next page load. ClojureScript and CSS hot-reload via shadow-cljs
   without a page load. `bb export` renders in one shot and caches the corpus.
-- **`resources/public/js/` is generated and gitignored** — never edit or commit it. Without a
+- **`resources/public/js/` and `resources/public/css/` are generated and gitignored** — never edit or commit them. Without a
   running watcher or a prior release build, `/js/main.js` 404s in dev.
 
 ## Commit & Pull Request Guidelines

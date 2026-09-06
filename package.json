@@ -6,5 +6,8 @@
   "scripts": {
     "cljs:watch": "shadow-cljs watch app",
     "cljs:release": "shadow-cljs release app"
+  },
+  "dependencies": {
+    "highlight.js": "^11.12.0"
   }
 }

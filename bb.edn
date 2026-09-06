@@ -2,13 +2,19 @@
  {:requires ([babashka.process :as p]
              [clojure.java.io :as io]
              [clojure.string :as str])
-  dev {:task (do (p/process {:inherit  true
+  vendor
+  {:doc "Copy highlight.js's github-dark theme into resources/public/css (run by bb dev and bb export)"
+   :task (do (shell "mkdir -p resources/public/css")
+             (shell "cp node_modules/highlight.js/styles/github-dark.min.css resources/public/css/"))}
+  dev {:task (do (run "vendor")
+                 (p/process {:inherit  true
                              :shutdown p/destroy-tree}
                             "./node_modules/.bin/shadow-cljs watch app")
                  (apply shell "clojure -M:run" *command-line-args*))}
   cljs:watch {:task (shell "./node_modules/.bin/shadow-cljs watch app")}
   cljs:release {:task (shell "./node_modules/.bin/shadow-cljs release app")}
-  export {:task (do (shell "./node_modules/.bin/shadow-cljs release app")
+  export {:task (do (run "vendor")
+                    (shell "./node_modules/.bin/shadow-cljs release app")
                     (shell "clojure -M:export"))}
   test {:task (shell "clojure -M:test")}
   new-post

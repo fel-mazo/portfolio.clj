@@ -1779,3 +1779,40 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
     transition: opacity 150ms ease;
   }
 }
+
+/* ---- Code blocks -------------------------------------------------------
+   Article pages render white prose on --navy, so code gets dark surfaces
+   and a GitHub Dark token palette. Base styles stand alone: without JS
+   the blocks are still readable plain text. */
+
+.rich-html pre {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--home-line);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.rich-html pre code {
+  display: block;
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  color: #c9d1d9;
+  background: none;
+  padding: 0; /* vendored theme gives pre code.hljs 1em padding; the pre box pads already */
+}
+
+.rich-html :not(pre) > code {
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  color: #e6edf3;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--home-line);
+  border-radius: 6px;
+  padding: 0.1em 0.35em;
+}
+
+.rich-html .hljs {
+  background: none; /* theme paints .hljs #0d1117; the rounded pre surface shows instead */
+}

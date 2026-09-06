@@ -64,6 +64,9 @@
    ;; home about heading; Poppins 500 paints nav, pills, roles and intros.
    [:link {:rel "preload" :href (str base-path "/fonts/SpecialGothicExpandedOne-Regular.woff2") :as "font" :type "font/woff2" :crossorigin "anonymous"}]
    [:link {:rel "preload" :href (str base-path "/fonts/poppins-500.woff2") :as "font" :type "font/woff2" :crossorigin "anonymous"}]
+   ;; Vendored highlight.js theme — regenerates via `bb vendor`; load before
+   ;; site.css so site overrides can win on equal specificity.
+   [:link {:rel "stylesheet" :href (str base-path "/css/github-dark.min.css")}]
    [:link {:rel "stylesheet" :href (str base-path "/site.css")}]))
 
 (defn layout [{:keys [locale title description site labels navigation body meta base-path hreflang json-ld alt-uri]

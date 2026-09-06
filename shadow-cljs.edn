@@ -1,5 +1,8 @@
 {:source-paths ["src"]
  :dependencies []
+ ;; highlight.js exposes only ./lib/* and ./es/* in its package "exports"
+ ;; map; the es/ files are proper ESM which Closure compiles reliably.
+ :js-options {:exports-bypass true}
  :builds
  {:app {:target :browser
         :output-dir "resources/public/js"
@@ -8,4 +11,4 @@
         :devtools {:after-load portfolio.ui.main/init!
                    :watch-dir "resources/public"}
         :compiler-options {:optimizations :advanced
-                           :output-feature-set :es6}}}}
+                           :output-feature-set :es2018}}}}

@@ -155,13 +155,14 @@
 
 (deftest og-image-is-absolute
   ;; Social crawlers drop relative image urls, so this must survive the
-  ;; portrait path in site.edn staying relative.
-  (let [portrait (support/site-value :portrait-url)]
-    (is (not (str/starts-with? portrait "http"))
-        "site.edn still ships a relative portrait, which is what makes this test meaningful")
+  ;; og-image path in site.edn staying relative. The preview uses the logo,
+  ;; not the portrait — the portrait stays on the homepage only.
+  (let [og-image (support/site-value :og-image-url)]
+    (is (not (str/starts-with? og-image "http"))
+        "site.edn still ships a relative og image, which is what makes this test meaningful")
     (doseq [uri (support/all-page-uris)]
       (let [image (support/meta-content (support/html-for uri) "og:image")]
-        (is (= (support/absolute portrait) image) uri)
+        (is (= (support/absolute og-image) image) uri)
         (is (= image (support/meta-content (support/html-for uri) "twitter:image")) uri)))))
 
 (deftest pages-link-their-own-locale-s-feed

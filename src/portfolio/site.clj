@@ -53,7 +53,7 @@
                               robots "index,follow"}}]
   {:canonical-url (absolute-url uri)
    :og-type og-type
-   :image-url (absolute-image-url (or image-url (:portrait-url (site-data))))
+   :image-url (absolute-image-url (or image-url (:og-image-url (site-data))))
    :robots robots})
 
 (defn- hreflang-map [locale self-uri alt-uri]

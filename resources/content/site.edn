@@ -3,6 +3,9 @@
   :site-url "https://fel-mazo.com"
   :base-path ""
   :portrait-url "/my-picture.jpg"
+  ;; og:image / twitter:image preview (crawlers reject SVG; PNG generated from
+  ;; favicon.svg at 1200x630 via headless Chrome)
+  :og-image-url "/og-logo.png"
   :socials [{:label "LinkedIn" :href "https://www.linkedin.com/in/fel-mazo/"}
             {:label "GitHub" :href "https://github.com/fel-mazo"}]
   :locales

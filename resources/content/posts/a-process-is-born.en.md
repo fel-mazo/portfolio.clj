@@ -25,7 +25,7 @@ end
 Some interesting [options](https://www.erlang.org/doc/apps/erts/erlang.html#spawn_opt/4): 
 - you can make it linked to the parent process.
 - you can setup a monitor, a message will be sent to notify of the process's death, natural or accidental.
-- you can (damn it's getting repetitive) set a min heap size, the default is 233 words, a word being 8 bytes for 64-bit VMs. it grows in a fibonacci sequence style (up to a certain point) and if you have big plans for the future of the process, knowing it will need a large heap, it can be interesting to save the gc the trouble of growing it god knows how many times. The gc 
+- you can (damn it's getting repetitive) set a min heap size, the default is 233 words, a word being 8 bytes for 64-bit VMs. it grows in a fibonacci sequence style (up to a certain point) and if you have big plans for the future of the process, knowing it will need a large heap, it can be interesting to save the gc the trouble of growing it god knows how many times. The gc copies live data over from old to new, on top of allocation cost, it adds up.
 - there is `message_queue_data` this one is interesting and will probably get a post to look into it deeper. You can set it to on_heap or off_heap as the name suggests, off_heap will be lighter on GC but messages would always be allocated which has a higher cost but spares you lock contention which might be the right tradeoff for a process getting a ton of messages from many processes... anyways, have a look here for a [better explanation](https://blog.stenmans.org/theBeamBook/#_lock_free_message_passing).
 - a few others I won't bother with here 
 

@@ -1211,6 +1211,17 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
   color: rgba(255, 255, 255, 0.9);
 }
 
+.rich-html a {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+
+.rich-html a:hover {
+  color: var(--white);
+}
+
 .rich-html p.lead {
   font-size: 18px;
   line-height: 28px;

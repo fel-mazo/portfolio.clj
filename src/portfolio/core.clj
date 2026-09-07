@@ -30,6 +30,8 @@
       3001))
 
 (defn -main [& args]
-  (let [port (server-port args)]
-    (println (str "Server listening on http://localhost:" port))
+  (let [port (server-port args)
+        url (str "http://localhost:" port)]
+    ;; OSC 8 terminal hyperlink — unsupported terminals just show the plain URL.
+    (println (str "Server listening on \u001b]8;;" url "\u0007" url "\u001b]8;;\u0007"))
     (jetty/run-jetty #'dev-app {:port port :join? true})))

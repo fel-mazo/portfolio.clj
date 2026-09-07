@@ -1192,6 +1192,8 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
 .article-main {
   padding-top: 56px;
   max-width: 895px;
+  min-width: 0; /* grid item: let long code lines shrink so pre can scroll instead of blowing out the column */
+  overflow-wrap: break-word; /* long inline code / URLs wrap instead of overflowing */
 }
 
 .article-translation-notice {
@@ -1608,7 +1610,7 @@ button.blog-tag-filter.blog-tag-active:focus-visible {
   }
 
   .article-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 28px;
   }
 

@@ -6,7 +6,7 @@
  :category "real talk"
  :tags ["yapping"]
  :excerpt "J'ai vraiment envie de tenir un blog"
- :ai-translated true
+ :ai-usage true
  :alternate-slug "hello-world"}
 ---
 

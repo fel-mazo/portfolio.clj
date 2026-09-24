@@ -27,7 +27,9 @@ at the root, French under `/fr/`. Legacy `/en/` URLs still answer — as meta-re
   then prints the prompt for an AI agent to translate it into French: where to write the file, how
   to slug and adapt the front-matter, and to cross-link both with `:alternate-slug`. Posts are
   written in English and translated; every post ships in both locales. Refuses to overwrite.
-  Translations carry `:ai-translated true`, which renders the disclosure notice on the article page.
+  Translations disclose AI use via `:ai-usage`: a string renders that description in the
+  disclosure notice, `true` renders the default translated-by-AI notice, and `:ai-translated true`
+  remains a deprecated alias that still works.
 - `clojure -M:nrepl` — nREPL on `127.0.0.1:7888`.
 
 Direct aliases: `clojure -M:run`, `-M:test`, `-M:export`, `-M:nrepl`.

@@ -405,12 +405,14 @@
         (is (not (str/includes? text (support/copy :fr :ai-translated-notice))))))))
 
 (deftest blank-ai-usage-renders-no-disclosure
-  (with-posts [(support/stub-post :slug "blank-ai" :locale :fr
-                                  :uri "/fr/blog/blank-ai/"
-                                  :ai-usage "")]
-    (fn []
-      (let [html (support/html-for "/fr/blog/blank-ai/")]
-        (is (empty? (support/attrs-with-class html "article-translation-notice")))))))
+  (doseq [[slug usage] [["empty-ai" ""]
+                        ["whitespace-ai" " \n\t "]]]
+    (with-posts [(support/stub-post :slug slug :locale :fr
+                                    :uri (str "/fr/blog/" slug "/")
+                                    :ai-usage usage)]
+      (fn []
+        (let [html (support/html-for (str "/fr/blog/" slug "/"))]
+          (is (empty? (support/attrs-with-class html "article-translation-notice"))))))))
 
 (deftest blog-index-exposes-the-data-the-tag-filter-script-reads
   ;; templates.clj emits these attributes and portfolio.ui.tags queries them;

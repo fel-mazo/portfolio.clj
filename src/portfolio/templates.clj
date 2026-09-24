@@ -235,7 +235,7 @@
 (defn- ai-disclosure [post labels]
   (let [usage (:ai-usage post)]
     (cond
-      (and (string? usage) (seq usage))       usage
+      (and (string? usage) (not (str/blank? usage))) usage
       (or (true? usage) (:ai-translated post)) (:ai-translated-notice labels)
       :else                                    nil)))
 

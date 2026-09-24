@@ -232,6 +232,13 @@
     (for [related related-posts]
       [:li [:a {:href (:uri related)} (:title related)]])]])
 
+(defn- ai-disclosure [post labels]
+  (let [usage (:ai-usage post)]
+    (cond
+      (and (string? usage) (seq usage))       usage
+      (or (true? usage) (:ai-translated post)) (:ai-translated-notice labels)
+      :else                                    nil)))
+
 (defn article-page [{:keys [post labels related-posts]}]
   (let [has-related-posts? (seq related-posts)]
     [:main.article-page {:id "main-content"}
@@ -259,8 +266,8 @@
             [:span.article-toc-title title]])
          (:headings post))]
        [:div.article-main
-        (when (:ai-translated post)
-          [:p.article-translation-notice (:ai-translated-notice labels)])
+        (when-let [disclosure (ai-disclosure post labels)]
+          [:p.article-translation-notice disclosure])
         [:div.rich-html (h/raw (:html post))]
         (when (or (:project-link labels) has-related-posts?)
           [:div.article-bottom-row

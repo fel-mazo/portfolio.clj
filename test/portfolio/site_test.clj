@@ -372,6 +372,46 @@
           (is (empty? (support/attrs-with-class html "article-translation-notice")))
           (is (not (str/includes? html (support/copy :en :ai-translated-notice)))))))))
 
+(deftest custom-ai-usage-renders-custom-disclosure
+  (with-posts [(support/stub-post :slug "custom-ai" :locale :fr
+                                  :uri "/fr/blog/custom-ai/"
+                                  :ai-usage "Généré avec l'aide d'une IA, puis relu.")]
+    (fn []
+      (let [html (support/html-for "/fr/blog/custom-ai/")
+            text (support/decode-entities html)]
+        (is (= 1 (count (support/attrs-with-class html "article-translation-notice"))))
+        (is (str/includes? text "Généré avec l'aide d'une IA, puis relu."))))))
+
+(deftest true-ai-usage-renders-default-disclosure
+  (with-posts [(support/stub-post :slug "default-ai" :locale :fr
+                                  :uri "/fr/blog/default-ai/"
+                                  :ai-usage true)]
+    (fn []
+      (let [html (support/html-for "/fr/blog/default-ai/")]
+        (is (= 1 (count (support/attrs-with-class html "article-translation-notice"))))
+        (is (str/includes? (support/decode-entities html)
+                           (support/copy :fr :ai-translated-notice)))))))
+
+(deftest custom-ai-usage-takes-precedence-over-legacy-flag
+  (with-posts [(support/stub-post :slug "precedence" :locale :fr
+                                  :uri "/fr/blog/precedence/"
+                                  :ai-usage "Drafté avec une IA, puis réécrit."
+                                  :ai-translated true)]
+    (fn []
+      (let [html (support/html-for "/fr/blog/precedence/")
+            text (support/decode-entities html)]
+        (is (= 1 (count (support/attrs-with-class html "article-translation-notice"))))
+        (is (str/includes? text "Drafté avec une IA, puis réécrit."))
+        (is (not (str/includes? text (support/copy :fr :ai-translated-notice))))))))
+
+(deftest blank-ai-usage-renders-no-disclosure
+  (with-posts [(support/stub-post :slug "blank-ai" :locale :fr
+                                  :uri "/fr/blog/blank-ai/"
+                                  :ai-usage "")]
+    (fn []
+      (let [html (support/html-for "/fr/blog/blank-ai/")]
+        (is (empty? (support/attrs-with-class html "article-translation-notice")))))))
+
 (deftest blog-index-exposes-the-data-the-tag-filter-script-reads
   ;; templates.clj emits these attributes and portfolio.ui.tags queries them;
   ;; the two sides only stay in sync if something checks the contract.
